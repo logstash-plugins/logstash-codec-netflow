@@ -46,7 +46,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     @templates = Vash.new()
 
     # Path to default Netflow v9 field definitions
-    filename = LogStash::Environment.plugin_path("codecs/netflow/netflow.yaml")
+    filename = ::File.expand_path('netflow/netflow.yaml', ::File.dirname(__FILE__))
 
     begin
       @fields = YAML.load_file(filename)
