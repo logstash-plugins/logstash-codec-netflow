@@ -31,7 +31,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   #    id:
   #    - :skip
   #
-  # See <https://github.com/logstash/logstash/tree/v%VERSION%/lib/logstash/codecs/netflow/netflow.yaml> for the base set.
+  # See <https://github.com/logstash-plugins/logstash-codec-netflow/blob/master/lib/logstash/codecs/netflow/netflow.yaml> for the base set.
   config :definitions, :validate => :path
 
   public
