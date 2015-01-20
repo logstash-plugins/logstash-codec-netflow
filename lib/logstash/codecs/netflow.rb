@@ -6,7 +6,6 @@ require "logstash/timestamp"
 # The "netflow" codec is for decoding Netflow v5/v9 flows.
 class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   config_name "netflow"
-  milestone 1
 
   # Netflow v9 template cache TTL (minutes)
   config :cache_ttl, :validate => :number, :default => 4000
