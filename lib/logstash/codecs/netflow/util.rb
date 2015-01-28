@@ -17,6 +17,10 @@ class IP4Addr < BinData::Primitive
   def get
     IPAddr.new_ntoh([self.storage].pack('N')).to_s
   end
+
+  def to_i
+    self.storage
+  end
 end
 
 class IP6Addr < BinData::Primitive
