@@ -137,7 +137,7 @@
 - :uint8
 - :mpls_top_label_type
 47:
-- :uint32
+- :ip4_addr
 - :mpls_top_label_ip_addr
 48:
 - 4
@@ -201,6 +201,36 @@
 - :skip
 69:
 - :skip
+70:
+- :mpls_stack_entry
+- :mpls_label_1
+71:
+- :mpls_stack_entry
+- :mpls_label_2
+72:
+- :mpls_stack_entry
+- :mpls_label_3
+73:
+- :mpls_stack_entry
+- :mpls_label_4
+74:
+- :mpls_stack_entry
+- :mpls_label_5
+75:
+- :mpls_stack_entry
+- :mpls_label_6
+76:
+- :mpls_stack_entry
+- :mpls_label_7
+77:
+- :mpls_stack_entry
+- :mpls_label_8
+78:
+- :mpls_stack_entry
+- :mpls_label_9
+79:
+- :mpls_stack_entry
+- :mpls_label_10
 80:
 - :mac_addr
 - :in_dst_mac

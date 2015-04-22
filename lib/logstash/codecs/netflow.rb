@@ -201,6 +201,8 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
             event[@target]['flowset_id'] = record.flowset_id
 
+            mpls_stack_ended = false
+
             r.each_pair do |k,v|
               case k.to_s
               when /_switched$/
@@ -209,6 +211,15 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
                 # v9 did away with the nanosecs field
                 micros = 1000000 - (millis % 1000)
                 event[@target][k.to_s] = Time.at(seconds, micros).utc.strftime("%Y-%m-%dT%H:%M:%S.%3NZ")
+              when /^mpls_label_\d+$/
+                event[@target]["mpls_label_stack"] ||= []
+                unless mpls_stack_ended
+                  event[@target]["mpls_label_stack"] << {
+                    "label" => v.label,
+                    "traffic_class" => v.traffic_class
+                  }
+                  mpls_stack_ended = ! v.end_of_stack.zero?
+                end
               else
                 event[@target][k.to_s] = v
               end

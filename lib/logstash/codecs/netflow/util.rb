@@ -51,6 +51,24 @@ class MacAddr < BinData::Primitive
   end
 end
 
+# The three-bit field was originally labeled 'Experimental',
+# but has since been re-named to Traffic Class (see RFC 5642)
+class MplsStackEntry < BinData::Record
+  endian :big
+
+  bit20  :label
+  bit3   :traffic_class
+  bit1   :end_of_stack
+
+  def to_i
+    self.label
+  end
+
+  def to_s
+    self.label.to_s
+  end
+end
+
 class Header < BinData::Record
   endian :big
   uint16 :version
