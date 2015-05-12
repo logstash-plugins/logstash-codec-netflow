@@ -3,7 +3,38 @@ require "logstash/filters/base"
 require "logstash/namespace"
 require "logstash/timestamp"
 
-# The "netflow" codec is for decoding Netflow v5/v9 flows.
+# The "netflow" codec is for decoding Netflow v5/v9/v10 (IPFIX) flows.
+
+# Example:
+#
+#     input {
+#       udp {
+#         host => localhost
+#         port => 2055
+#         codec => netflow {
+#           versions => [5, 9]
+#         }
+#         type => netflow
+#       }
+#       udp {
+#         host => localhost
+#         port => 4739
+#         codec => netflow {
+#           versions => [10]
+#           target => ipfix
+#         }
+#         type => ipfix
+#       }
+#       tcp {
+#         host => localhost
+#         port => 4739
+#         codec => netflow {
+#           versions => [10]
+#           target => ipfix
+#         }
+#         type => ipfix
+#       }
+#     }
 class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   config_name "netflow"
 
@@ -14,7 +45,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   config :target, :validate => :string, :default => "netflow"
 
   # Specify which Netflow versions you will accept.
-  config :versions, :validate => :array, :default => [5, 9]
+  config :versions, :validate => :array, :default => [5, 9, 10]
 
   # Override YAML file containing Netflow field definitions
   #
@@ -33,6 +64,24 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   # See <https://github.com/logstash-plugins/logstash-codec-netflow/blob/master/lib/logstash/codecs/netflow/netflow.yaml> for the base set.
   config :netflow_definitions, :validate => :path
 
+  # Override YAML file containing IPFIX field definitions
+  #
+  # Very similar to the Netflow version except there is a top level Private
+  # Enterprise Number (PEN) key added:
+  #
+  #    ---
+  #    pen:
+  #      id:
+  #      - :uintN or :ip4_addr or :ip6_addr or :mac_addr or :string
+  #      - :name
+  #      id:
+  #      - :skip
+  #
+  # There is an implicit PEN 0 for the standard fields.
+  #
+  # See <https://github.com/logstash-plugins/logstash-codec-netflow/blob/master/lib/logstash/codecs/netflow/ipfix.yaml> for the base set.
+  config :ipfix_definitions, :validate => :path
+
   NETFLOW5_FIELDS = ['version', 'flow_seq_num', 'engine_type', 'engine_id', 'sampling_algorithm', 'sampling_interval', 'flow_records']
   NETFLOW9_FIELDS = ['version', 'flow_seq_num']
   SWITCHED = /_switched$/
@@ -46,11 +95,15 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   def register
     require "logstash/codecs/netflow/util"
     @netflow_templates = Vash.new()
+    @ipfix_templates = Vash.new()
 
     # Path to default Netflow v9 field definitions
     filename = ::File.expand_path('netflow/netflow.yaml', ::File.dirname(__FILE__))
     @netflow_fields = load_definitions(filename, @netflow_definitions)
 
+    # Path to default IPFIX field definitions
+    filename = ::File.expand_path('netflow/ipfix.yaml', ::File.dirname(__FILE__))
+    @ipfix_fields = load_definitions(filename, @ipfix_definitions)
   end # def register
 
   def decode(payload, &block)
@@ -70,6 +123,13 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       flowset = Netflow9PDU.read(payload)
       flowset.records.each do |record|
         decode_netflow9(flowset, record).each{|event| yield(event)}
+      end
+    elsif header.version == 10
+      BinData::trace_reading do
+        flowset = IpfixPDU.read(payload)
+        flowset.records.each do |record|
+          decode_ipfix(flowset, record).each { |event| yield(event) }
+        end
       end
     else
       @logger.warn("Unsupported Netflow version v#{header.version}")
@@ -205,6 +265,23 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
         events << LogStash::Event.new(event)
       end
+    else
+      @logger.warn("Unsupported flowset id #{record.flowset_id}")
+    end
+
+    events
+  end
+
+  def decode_ipfix(flowset, record)
+    events = []
+
+    case record.flowset_id
+    when 2
+      # Template flowset
+    when 3
+      # Options template flowset
+    when 256..65535
+      # Data flowset
     else
       @logger.warn("Unsupported flowset id #{record.flowset_id}")
     end

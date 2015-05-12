@@ -141,6 +141,22 @@ class Netflow9PDU < BinData::Record
   end
 end
 
+class IpfixPDU < BinData::Record
+  endian :big
+  uint16 :version
+  uint16 :pdu_length
+  uint32 :unix_sec
+  uint32 :flow_seq_num
+  uint32 :observation_domain_id
+  array  :records, :read_until => lambda { array.num_bytes == pdu_length - 16 } do
+    uint16 :flowset_id
+    uint16 :flowset_length
+    choice :flowset_data, :selection => :flowset_id do
+      string :default, :read_length => lambda { flowset_length - 4 }
+    end
+  end
+end
+
 # https://gist.github.com/joshaven/184837
 class Vash < Hash
   def initialize(constructor = {})
