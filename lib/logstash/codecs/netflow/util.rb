@@ -92,7 +92,7 @@ class Netflow5PDU < BinData::Record
   end
 end
 
-class TemplateFlowset < BinData::Record
+class NetflowTemplateFlowset < BinData::Record
   endian :big
   array  :templates, :read_until => lambda { array.num_bytes == flowset_length - 4 } do
     uint16 :template_id
@@ -104,7 +104,7 @@ class TemplateFlowset < BinData::Record
   end
 end
 
-class OptionFlowset < BinData::Record
+class NetflowOptionFlowset < BinData::Record
   endian :big
   array  :templates, :read_until => lambda { flowset_length - 4 - array.num_bytes <= 2 } do
     uint16 :template_id
@@ -134,9 +134,9 @@ class Netflow9PDU < BinData::Record
     uint16 :flowset_id
     uint16 :flowset_length
     choice :flowset_data, :selection => :flowset_id do
-      template_flowset 0
-      option_flowset   1
-      string           :default, :read_length => lambda { flowset_length - 4 }
+      netflow_template_flowset 0
+      netflow_option_flowset   1
+      string                   :default, :read_length => lambda { flowset_length - 4 }
     end
   end
 end

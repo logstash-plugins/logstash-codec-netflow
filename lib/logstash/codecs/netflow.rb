@@ -31,7 +31,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   #    - :skip
   #
   # See <https://github.com/logstash-plugins/logstash-codec-netflow/blob/master/lib/logstash/codecs/netflow/netflow.yaml> for the base set.
-  config :definitions, :validate => :path
+  config :netflow_definitions, :validate => :path
 
   NETFLOW5_FIELDS = ['version', 'flow_seq_num', 'engine_type', 'engine_id', 'sampling_algorithm', 'sampling_interval', 'flow_records']
   NETFLOW9_FIELDS = ['version', 'flow_seq_num']
@@ -45,26 +45,12 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
   def register
     require "logstash/codecs/netflow/util"
-    @templates = Vash.new()
+    @netflow_templates = Vash.new()
 
     # Path to default Netflow v9 field definitions
     filename = ::File.expand_path('netflow/netflow.yaml', ::File.dirname(__FILE__))
+    @netflow_fields = load_definitions(filename, @netflow_definitions)
 
-    begin
-      @fields = YAML.load_file(filename)
-    rescue Exception => e
-      raise "#{self.class.name}: Bad syntax in definitions file #{filename}"
-    end
-
-    # Allow the user to augment/override/rename the supported Netflow fields
-    if @definitions
-      raise "#{self.class.name}: definitions file #{@definitions} does not exists" unless File.exists?(@definitions)
-      begin
-        @fields.merge!(YAML.load_file(@definitions))
-      rescue Exception => e
-        raise "#{self.class.name}: Bad syntax in definitions file #{@definitions}"
-      end
-    end
   end # def register
 
   def decode(payload, &block)
@@ -144,9 +130,9 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           # We get this far, we have a list of fields
           #key = "#{flowset.source_id}|#{event["source"]}|#{template.template_id}"
           key = "#{flowset.source_id}|#{template.template_id}"
-          @templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
+          @netflow_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
           # Purge any expired templates
-          @templates.cleanup!
+          @netflow_templates.cleanup!
         end
       end
     when 1
@@ -162,16 +148,16 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           # We get this far, we have a list of fields
           #key = "#{flowset.source_id}|#{event["source"]}|#{template.template_id}"
           key = "#{flowset.source_id}|#{template.template_id}"
-          @templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
+          @netflow_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
           # Purge any expired templates
-          @templates.cleanup!
+          @netflow_templates.cleanup!
         end
       end
     when 256..65535
       # Data flowset
       #key = "#{flowset.source_id}|#{event["source"]}|#{record.flowset_id}"
       key = "#{flowset.source_id}|#{record.flowset_id}"
-      template = @templates[key]
+      template = @netflow_templates[key]
 
       unless template
         #@logger.warn("No matching template for flow id #{record.flowset_id} from #{event["source"]}")
@@ -226,14 +212,34 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     events
   end
 
+  def load_definitions(defaults, extra)
+    begin
+      fields = YAML.load_file(defaults)
+    rescue Exception => e
+      raise "#{self.class.name}: Bad syntax in definitions file #{defaults}"
+    end
+
+    # Allow the user to augment/override/rename the default fields
+    if extra
+      raise "#{self.class.name}: definitions file #{extra} does not exist" unless File.exists?(extra)
+      begin
+        fields.merge!(YAML.load_file(extra))
+      rescue Exception => e
+        raise "#{self.class.name}: Bad syntax in definitions file #{extra}"
+      end
+    end
+
+    fields
+  end
+
   def uint_field(length, default)
     # If length is 4, return :uint32, etc. and use default if length is 0
     ("uint" + (((length > 0) ? length : default) * 8).to_s).to_sym
   end # def uint_field
 
   def netflow_field_for(type, length)
-    if @fields.include?(type)
-      field = @fields[type]
+    if @netflow_fields.include?(type)
+      field = @netflow_fields[type]
       if field.is_a?(Array)
 
         field[0] = uint_field(length, field[0]) if field[0].is_a?(Integer)
