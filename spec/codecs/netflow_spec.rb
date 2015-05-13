@@ -434,6 +434,249 @@ describe LogStash::Codecs::Netflow do
       expect(decode[0].get("[netflow][scope_system]")).to eq(0)
       expect(decode[0].get("[netflow][total_flows_exp]")).to eq(1)
     end
-
   end
-end
+
+  context "IPFIX" do
+    let(:data) do
+      # this netflow raw data was produced with softflowd and captured with netcat
+      # softflowd -D -i eth0 -v 10 -t maxlife=1 -n 127.0.01:8765
+      # nc -k -4 -u -l 127.0.0.1 8765 > ipfix.dat
+      data = []
+      data << IO.read(File.join(File.dirname(__FILE__), "ipfix.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "@timestamp": "2015-05-13T11:20:26.000Z",
+          "netflow": {
+            "version": 10,
+            "meteringProcessId": 2679,
+            "systemInitTimeMilliseconds": 1431516013506,
+            "selectorAlgorithm": 1,
+            "samplingPacketInterval": 1,
+            "samplingPacketSpace": 0
+          },
+          "@version": "1"
+        }
+      END
+
+      events << <<-END
+        {
+          "@timestamp": "2015-05-13T11:20:26.000Z",
+          "netflow": {
+            "version": 10,
+            "sourceIPv4Address": "192.168.253.1",
+            "destinationIPv4Address": "192.168.253.128",
+            "octetDeltaCount": 260,
+            "packetDeltaCount": 5,
+            "ingressInterface": 0,
+            "egressInterface": 0,
+            "sourceTransportPort": 60560,
+            "destinationTransportPort": 22,
+            "protocolIdentifier": 6,
+            "tcpControlBits": 16,
+            "ipVersion": 4,
+            "ipClassOfService": 0,
+            "icmpTypeCodeIPv4": 0,
+            "vlanId": 0,
+            "flowStartSysUpTime": 0,
+            "flowEndSysUpTime": 12726
+          },
+          "@version": "1"
+        }
+      END
+
+      events << <<-END
+        {
+          "@timestamp": "2015-05-13T11:20:26.000Z",
+          "netflow": {
+            "version": 10,
+            "sourceIPv4Address": "192.168.253.128",
+            "destinationIPv4Address": "192.168.253.1",
+            "octetDeltaCount": 1000,
+            "packetDeltaCount": 6,
+            "ingressInterface": 0,
+            "egressInterface": 0,
+            "sourceTransportPort": 22,
+            "destinationTransportPort": 60560,
+            "protocolIdentifier": 6,
+            "tcpControlBits": 24,
+            "ipVersion": 4,
+            "ipClassOfService": 0,
+            "icmpTypeCodeIPv4": 0,
+            "vlanId": 0,
+            "flowStartSysUpTime": 0,
+            "flowEndSysUpTime": 12726
+          },
+          "@version": "1"
+        }
+      END
+
+      events << <<-END
+        {
+          "@timestamp": "2015-05-13T11:20:26.000Z",
+          "netflow": {
+            "version": 10,
+            "sourceIPv4Address": "192.168.253.2",
+            "destinationIPv4Address": "192.168.253.132",
+            "octetDeltaCount": 601,
+            "packetDeltaCount": 2,
+            "ingressInterface": 0,
+            "egressInterface": 0,
+            "sourceTransportPort": 53,
+            "destinationTransportPort": 35262,
+            "protocolIdentifier": 17,
+            "tcpControlBits": 0,
+            "ipVersion": 4,
+            "ipClassOfService": 0,
+            "icmpTypeCodeIPv4": 0,
+            "vlanId": 0,
+            "flowStartSysUpTime": 1104,
+            "flowEndSysUpTime": 1142
+          },
+          "@version": "1"
+        }
+      END
+
+      events << <<-END
+        {
+          "@timestamp": "2015-05-13T11:20:26.000Z",
+          "netflow": {
+            "version": 10,
+            "sourceIPv4Address": "192.168.253.132",
+            "destinationIPv4Address": "192.168.253.2",
+            "octetDeltaCount": 148,
+            "packetDeltaCount": 2,
+            "ingressInterface": 0,
+            "egressInterface": 0,
+            "sourceTransportPort": 35262,
+            "destinationTransportPort": 53,
+            "protocolIdentifier": 17,
+            "tcpControlBits": 0,
+            "ipVersion": 4,
+            "ipClassOfService": 0,
+            "icmpTypeCodeIPv4": 0,
+            "vlanId": 0,
+            "flowStartSysUpTime": 1104,
+            "flowEndSysUpTime": 1142
+          },
+          "@version": "1"
+        }
+      END
+
+      events << <<-END
+        {
+          "@timestamp": "2015-05-13T11:20:26.000Z",
+          "netflow": {
+            "version": 10,
+            "sourceIPv4Address": "54.214.9.161",
+            "destinationIPv4Address": "192.168.253.132",
+            "octetDeltaCount": 5946,
+            "packetDeltaCount": 14,
+            "ingressInterface": 0,
+            "egressInterface": 0,
+            "sourceTransportPort": 443,
+            "destinationTransportPort": 49935,
+            "protocolIdentifier": 6,
+            "tcpControlBits": 26,
+            "ipVersion": 4,
+            "ipClassOfService": 0,
+            "icmpTypeCodeIPv4": 0,
+            "vlanId": 0,
+            "flowStartSysUpTime": 1142,
+            "flowEndSysUpTime": 2392
+          },
+          "@version": "1"
+        }
+      END
+
+      events << <<-END
+        {
+          "@timestamp": "2015-05-13T11:20:26.000Z",
+          "netflow": {
+            "version": 10,
+            "sourceIPv4Address": "192.168.253.132",
+            "destinationIPv4Address": "54.214.9.161",
+            "octetDeltaCount": 2608,
+            "packetDeltaCount": 13,
+            "ingressInterface": 0,
+            "egressInterface": 0,
+            "sourceTransportPort": 49935,
+            "destinationTransportPort": 443,
+            "protocolIdentifier": 6,
+            "tcpControlBits": 26,
+            "ipVersion": 4,
+            "ipClassOfService": 0,
+            "icmpTypeCodeIPv4": 0,
+            "vlanId": 0,
+            "flowStartSysUpTime": 1142,
+            "flowEndSysUpTime": 2392
+          },
+          "@version": "1"
+        }
+      END
+
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(7)
+
+      expect(decode[0].get("[netflow][version]")).to eq(10)
+      expect(decode[0].get("[netflow][systemInitTimeMilliseconds]")).to eq(1431516013506)
+
+      expect(decode[1].get("[netflow][version]")).to eq(10)
+      expect(decode[1].get("[netflow][sourceIPv4Address]")).to eq("192.168.253.1")
+      expect(decode[1].get("[netflow][destinationIPv4Address]")).to eq("192.168.253.128")
+      expect(decode[1].get("[netflow][sourceTransportPort]")).to eq(60560)
+      expect(decode[1].get("[netflow][destinationTransportPort]")).to eq(22)
+      expect(decode[1].get("[netflow][protocolIdentifier]")).to eq(6)
+      expect(decode[1].get("[netflow][tcpControlBits]")).to eq(16)
+
+      expect(decode[2].get("[netflow][version]")).to eq(10)
+      expect(decode[2].get("[netflow][sourceIPv4Address]")).to eq("192.168.253.128")
+      expect(decode[2].get("[netflow][destinationIPv4Address]")).to eq("192.168.253.1")
+      expect(decode[2].get("[netflow][sourceTransportPort]")).to eq(22)
+      expect(decode[2].get("[netflow][destinationTransportPort]")).to eq(60560)
+      expect(decode[2].get("[netflow][protocolIdentifier]")).to eq(6)
+      expect(decode[2].get("[netflow][tcpControlBits]")).to eq(24)
+
+      expect(decode[3].get("[netflow][sourceIPv4Address]")).to eq("192.168.253.2")
+      expect(decode[3].get("[netflow][destinationIPv4Address]")).to eq("192.168.253.132")
+      expect(decode[3].get("[netflow][sourceTransportPort]")).to eq(53)
+      expect(decode[3].get("[netflow][destinationTransportPort]")).to eq(35262)
+      expect(decode[3].get("[netflow][protocolIdentifier]")).to eq(17)
+
+      expect(decode[4].get("[netflow][sourceIPv4Address]")).to eq("192.168.253.132")
+      expect(decode[4].get("[netflow][destinationIPv4Address]")).to eq("192.168.253.2")
+      expect(decode[4].get("[netflow][sourceTransportPort]")).to eq(35262)
+      expect(decode[4].get("[netflow][destinationTransportPort]")).to eq(53)
+      expect(decode[4].get("[netflow][protocolIdentifier]")).to eq(17)
+
+      expect(decode[5].get("[netflow][sourceIPv4Address]")).to eq("54.214.9.161")
+      expect(decode[5].get("[netflow][destinationIPv4Address]")).to eq("192.168.253.132")
+      expect(decode[5].get("[netflow][sourceTransportPort]")).to eq(443)
+      expect(decode[5].get("[netflow][destinationTransportPort]")).to eq(49935)
+      expect(decode[5].get("[netflow][protocolIdentifier]")).to eq(6)
+      expect(decode[5].get("[netflow][tcpControlBits]")).to eq(26)
+
+      expect(decode[6].get("[netflow][sourceIPv4Address]")).to eq("192.168.253.132")
+      expect(decode[6].get("[netflow][destinationIPv4Address]")).to eq("54.214.9.161")
+      expect(decode[6].get("[netflow][sourceTransportPort]")).to eq(49935)
+      expect(decode[6].get("[netflow][destinationTransportPort]")).to eq(443)
+      expect(decode[6].get("[netflow][protocolIdentifier]")).to eq(6)
+      expect(decode[6].get("[netflow][tcpControlBits]")).to eq(26)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+      expect(JSON.parse(decode[1].to_json)).to eq(JSON.parse(json_events[1]))
+      expect(JSON.parse(decode[2].to_json)).to eq(JSON.parse(json_events[2]))
+      expect(JSON.parse(decode[3].to_json)).to eq(JSON.parse(json_events[3]))
+      expect(JSON.parse(decode[4].to_json)).to eq(JSON.parse(json_events[4]))
+      expect(JSON.parse(decode[5].to_json)).to eq(JSON.parse(json_events[5]))
+      expect(JSON.parse(decode[6].to_json)).to eq(JSON.parse(json_events[6]))
+    end
+  end
