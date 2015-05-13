@@ -137,11 +137,9 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
         end
       end
     elsif header.version == 10
-      BinData::trace_reading do
-        flowset = IpfixPDU.read(payload)
-        flowset.records.each do |record|
-          decode_ipfix(flowset, record).each { |event| yield(event) }
-        end
+      flowset = IpfixPDU.read(payload)
+      flowset.records.each do |record|
+        decode_ipfix(flowset, record).each { |event| yield(event) }
       end
     else
       @logger.warn("Unsupported Netflow version v#{header.version}")
@@ -405,10 +403,23 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
         end
 
         r.each_pair do |k, v|
-          #case k.to_s
-          #else
+          case k.to_s
+          when /^flow(?:Start|End)Seconds$/
+            event[@target][k.to_s] = LogStash::Timestamp.at(v.snapshot).to_iso8601
+          when /^flow(?:Start|End)(Milli|Micro|Nano)seconds$/
+            divisor =
+              case $1
+              when 'Milli'
+                1_000
+              when 'Micro'
+                1_000_000
+              when 'Nano'
+                1_000_000_000
+              end
+            event[@target][k.to_s] = LogStash::Timestamp.at(v.snapshot.to_f / divisor).to_iso8601
+          else
             event[@target][k.to_s] = v.snapshot
-          #end
+          end
         end
 
         events << LogStash::Event.new(event)
@@ -418,6 +429,8 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     end
 
     events
+  rescue BinData::ValidityError => e
+    @logger.warn("Invalid IPFIX packet received (#{e})")
   end
 
   def load_definitions(defaults, extra)
