@@ -3,7 +3,7 @@ Gem::Specification.new do |s|
   s.name            = 'logstash-codec-netflow'
   s.version         = '2.0.3'
   s.licenses        = ['Apache License (2.0)']
-  s.summary         = "The netflow codec is for decoding Netflow v5/v9 flows."
+  s.summary         = "The netflow codec is for decoding Netflow v5/v9/v10 (IPFIX) flows."
   s.description     = "This gem is a logstash plugin required to be installed on top of the Logstash core pipeline using $LS_HOME/bin/plugin install gemname. This gem is not a stand-alone program"
   s.authors         = ["Elastic"]
   s.email           = 'info@elastic.co'
