@@ -262,6 +262,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       if @auto_skip
        field = [:skip]
        field += [nil, {:length => length}] 
+       @logger.warn("Automatically Skiped", :type => type, :length => length)
        [field]
       else
        nil 
