@@ -126,11 +126,9 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
         decode_netflow9(flowset, record).each{|event| yield(event)}
       end
     elsif header.version == 10
-      BinData::trace_reading do
-        flowset = IpfixPDU.read(payload)
-        flowset.records.each do |record|
-          decode_ipfix(flowset, record).each { |event| yield(event) }
-        end
+      flowset = IpfixPDU.read(payload)
+      flowset.records.each do |record|
+        decode_ipfix(flowset, record).each { |event| yield(event) }
       end
     else
       @logger.warn("Unsupported Netflow version v#{header.version}")
