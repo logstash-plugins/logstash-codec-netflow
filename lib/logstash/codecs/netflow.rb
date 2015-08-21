@@ -35,6 +35,13 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
   NETFLOW5_FIELDS = ['version', 'flow_seq_num', 'engine_type', 'engine_id', 'sampling_algorithm', 'sampling_interval', 'flow_records']
   NETFLOW9_FIELDS = ['version', 'flow_seq_num']
+  NETFLOW9_SCOPES = {
+    1 => :scope_system,
+    2 => :scope_interface,
+    3 => :scope_line_card,
+    4 => :scope_netflow_cache,
+    5 => :scope_template,
+  }
   SWITCHED = /_switched$/
   FLOWSET_ID = "flowset_id"
 
@@ -166,6 +173,9 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       record.flowset_data.templates.each do |template|
         catch (:field) do
           fields = []
+          template.scope_fields.each do |field|
+            fields << [uint_field(0, field.field_length), NETFLOW9_SCOPES[field.field_type]]
+          end
           template.option_fields.each do |field|
             entry = netflow_field_for(field.field_type, field.field_length)
             throw :field unless entry
