@@ -397,6 +397,8 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     end
 
     events
+  rescue BinData::ValidityError => e
+    @logger.warn("Invalid IPFIX packet received (#{e})")
   end
 
   def load_definitions(defaults, extra)
