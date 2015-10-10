@@ -47,7 +47,7 @@ class MacAddr < BinData::Primitive
   end
 
   def get
-    self.bytes.collect { |byte| byte.to_s(16) }.join(":")
+    self.bytes.collect { |byte| byte.value.to_s(16).rjust(2,'0') }.join(":")
   end
 end
 

@@ -164,10 +164,10 @@
 - :dst_tos
 56:
 - :mac_addr
-- :in_src_max
+- :in_src_mac
 57:
 - :mac_addr
-- :out_dst_max
+- :out_dst_mac
 58:
 - :uint16
 - :src_vlan
