@@ -17,9 +17,10 @@ describe LogStash::Codecs::Netflow do
     end
   end
 
-  context "Netflow 5" do
+  ### NETFLOW v5
+ 
+  context "Netflow 5 valid 01" do
     let(:data) do
-      data = []
       # this netflow raw data was produced with softflowd and captured with netcat
       # softflowd -D -i eth0 -v 5 -t maxlife=1 -n 127.0.01:8765
       # nc -k -4 -u -l 127.0.0.1 8765 > netflow5.dat
@@ -125,93 +126,81 @@ describe LogStash::Codecs::Netflow do
     end
   end
 
-  context "Netflow 9" do
+  context "Netflow 5 invalid 01 " do
+    let(:data) do
+      data = []
+      data << IO.read(File.join(File.dirname(__FILE__), "netflow5_test_invalid01.dat"), :mode => "rb")
+    end
+
+    it "should not raise_error " do
+      expect{decode.size}.not_to raise_error
+    end
+  end
+
+  context "Netflow 5 invalid 02 " do
+    let(:data) do
+      data = []
+      data << IO.read(File.join(File.dirname(__FILE__), "netflow5_test_invalid02.dat"), :mode => "rb")
+    end
+
+    it "should not raise_error" do
+      expect{decode.size}.not_to raise_error
+    end
+  end
+
+  ### NETFLOW v9
+
+  context "Netflow 9 valid 01" do
     let(:data) do
       # this netflow raw data was produced with softflowd and captured with netcat
-      # softflowd -D -i eth0 -v 9 -t maxlife=1 -n 127.0.01:8765
-      # nc -k -4 -u -l 127.0.0.1 8765 > netflow9.dat
+      # softflowd -v 9 -n 172.16.32.202:2055
+      # nc -4 -u -l 172.16.32.202 8765 > netflow9_test_valid01.dat
       data = []
-      data << IO.read(File.join(File.dirname(__FILE__), "netflow9.dat"), :mode => "rb")
+      data << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_valid01.dat"), :mode => "rb")
     end
 
     let(:json_events) do
       events = []
       events << <<-END
         {
-          "@timestamp": "2015-05-02T22:10:07.000Z",
+          "@timestamp": "2015-10-08T19:04:30.000Z",
           "netflow": {
             "version": 9,
-            "flow_seq_num": 0,
-            "flowset_id": 1024,
-            "ipv4_src_addr": "10.0.2.2",
-            "ipv4_dst_addr": "10.0.2.15",
-            "last_switched": "2015-05-02T22:10:07.999Z",
-            "first_switched": "2015-06-21T15:12:49.999Z",
-            "in_bytes": 230,
-            "in_pkts": 5,
-            "input_snmp": 0,
-            "output_snmp": 0,
-            "l4_src_port": 57369,
-            "l4_dst_port": 22,
-            "protocol": 6,
-            "tcp_flags": 16,
-            "ip_protocol_version": 4
-          },
-          "@version": "1"
-        }
-      END
-
-      events << <<-END
-        {
-          "@timestamp": "2015-05-02T22:10:07.000Z",
-          "netflow": {
-            "version": 9,
-            "flow_seq_num": 0,
-            "flowset_id": 1024,
-            "ipv4_src_addr": "10.0.2.15",
-            "ipv4_dst_addr": "10.0.2.2",
-            "last_switched": "2015-05-02T22:10:07.999Z",
-            "first_switched": "2015-06-21T15:12:49.999Z",
-            "in_bytes": 352,
-            "in_pkts": 4,
-            "input_snmp": 0,
-            "output_snmp": 0,
-            "l4_src_port": 22,
-            "l4_dst_port": 57369,
-            "protocol": 6,
-            "tcp_flags": 24,
-            "ip_protocol_version": 4
+            "flow_seq_num":1,
+            "flowset_id":1024,
+            "ipv4_src_addr": "172.16.32.100",
+            "ipv4_dst_addr":"172.16.32.248",
+            "last_switched":"2015-10-08T19:03:47.999Z",
+            "first_switched":"2015-10-08T19:03:47.999Z",
+            "in_bytes":76,
+            "in_pkts":1,
+            "input_snmp":0,
+            "output_snmp":0,
+            "l4_src_port":123,
+            "l4_dst_port":123,
+            "protocol":17, 
+            "tcp_flags":0,
+            "ip_protocol_version":4,
+            "src_tos":0
           },
           "@version": "1"
         }
       END
 
       events.map{|event| event.gsub(/\s+/, "")}
+
     end
 
     it "should decode raw data" do
-      expect(decode.size).to eq(2)
-
+      expect(decode.size).to eq(7)
       expect(decode[0]["[netflow][version]"]).to eq(9)
-      expect(decode[0]["[netflow][ipv4_src_addr]"]).to eq("10.0.2.2")
-      expect(decode[0]["[netflow][ipv4_dst_addr]"]).to eq("10.0.2.15")
-      expect(decode[0]["[netflow][l4_src_port]"]).to eq(57369)
-      expect(decode[0]["[netflow][l4_dst_port]"]).to eq(22)
-      expect(decode[0]["[netflow][tcp_flags]"]).to eq(16)
-
-      expect(decode[1]["[netflow][version]"]).to eq(9)
-      expect(decode[1]["[netflow][ipv4_src_addr]"]).to eq("10.0.2.15")
-      expect(decode[1]["[netflow][ipv4_dst_addr]"]).to eq("10.0.2.2")
-      expect(decode[1]["[netflow][l4_src_port]"]).to eq(22)
-      expect(decode[1]["[netflow][l4_dst_port]"]).to eq(57369)
-      expect(decode[1]["[netflow][tcp_flags]"]).to eq(24)
     end
 
     it "should serialize to json" do
       # generated json order can change with different implementation, convert back to hash to compare.
       expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
-      expect(JSON.parse(decode[1].to_json)).to eq(JSON.parse(json_events[1]))
     end
+
   end
 
   context "Netflow 9 macaddress" do
@@ -397,6 +386,17 @@ describe LogStash::Codecs::Netflow do
     it "should serialize to json" do
       expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
       expect(JSON.parse(decode[7].to_json)).to eq(JSON.parse(json_events[1]))
+    end
+  end
+
+  context "Netflow 9 invalid 01 " do
+    let(:data) do
+      data = []
+      data << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_invalid01.dat"), :mode => "rb")
+    end
+
+    it "should not raise_error" do
+      expect{decode.size}.not_to raise_error
     end
   end
 end

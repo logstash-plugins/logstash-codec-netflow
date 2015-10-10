@@ -92,6 +92,8 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     else
       @logger.warn("Unsupported Netflow version v#{header.version}")
     end
+  rescue BinData::ValidityError, IOError => e
+    @logger.warn("Invalid netflow packet received (#{e})")
   end
 
   private
@@ -129,6 +131,8 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     end
 
     LogStash::Event.new(event)
+  rescue BinData::ValidityError, IOError => e
+    @logger.warn("Invalid netflow packet received (#{e})")
   end
 
   def decode_netflow9(flowset, record, metadata = nil)
@@ -240,6 +244,8 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     end
 
     events
+  rescue BinData::ValidityError, IOError => e
+    @logger.warn("Invalid netflow packet received (#{e})")
   end
 
   def uint_field(length, default)
