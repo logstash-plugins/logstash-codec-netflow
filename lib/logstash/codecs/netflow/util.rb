@@ -72,7 +72,7 @@ end
 class Netflow5PDU < BinData::Record
   endian :big
   uint16 :version
-  uint16 :flow_records
+  uint16 :flow_records, :assert => lambda { flow_records.value.between?(1,30) }
   uint32 :uptime
   uint32 :unix_sec
   uint32 :unix_nsec
@@ -81,7 +81,7 @@ class Netflow5PDU < BinData::Record
   uint8  :engine_id
   bit2   :sampling_algorithm
   bit14  :sampling_interval
-  array  :records, :initial_length => :flow_records do
+  array :records, :initial_length => :flow_records do
     ip4_addr :ipv4_src_addr
     ip4_addr :ipv4_dst_addr
     ip4_addr :ipv4_next_hop
@@ -144,8 +144,8 @@ class Netflow9PDU < BinData::Record
   uint32 :flow_seq_num
   uint32 :source_id
   array  :records, :read_until => :eof do
-    uint16 :flowset_id
-    uint16 :flowset_length
+    uint16 :flowset_id, :assert => lambda { [0, 1, *(256..65535)].include?(flowset_id) }
+    uint16 :flowset_length, :assert => lambda { flowset_length > 4 }
     choice :flowset_data, :selection => :flowset_id do
       template_flowset 0
       option_flowset   1
