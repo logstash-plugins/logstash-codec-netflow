@@ -13,7 +13,7 @@ describe LogStash::Codecs::Netflow do
 
   let(:decode) do
     [].tap do |events|
-      subject.decode(data){|event| events << event}
+      data.each { |packet| subject.decode(packet){|event| events << event}}
     end
   end
 
@@ -22,7 +22,8 @@ describe LogStash::Codecs::Netflow do
       # this netflow raw data was produced with softflowd and captured with netcat
       # softflowd -D -i eth0 -v 5 -t maxlife=1 -n 127.0.01:8765
       # nc -k -4 -u -l 127.0.0.1 8765 > netflow5.dat
-      IO.read(File.join(File.dirname(__FILE__), "netflow5.dat"), :mode => "rb")
+      data = []
+      data << IO.read(File.join(File.dirname(__FILE__), "netflow5.dat"), :mode => "rb")
     end
 
     let(:json_events) do
@@ -128,7 +129,8 @@ describe LogStash::Codecs::Netflow do
       # this netflow raw data was produced with softflowd and captured with netcat
       # softflowd -D -i eth0 -v 9 -t maxlife=1 -n 127.0.01:8765
       # nc -k -4 -u -l 127.0.0.1 8765 > netflow9.dat
-      IO.read(File.join(File.dirname(__FILE__), "netflow9.dat"), :mode => "rb")
+      data = []
+      data << IO.read(File.join(File.dirname(__FILE__), "netflow9.dat"), :mode => "rb")
     end
 
     let(:json_events) do
@@ -208,6 +210,47 @@ describe LogStash::Codecs::Netflow do
       # generated json order can change with different implementation, convert back to hash to compare.
       expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
       expect(JSON.parse(decode[1].to_json)).to eq(JSON.parse(json_events[1]))
+    end
+  end
+
+  context "Netflow 9 macaddress" do
+    let(:data) do
+      data = []
+      data << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_macaddr_tpl.dat"), :mode => "rb")
+      data << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_macaddr_data.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "@timestamp":"2015-10-10T08:47:01.000Z",
+          "netflow":{
+            "version":9,
+            "flow_seq_num":2,
+            "flowset_id":257,
+            "protocol":6,
+            "l4_src_port":65058,
+            "ipv4_src_addr":"172.16.32.1",
+            "l4_dst_port":22,
+            "ipv4_dst_addr":"172.16.32.201",
+            "in_src_mac":"00:50:56:c0:00:01",
+            "in_dst_mac":"00:0c:29:70:86:09"
+          },
+          "@version":"1"
+        }
+      END
+
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode the mac address" do
+      expect(decode[0]["[netflow][in_src_mac]"]).to eq("00:50:56:c0:00:01")
+      expect(decode[0]["[netflow][in_dst_mac]"]).to eq("00:0c:29:70:86:09")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
     end
   end
 end
