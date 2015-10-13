@@ -19,6 +19,7 @@ describe LogStash::Codecs::Netflow do
 
   context "Netflow 5" do
     let(:data) do
+      data = []
       # this netflow raw data was produced with softflowd and captured with netcat
       # softflowd -D -i eth0 -v 5 -t maxlife=1 -n 127.0.01:8765
       # nc -k -4 -u -l 127.0.0.1 8765 > netflow5.dat
@@ -251,6 +252,62 @@ describe LogStash::Codecs::Netflow do
 
     it "should serialize to json" do
       expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+  end
+
+  context "Netflow 9 Cisco ASA" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_valid_cisco_asa_tpl.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_valid_cisco_asa_data.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "@timestamp": "2015-10-09T09:47:51.000Z",
+          "netflow": {
+            "version": 9,
+            "flow_seq_num": 662,
+            "flowset_id": 265,
+            "conn_id": 8501,
+            "ipv4_src_addr": "192.168.23.22",
+            "l4_src_port": 17549,
+            "input_snmp": 2,
+            "ipv4_dst_addr": "164.164.37.11",
+            "l4_dst_port": 0,
+            "output_snmp": 3,
+            "protocol": 1,
+            "icmp_type": 8,
+            "icmp_code": 0,
+            "xlate_src_addr_ipv4": "192.168.23.22",
+            "xlate_dst_addr_ipv4": "164.164.37.11",
+            "xlate_src_port": 17549,
+            "xlate_dst_port": 0,
+            "fw_event": 2,
+            "fw_ext_event": 2025,
+            "event_time_msec": 1444384070179,
+            "in_permanent_bytes": 56,
+            "flow_start_msec": 1444384068169,
+            "ingress_acl_id": "0f8e7ff3-fc1a030f-00000000",
+            "egress_acl_id": "00000000-00000000-00000000",
+            "username": ""
+          },
+          "@version": "1"
+        }
+      END
+
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(14)
+      expect(decode[1]["[netflow][version]"]).to eq(9)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[1].to_json)).to eq(JSON.parse(json_events[0]))
     end
   end
 end
