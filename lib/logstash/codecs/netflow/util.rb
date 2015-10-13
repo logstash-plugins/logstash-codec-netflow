@@ -51,6 +51,19 @@ class MacAddr < BinData::Primitive
   end
 end
 
+class ACLIdASA < BinData::Primitive
+  array :bytes, :type => :uint8, :initial_length => 12
+
+  def set(val)
+    self.bytes = val.split("-").collect { |aclid| aclid.scan(/../).collect { |hex| hex.to_i(16)} }.flatten
+  end
+
+  def get
+    hexstring = self.bytes.collect { |byte| byte.value.to_s(16).rjust(2,'0') }.join
+    hexstring.scan(/......../).collect { |aclid| aclid }.join("-")
+  end
+end
+
 class Header < BinData::Record
   endian :big
   uint16 :version
