@@ -249,7 +249,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
   def netflow_field_for(type, length)
     if @fields.include?(type)
-      field = @fields[type]
+      field = @fields[type].clone
       if field.is_a?(Array)
 
         field[0] = uint_field(length, field[0]) if field[0].is_a?(Integer)
