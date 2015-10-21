@@ -67,7 +67,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     end
   end # def register
 
-  def decode(payload, &block)
+  def decode(payload, metadata = nil, &block)
     header = Header.read(payload)
 
     unless @versions.include?(header.version)
@@ -83,7 +83,11 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     elsif header.version == 9
       flowset = Netflow9PDU.read(payload)
       flowset.records.each do |record|
-        decode_netflow9(flowset, record).each{|event| yield(event)}
+        if metadata != nil
+          decode_netflow9(flowset, record, metadata).each{|event| yield(event)}
+        else
+          decode_netflow9(flowset, record).each{|event| yield(event)}
+        end
       end
     else
       @logger.warn("Unsupported Netflow version v#{header.version}")
@@ -127,7 +131,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     LogStash::Event.new(event)
   end
 
-  def decode_netflow9(flowset, record)
+  def decode_netflow9(flowset, record, metadata = nil)
     events = []
 
     case record.flowset_id
@@ -143,7 +147,11 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           end
           # We get this far, we have a list of fields
           #key = "#{flowset.source_id}|#{event["source"]}|#{template.template_id}"
-          key = "#{flowset.source_id}|#{template.template_id}"
+          if metadata != nil
+            key = "#{flowset.source_id}|#{template.template_id}|#{metadata["host"]}|#{metadata["port"]}"
+          else
+            key = "#{flowset.source_id}|#{template.template_id}"
+          end
           @templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
           # Purge any expired templates
           @templates.cleanup!
@@ -161,7 +169,11 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           end
           # We get this far, we have a list of fields
           #key = "#{flowset.source_id}|#{event["source"]}|#{template.template_id}"
-          key = "#{flowset.source_id}|#{template.template_id}"
+          if metadata != nil
+            key = "#{flowset.source_id}|#{template.template_id}|#{metadata["host"]}|#{metadata["port"]}"
+          else
+            key = "#{flowset.source_id}|#{template.template_id}"
+          end
           @templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
           # Purge any expired templates
           @templates.cleanup!
@@ -170,7 +182,11 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     when 256..65535
       # Data flowset
       #key = "#{flowset.source_id}|#{event["source"]}|#{record.flowset_id}"
-      key = "#{flowset.source_id}|#{record.flowset_id}"
+      if metadata != nil
+        key = "#{flowset.source_id}|#{record.flowset_id}|#{metadata["host"]}|#{metadata["port"]}"
+      else
+        key = "#{flowset.source_id}|#{record.flowset_id}"
+      end
       template = @templates[key]
 
       unless template
