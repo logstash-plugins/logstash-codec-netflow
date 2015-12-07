@@ -1,5 +1,8 @@
+# encoding: utf-8
+
 require "logstash/devutils/rspec/spec_helper"
 require "logstash/codecs/netflow"
+require "json"
 
 describe LogStash::Codecs::Netflow do
   subject do
@@ -114,8 +117,9 @@ describe LogStash::Codecs::Netflow do
     end
 
     it "should serialize to json" do
-      expect(decode[0].to_json).to eq(json_events[0])
-      expect(decode[1].to_json).to eq(json_events[1])
+      # generated json order can change with different implementation, convert back to hash to compare.
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+      expect(JSON.parse(decode[1].to_json)).to eq(JSON.parse(json_events[1]))
     end
   end
 
@@ -201,8 +205,9 @@ describe LogStash::Codecs::Netflow do
     end
 
     it "should serialize to json" do
-      expect(decode[0].to_json).to eq(json_events[0])
-      expect(decode[1].to_json).to eq(json_events[1])
+      # generated json order can change with different implementation, convert back to hash to compare.
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+      expect(JSON.parse(decode[1].to_json)).to eq(JSON.parse(json_events[1]))
     end
   end
 end
