@@ -92,7 +92,7 @@ class Netflow5PDU < BinData::Record
   end
 end
 
-class TemplateFlowset < BinData::Record
+class NetflowTemplateFlowset < BinData::Record
   endian :big
   array  :templates, :read_until => lambda { array.num_bytes == flowset_length - 4 } do
     uint16 :template_id
@@ -104,7 +104,7 @@ class TemplateFlowset < BinData::Record
   end
 end
 
-class OptionFlowset < BinData::Record
+class NetflowOptionFlowset < BinData::Record
   endian :big
   array  :templates, :read_until => lambda { flowset_length - 4 - array.num_bytes <= 2 } do
     uint16 :template_id
@@ -134,9 +134,63 @@ class Netflow9PDU < BinData::Record
     uint16 :flowset_id
     uint16 :flowset_length
     choice :flowset_data, :selection => :flowset_id do
-      template_flowset 0
-      option_flowset   1
-      string           :default, :read_length => lambda { flowset_length - 4 }
+      netflow_template_flowset 0
+      netflow_option_flowset   1
+      string                   :default, :read_length => lambda { flowset_length - 4 }
+    end
+  end
+end
+
+class IpfixTemplateFlowset < BinData::Record
+  endian :big
+  array  :templates, :read_until => lambda { flowset_length - 4 - array.num_bytes <= 2 } do
+    uint16 :template_id
+    uint16 :field_count
+    array  :fields, :initial_length => :field_count do
+      bit1   :enterprise
+      bit15  :field_type
+      uint16 :field_length
+      uint32 :enterprise_id, :onlyif => lambda { enterprise != 0 }
+    end
+  end
+  # skip :length => lambda { flowset_length - 4 - set.num_bytes } ?
+end
+
+class IpfixOptionFlowset < BinData::Record
+  endian :big
+  array  :templates, :read_until => lambda { flowset_length - 4 - array.num_bytes <= 2 } do
+    uint16 :template_id
+    uint16 :field_count
+    uint16 :scope_count, :assert => lambda { scope_count > 0 }
+    array  :scope_fields, :initial_length => lambda { scope_count } do
+      bit1   :enterprise
+      bit15  :field_type
+      uint16 :field_length
+      uint32 :enterprise_id, :onlyif => lambda { enterprise != 0 }
+    end
+    array  :option_fields, :initial_length => lambda { field_count - scope_count } do
+      bit1   :enterprise
+      bit15  :field_type
+      uint16 :field_length
+      uint32 :enterprise_id, :onlyif => lambda { enterprise != 0 }
+    end
+  end
+end
+
+class IpfixPDU < BinData::Record
+  endian :big
+  uint16 :version
+  uint16 :pdu_length
+  uint32 :unix_sec
+  uint32 :flow_seq_num
+  uint32 :observation_domain_id
+  array  :records, :read_until => lambda { array.num_bytes == pdu_length - 16 } do
+    uint16 :flowset_id, :assert => lambda { [2, 3, *(256..65535)].include?(flowset_id) }
+    uint16 :flowset_length, :assert => lambda { flowset_length > 4 }
+    choice :flowset_data, :selection => :flowset_id do
+      ipfix_template_flowset 2
+      ipfix_option_flowset   3
+      string                 :default, :read_length => lambda { flowset_length - 4 }
     end
   end
 end

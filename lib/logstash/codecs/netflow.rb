@@ -3,7 +3,38 @@ require "logstash/filters/base"
 require "logstash/namespace"
 require "logstash/timestamp"
 
-# The "netflow" codec is for decoding Netflow v5/v9 flows.
+# The "netflow" codec is for decoding Netflow v5/v9/v10 (IPFIX) flows.
+
+# Example:
+#
+#     input {
+#       udp {
+#         host => localhost
+#         port => 2055
+#         codec => netflow {
+#           versions => [5, 9]
+#         }
+#         type => netflow
+#       }
+#       udp {
+#         host => localhost
+#         port => 4739
+#         codec => netflow {
+#           versions => [10]
+#           target => ipfix
+#         }
+#         type => ipfix
+#       }
+#       tcp {
+#         host => localhost
+#         port => 4739
+#         codec => netflow {
+#           versions => [10]
+#           target => ipfix
+#         }
+#         type => ipfix
+#       }
+#     }
 class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   config_name "netflow"
 
@@ -14,7 +45,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   config :target, :validate => :string, :default => "netflow"
 
   # Specify which Netflow versions you will accept.
-  config :versions, :validate => :array, :default => [5, 9]
+  config :versions, :validate => :array, :default => [5, 9, 10]
 
   # Override YAML file containing Netflow field definitions
   #
@@ -31,10 +62,29 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   #    - :skip
   #
   # See <https://github.com/logstash-plugins/logstash-codec-netflow/blob/master/lib/logstash/codecs/netflow/netflow.yaml> for the base set.
-  config :definitions, :validate => :path
+  config :netflow_definitions, :validate => :path
+
+  # Override YAML file containing IPFIX field definitions
+  #
+  # Very similar to the Netflow version except there is a top level Private
+  # Enterprise Number (PEN) key added:
+  #
+  #    ---
+  #    pen:
+  #      id:
+  #      - :uintN or :ip4_addr or :ip6_addr or :mac_addr or :string
+  #      - :name
+  #      id:
+  #      - :skip
+  #
+  # There is an implicit PEN 0 for the standard fields.
+  #
+  # See <https://github.com/logstash-plugins/logstash-codec-netflow/blob/master/lib/logstash/codecs/netflow/ipfix.yaml> for the base set.
+  config :ipfix_definitions, :validate => :path
 
   NETFLOW5_FIELDS = ['version', 'flow_seq_num', 'engine_type', 'engine_id', 'sampling_algorithm', 'sampling_interval', 'flow_records']
   NETFLOW9_FIELDS = ['version', 'flow_seq_num']
+  IPFIX_FIELDS = ['version']
   SWITCHED = /_switched$/
   FLOWSET_ID = "flowset_id"
 
@@ -45,26 +95,16 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
   def register
     require "logstash/codecs/netflow/util"
-    @templates = Vash.new()
+    @netflow_templates = Vash.new()
+    @ipfix_templates = Vash.new()
 
     # Path to default Netflow v9 field definitions
     filename = ::File.expand_path('netflow/netflow.yaml', ::File.dirname(__FILE__))
+    @netflow_fields = load_definitions(filename, @netflow_definitions)
 
-    begin
-      @fields = YAML.load_file(filename)
-    rescue Exception => e
-      raise "#{self.class.name}: Bad syntax in definitions file #{filename}"
-    end
-
-    # Allow the user to augment/override/rename the supported Netflow fields
-    if @definitions
-      raise "#{self.class.name}: definitions file #{@definitions} does not exists" unless File.exists?(@definitions)
-      begin
-        @fields.merge!(YAML.load_file(@definitions))
-      rescue Exception => e
-        raise "#{self.class.name}: Bad syntax in definitions file #{@definitions}"
-      end
-    end
+    # Path to default IPFIX field definitions
+    filename = ::File.expand_path('netflow/ipfix.yaml', ::File.dirname(__FILE__))
+    @ipfix_fields = load_definitions(filename, @ipfix_definitions)
   end # def register
 
   def decode(payload, &block)
@@ -84,6 +124,11 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       flowset = Netflow9PDU.read(payload)
       flowset.records.each do |record|
         decode_netflow9(flowset, record).each{|event| yield(event)}
+      end
+    elsif header.version == 10
+      flowset = IpfixPDU.read(payload)
+      flowset.records.each do |record|
+        decode_ipfix(flowset, record).each { |event| yield(event) }
       end
     else
       @logger.warn("Unsupported Netflow version v#{header.version}")
@@ -144,9 +189,9 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           # We get this far, we have a list of fields
           #key = "#{flowset.source_id}|#{event["source"]}|#{template.template_id}"
           key = "#{flowset.source_id}|#{template.template_id}"
-          @templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
+          @netflow_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
           # Purge any expired templates
-          @templates.cleanup!
+          @netflow_templates.cleanup!
         end
       end
     when 1
@@ -162,16 +207,16 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           # We get this far, we have a list of fields
           #key = "#{flowset.source_id}|#{event["source"]}|#{template.template_id}"
           key = "#{flowset.source_id}|#{template.template_id}"
-          @templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
+          @netflow_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
           # Purge any expired templates
-          @templates.cleanup!
+          @netflow_templates.cleanup!
         end
       end
     when 256..65535
       # Data flowset
       #key = "#{flowset.source_id}|#{event["source"]}|#{record.flowset_id}"
       key = "#{flowset.source_id}|#{record.flowset_id}"
-      template = @templates[key]
+      template = @netflow_templates[key]
 
       unless template
         #@logger.warn("No matching template for flow id #{record.flowset_id} from #{event["source"]}")
@@ -226,14 +271,164 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     events
   end
 
+  def decode_ipfix(flowset, record)
+    events = []
+
+    case record.flowset_id
+    when 2
+      # Template flowset
+      record.flowset_data.templates.each do |template|
+        catch (:field) do
+          fields = []
+          template.fields.each do |field|
+            field_type = field.field_type
+            field_length = field.field_length
+            enterprise_id = field.enterprise ? field.enterprise_id : 0
+
+            if field.field_length == 0xffff
+              # FIXME
+              @logger.warn("Cowardly refusing to deal with variable length encoded field", :type => field_type, :enterprise => enterprise_id)
+              throw :field
+            end
+
+            if enterprise_id == 0
+              case field_type
+              when 291, 292, 293
+                # FIXME
+                @logger.warn("Cowardly refusing to deal with complex data types", :type => field_type, :enterprise => enterprise_id)
+                throw :field
+              end
+            end
+
+            entry = ipfix_field_for(field_type, enterprise_id, field.field_length)
+            throw :field unless entry
+            fields += entry
+          end
+          # FIXME Source IP address required in key
+          key = "#{flowset.observation_domain_id}|#{template.template_id}"
+          @ipfix_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
+          # Purge any expired templates
+          @ipfix_templates.cleanup!
+        end
+      end
+    when 3
+      # Options template flowset
+      record.flowset_data.templates.each do |template|
+        catch (:field) do
+          fields = []
+          (template.scope_fields.to_ary + template.option_fields.to_ary).each do |field|
+            field_type = field.field_type
+            field_length = field.field_length
+            enterprise_id = field.enterprise ? field.enterprise_id : 0
+
+            if field.field_length == 0xffff
+              # FIXME
+              @logger.warn("Cowardly refusing to deal with variable length encoded field", :type => field_type, :enterprise => enterprise_id)
+              throw :field
+            end
+
+            if enterprise_id == 0
+              case field_type
+              when 291, 292, 293
+                # FIXME
+                @logger.warn("Cowardly refusing to deal with complex data types", :type => field_type, :enterprise => enterprise_id)
+                throw :field
+              end
+            end
+
+            entry = ipfix_field_for(field_type, enterprise_id, field.field_length)
+            throw :field unless entry
+            fields += entry
+          end
+          # FIXME Source IP address required in key
+          key = "#{flowset.observation_domain_id}|#{template.template_id}"
+          @ipfix_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
+          # Purge any expired templates
+          @ipfix_templates.cleanup!
+        end
+      end
+    when 256..65535
+      # Data flowset
+      key = "#{flowset.observation_domain_id}|#{record.flowset_id}"
+      template = @ipfix_templates[key]
+
+      unless template
+        @logger.warn("No matching template for flow id #{record.flowset_id}")
+        next
+      end
+
+      array = BinData::Array.new(:type => template, :read_until => :eof)
+      records = array.read(record.flowset_data)
+
+      records.each do |r|
+        event = {
+          LogStash::Event::TIMESTAMP => LogStash::Timestamp.at(flowset.unix_sec),
+          @target => {}
+        }
+
+        IPFIX_FIELDS.each do |f|
+          event[@target][f] = flowset[f].snapshot
+        end
+
+        r.each_pair do |k, v|
+          case k.to_s
+          when /^flow(?:Start|End)Seconds$/
+            event[@target][k.to_s] = LogStash::Timestamp.at(v.snapshot).to_iso8601
+          when /^flow(?:Start|End)(Milli|Micro|Nano)seconds$/
+            divisor =
+              case $1
+              when 'Milli'
+                1_000
+              when 'Micro'
+                1_000_000
+              when 'Nano'
+                1_000_000_000
+              end
+            event[@target][k.to_s] = LogStash::Timestamp.at(v.snapshot.to_f / divisor).to_iso8601
+          else
+            event[@target][k.to_s] = v.snapshot
+          end
+        end
+
+        events << LogStash::Event.new(event)
+      end
+    else
+      @logger.warn("Unsupported flowset id #{record.flowset_id}")
+    end
+
+    events
+  rescue BinData::ValidityError => e
+    @logger.warn("Invalid IPFIX packet received (#{e})")
+  end
+
+  def load_definitions(defaults, extra)
+    begin
+      fields = YAML.load_file(defaults)
+    rescue Exception => e
+      raise "#{self.class.name}: Bad syntax in definitions file #{defaults}"
+    end
+
+    # Allow the user to augment/override/rename the default fields
+    if extra
+      raise "#{self.class.name}: definitions file #{extra} does not exist" unless File.exists?(extra)
+      begin
+        fields.merge!(YAML.load_file(extra))
+      rescue Exception => e
+        raise "#{self.class.name}: Bad syntax in definitions file #{extra}"
+      end
+    end
+
+    fields
+  end
+
   def uint_field(length, default)
     # If length is 4, return :uint32, etc. and use default if length is 0
     ("uint" + (((length > 0) ? length : default) * 8).to_s).to_sym
   end # def uint_field
 
   def netflow_field_for(type, length)
-    if @fields.include?(type)
-      field = @fields[type]
+    if @netflow_fields.include?(type)
+      field = @netflow_fields[type]
       if field.is_a?(Array)
 
         field[0] = uint_field(length, field[0]) if field[0].is_a?(Integer)
@@ -259,4 +454,38 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       nil
     end
   end # def netflow_field_for
+
+  def ipfix_field_for(type, enterprise, length)
+    if @ipfix_fields.include?(enterprise)
+      if @ipfix_fields[enterprise].include?(type)
+        field = @ipfix_fields[enterprise][type].clone
+      else
+        @logger.warn("Unsupported enterprise field", :type => type, :enterprise => enterprise, :length => length)
+      end
+    else
+      @logger.warn("Unsupported enterprise", :enterprise => enterprise)
+    end
+
+    return nil unless field
+
+    if field.is_a?(Array)
+      case field[0]
+      when :skip
+        field += [nil, {:length => length}]
+      when :string
+        field += [{:length => length, :trim_padding => true}]
+      when :uint64
+        field[0] = uint_field(length, 8)
+      when :uint32
+        field[0] = uint_field(length, 4)
+      when :uint16
+        field[0] = uint_field(length, 2)
+      end
+
+      @logger.debug("Definition complete", :field => field)
+      [field]
+    else
+      @logger.warn("Definition should be an array", :field => field)
+    end
+  end
 end # class LogStash::Filters::Netflow
