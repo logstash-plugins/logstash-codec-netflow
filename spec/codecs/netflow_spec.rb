@@ -680,3 +680,5 @@ describe LogStash::Codecs::Netflow do
       expect(JSON.parse(decode[6].to_json)).to eq(JSON.parse(json_events[6]))
     end
   end
+
+end
