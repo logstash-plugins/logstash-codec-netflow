@@ -104,19 +104,19 @@ describe LogStash::Codecs::Netflow do
     it "should decode raw data" do
       expect(decode.size).to eq(2)
 
-      expect(decode[0]["[netflow][version]"]).to eq(5)
-      expect(decode[0]["[netflow][ipv4_src_addr]"]).to eq("10.0.2.2")
-      expect(decode[0]["[netflow][ipv4_dst_addr]"]).to eq("10.0.2.15")
-      expect(decode[0]["[netflow][l4_src_port]"]).to eq(54435)
-      expect(decode[0]["[netflow][l4_dst_port]"]).to eq(22)
-      expect(decode[0]["[netflow][tcp_flags]"]).to eq(16)
+      expect(decode[0].get("[netflow][version]")).to eq(5)
+      expect(decode[0].get("[netflow][ipv4_src_addr]")).to eq("10.0.2.2")
+      expect(decode[0].get("[netflow][ipv4_dst_addr]")).to eq("10.0.2.15")
+      expect(decode[0].get("[netflow][l4_src_port]")).to eq(54435)
+      expect(decode[0].get("[netflow][l4_dst_port]")).to eq(22)
+      expect(decode[0].get("[netflow][tcp_flags]")).to eq(16)
 
-      expect(decode[1]["[netflow][version]"]).to eq(5)
-      expect(decode[1]["[netflow][ipv4_src_addr]"]).to eq("10.0.2.15")
-      expect(decode[1]["[netflow][ipv4_dst_addr]"]).to eq("10.0.2.2")
-      expect(decode[1]["[netflow][l4_src_port]"]).to eq(22)
-      expect(decode[1]["[netflow][l4_dst_port]"]).to eq(54435)
-      expect(decode[1]["[netflow][tcp_flags]"]).to eq(24)
+      expect(decode[1].get("[netflow][version]")).to eq(5)
+      expect(decode[1].get("[netflow][ipv4_src_addr]")).to eq("10.0.2.15")
+      expect(decode[1].get("[netflow][ipv4_dst_addr]")).to eq("10.0.2.2")
+      expect(decode[1].get("[netflow][l4_src_port]")).to eq(22)
+      expect(decode[1].get("[netflow][l4_dst_port]")).to eq(54435)
+      expect(decode[1].get("[netflow][tcp_flags]")).to eq(24)
     end
 
     it "should serialize to json" do
@@ -193,7 +193,7 @@ describe LogStash::Codecs::Netflow do
 
     it "should decode raw data" do
       expect(decode.size).to eq(7)
-      expect(decode[0]["[netflow][version]"]).to eq(9)
+      expect(decode[0].get("[netflow][version]")).to eq(9)
     end
 
     it "should serialize to json" do
@@ -235,8 +235,8 @@ describe LogStash::Codecs::Netflow do
     end
 
     it "should decode the mac address" do
-      expect(decode[0]["[netflow][in_src_mac]"]).to eq("00:50:56:c0:00:01")
-      expect(decode[0]["[netflow][in_dst_mac]"]).to eq("00:0c:29:70:86:09")
+      expect(decode[0].get("[netflow][in_src_mac]")).to eq("00:50:56:c0:00:01")
+      expect(decode[0].get("[netflow][in_dst_mac]")).to eq("00:0c:29:70:86:09")
     end
 
     it "should serialize to json" do
@@ -292,7 +292,7 @@ describe LogStash::Codecs::Netflow do
 
     it "should decode raw data" do
       expect(decode.size).to eq(14)
-      expect(decode[1]["[netflow][version]"]).to eq(9)
+      expect(decode[1].get("[netflow][version]")).to eq(9)
     end
 
     it "should serialize to json" do
@@ -379,8 +379,8 @@ describe LogStash::Codecs::Netflow do
 
     it "should decode raw data" do
       expect(decode.size).to eq(8)
-      expect(decode[0]["[netflow][l4_src_port]"]).to eq(123)
-      expect(decode[7]["[netflow][l4_src_port]"]).to eq(22)
+      expect(decode[0].get("[netflow][l4_src_port]")).to eq(123)
+      expect(decode[7].get("[netflow][l4_src_port]")).to eq(22)
     end
 
     it "should serialize to json" do
