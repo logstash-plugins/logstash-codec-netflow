@@ -3,12 +3,24 @@ reports, or in general have helped logstash along its way.
 
 Contributors:
 * Aaron Mildenstein (untergeek)
+* Adam Kaminski (thimslugga)
 * Colin Surprenant (colinsurprenant)
 * Jordan Sissel (jordansissel)
+* Jorrit Folmer (jorritfolmer)
 * Matt Dainty (bodgit)
+* Paul Warren (pwarren)
 * Pier-Hugues Pellerin (ph)
+* Pulkit Agrawal (propulkit)
 * Richard Pijnenburg (electrical)
+* Salvador Ferrer (salva-ferrer)
+* Will Rigby (wrigby)
+* Rojuinex
 * debadair
+* hkshirish
+* jstopinsek
+
+Maintainer:
+* Jorrit Folmer (jorritfolmer)
 
 Note: If you've sent us patches, bug reports, or otherwise contributed to
 Logstash, and you aren't on the list above and want to be, please let us know

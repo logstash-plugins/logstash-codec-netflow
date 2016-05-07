@@ -3,38 +3,59 @@ require "logstash/filters/base"
 require "logstash/namespace"
 require "logstash/timestamp"
 
-# The "netflow" codec is for decoding Netflow v5/v9/v10 (IPFIX) flows.
-
-# Example:
+# The "netflow" codec is used for decoding Netflow v5/v9/v10 (IPFIX) flows.
 #
-#     input {
-#       udp {
-#         host => localhost
-#         port => 2055
-#         codec => netflow {
-#           versions => [5, 9]
-#         }
-#         type => netflow
-#       }
-#       udp {
-#         host => localhost
-#         port => 4739
-#         codec => netflow {
-#           versions => [10]
-#           target => ipfix
-#         }
-#         type => ipfix
-#       }
-#       tcp {
-#         host => localhost
-#         port => 4739
-#         codec => netflow {
-#           versions => [10]
-#           target => ipfix
-#         }
-#         type => ipfix
-#       }
+# ==== Supported Netflow/IPFIX exporters
+#
+# The following Netflow/IPFIX exporters are known to work with the most recent version of the netflow codec:
+#
+# [cols="6,^2,^2,^2,12",options="header"]
+# |===========================================================================================
+# |Netflow exporter | v5 | v9 | IPFIX | Remarks
+# |Softflowd        |  y | y  |   y   | IPFIX supported in https://github.com/djmdjm/softflowd
+# |nProbe           |  y | y  |   y   |  
+# |ipt_NETFLOW      |  y | y  |   y   |
+# |Cisco ASA        |    | y  |       |  
+# |Cisco IOS 12.x   |    | y  |       |  
+# |fprobe           |  y |    |       |
+# |===========================================================================================
+#
+# ==== Usage
+#
+# Example Logstash configuration:
+#
+# [source]
+# -----------------------------
+# input {
+#   udp {
+#     host => localhost
+#     port => 2055
+#     codec => netflow {
+#       versions => [5, 9]
 #     }
+#     type => netflow
+#   }
+#   udp {
+#     host => localhost
+#         port => 4739
+#         codec => netflow {
+#       versions => [10]
+#       target => ipfix
+#     }
+#     type => ipfix
+#   }
+#   tcp {
+#     host => localhost
+#     port => 4739
+#     codec => netflow {
+#       versions => [10]
+#           target => ipfix
+#     }
+#     type => ipfix
+#   }
+# }
+# -----------------------------
+
 class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   config_name "netflow"
 
