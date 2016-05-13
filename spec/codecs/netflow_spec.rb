@@ -104,19 +104,19 @@ describe LogStash::Codecs::Netflow do
     it "should decode raw data" do
       expect(decode.size).to eq(2)
 
-      expect(decode[0].get("[netflow][version]")).to eq(5)
-      expect(decode[0].get("[netflow][ipv4_src_addr]")).to eq("10.0.2.2")
-      expect(decode[0].get("[netflow][ipv4_dst_addr]")).to eq("10.0.2.15")
-      expect(decode[0].get("[netflow][l4_src_port]")).to eq(54435)
-      expect(decode[0].get("[netflow][l4_dst_port]")).to eq(22)
-      expect(decode[0].get("[netflow][tcp_flags]")).to eq(16)
+      expect(decode[0]["[netflow][version]"]).to eq(5)
+      expect(decode[0]["[netflow][ipv4_src_addr]"]).to eq("10.0.2.2")
+      expect(decode[0]["[netflow][ipv4_dst_addr]"]).to eq("10.0.2.15")
+      expect(decode[0]["[netflow][l4_src_port]"]).to eq(54435)
+      expect(decode[0]["[netflow][l4_dst_port]"]).to eq(22)
+      expect(decode[0]["[netflow][tcp_flags]"]).to eq(16)
 
-      expect(decode[1].get("[netflow][version]")).to eq(5)
-      expect(decode[1].get("[netflow][ipv4_src_addr]")).to eq("10.0.2.15")
-      expect(decode[1].get("[netflow][ipv4_dst_addr]")).to eq("10.0.2.2")
-      expect(decode[1].get("[netflow][l4_src_port]")).to eq(22)
-      expect(decode[1].get("[netflow][l4_dst_port]")).to eq(54435)
-      expect(decode[1].get("[netflow][tcp_flags]")).to eq(24)
+      expect(decode[1]["[netflow][version]"]).to eq(5)
+      expect(decode[1]["[netflow][ipv4_src_addr]"]).to eq("10.0.2.15")
+      expect(decode[1]["[netflow][ipv4_dst_addr]"]).to eq("10.0.2.2")
+      expect(decode[1]["[netflow][l4_src_port]"]).to eq(22)
+      expect(decode[1]["[netflow][l4_dst_port]"]).to eq(54435)
+      expect(decode[1]["[netflow][tcp_flags]"]).to eq(24)
     end
 
     it "should serialize to json" do
@@ -193,7 +193,7 @@ describe LogStash::Codecs::Netflow do
 
     it "should decode raw data" do
       expect(decode.size).to eq(7)
-      expect(decode[0].get("[netflow][version]")).to eq(9)
+      expect(decode[0]["[netflow][version]"]).to eq(9)
     end
 
     it "should serialize to json" do
@@ -235,8 +235,8 @@ describe LogStash::Codecs::Netflow do
     end
 
     it "should decode the mac address" do
-      expect(decode[1].get("[netflow][in_src_mac]")).to eq("00:50:56:c0:00:01")
-      expect(decode[1].get("[netflow][in_dst_mac]")).to eq("00:0c:29:70:86:09")
+      expect(decode[1]["[netflow][in_src_mac]"]).to eq("00:50:56:c0:00:01")
+      expect(decode[1]["[netflow][in_dst_mac]"]).to eq("00:0c:29:70:86:09")
     end
 
     it "should serialize to json" do
@@ -292,7 +292,7 @@ describe LogStash::Codecs::Netflow do
 
     it "should decode raw data" do
       expect(decode.size).to eq(14)
-      expect(decode[1].get("[netflow][version]")).to eq(9)
+      expect(decode[1]["[netflow][version]"]).to eq(9)
     end
 
     it "should serialize to json" do
@@ -379,8 +379,8 @@ describe LogStash::Codecs::Netflow do
 
     it "should decode raw data" do
       expect(decode.size).to eq(9)
-      expect(decode[1].get("[netflow][l4_src_port]")).to eq(123)
-      expect(decode[8].get("[netflow][l4_src_port]")).to eq(22)
+      expect(decode[1]["[netflow][l4_src_port]"]).to eq(123)
+      expect(decode[8]["[netflow][l4_src_port]"]).to eq(22)
     end
 
     it "should serialize to json" do
@@ -431,8 +431,8 @@ describe LogStash::Codecs::Netflow do
     end
 
     it "should decode raw data" do
-      expect(decode[0].get("[netflow][scope_system]")).to eq(0)
-      expect(decode[0].get("[netflow][total_flows_exp]")).to eq(1)
+      expect(decode[0]["[netflow][scope_system]"]).to eq(0)
+      expect(decode[0]["[netflow][total_flows_exp]"]).to eq(1)
     end
   end
 
@@ -624,50 +624,50 @@ describe LogStash::Codecs::Netflow do
     it "should decode raw data" do
       expect(decode.size).to eq(7)
 
-      expect(decode[0].get("[netflow][version]")).to eq(10)
-      expect(decode[0].get("[netflow][systemInitTimeMilliseconds]")).to eq(1431516013506)
+      expect(decode[0]["[netflow][version]"]).to eq(10)
+      expect(decode[0]["[netflow][systemInitTimeMilliseconds]"]).to eq(1431516013506)
 
-      expect(decode[1].get("[netflow][version]")).to eq(10)
-      expect(decode[1].get("[netflow][sourceIPv4Address]")).to eq("192.168.253.1")
-      expect(decode[1].get("[netflow][destinationIPv4Address]")).to eq("192.168.253.128")
-      expect(decode[1].get("[netflow][sourceTransportPort]")).to eq(60560)
-      expect(decode[1].get("[netflow][destinationTransportPort]")).to eq(22)
-      expect(decode[1].get("[netflow][protocolIdentifier]")).to eq(6)
-      expect(decode[1].get("[netflow][tcpControlBits]")).to eq(16)
+      expect(decode[1]["[netflow][version]"]).to eq(10)
+      expect(decode[1]["[netflow][sourceIPv4Address]"]).to eq("192.168.253.1")
+      expect(decode[1]["[netflow][destinationIPv4Address]"]).to eq("192.168.253.128")
+      expect(decode[1]["[netflow][sourceTransportPort]"]).to eq(60560)
+      expect(decode[1]["[netflow][destinationTransportPort]"]).to eq(22)
+      expect(decode[1]["[netflow][protocolIdentifier]"]).to eq(6)
+      expect(decode[1]["[netflow][tcpControlBits]"]).to eq(16)
 
-      expect(decode[2].get("[netflow][version]")).to eq(10)
-      expect(decode[2].get("[netflow][sourceIPv4Address]")).to eq("192.168.253.128")
-      expect(decode[2].get("[netflow][destinationIPv4Address]")).to eq("192.168.253.1")
-      expect(decode[2].get("[netflow][sourceTransportPort]")).to eq(22)
-      expect(decode[2].get("[netflow][destinationTransportPort]")).to eq(60560)
-      expect(decode[2].get("[netflow][protocolIdentifier]")).to eq(6)
-      expect(decode[2].get("[netflow][tcpControlBits]")).to eq(24)
+      expect(decode[2]["[netflow][version]"]).to eq(10)
+      expect(decode[2]["[netflow][sourceIPv4Address]"]).to eq("192.168.253.128")
+      expect(decode[2]["[netflow][destinationIPv4Address]"]).to eq("192.168.253.1")
+      expect(decode[2]["[netflow][sourceTransportPort]"]).to eq(22)
+      expect(decode[2]["[netflow][destinationTransportPort]"]).to eq(60560)
+      expect(decode[2]["[netflow][protocolIdentifier]"]).to eq(6)
+      expect(decode[2]["[netflow][tcpControlBits]"]).to eq(24)
 
-      expect(decode[3].get("[netflow][sourceIPv4Address]")).to eq("192.168.253.2")
-      expect(decode[3].get("[netflow][destinationIPv4Address]")).to eq("192.168.253.132")
-      expect(decode[3].get("[netflow][sourceTransportPort]")).to eq(53)
-      expect(decode[3].get("[netflow][destinationTransportPort]")).to eq(35262)
-      expect(decode[3].get("[netflow][protocolIdentifier]")).to eq(17)
+      expect(decode[3]["[netflow][sourceIPv4Address]"]).to eq("192.168.253.2")
+      expect(decode[3]["[netflow][destinationIPv4Address]"]).to eq("192.168.253.132")
+      expect(decode[3]["[netflow][sourceTransportPort]"]).to eq(53)
+      expect(decode[3]["[netflow][destinationTransportPort]"]).to eq(35262)
+      expect(decode[3]["[netflow][protocolIdentifier]"]).to eq(17)
 
-      expect(decode[4].get("[netflow][sourceIPv4Address]")).to eq("192.168.253.132")
-      expect(decode[4].get("[netflow][destinationIPv4Address]")).to eq("192.168.253.2")
-      expect(decode[4].get("[netflow][sourceTransportPort]")).to eq(35262)
-      expect(decode[4].get("[netflow][destinationTransportPort]")).to eq(53)
-      expect(decode[4].get("[netflow][protocolIdentifier]")).to eq(17)
+      expect(decode[4]["[netflow][sourceIPv4Address]"]).to eq("192.168.253.132")
+      expect(decode[4]["[netflow][destinationIPv4Address]"]).to eq("192.168.253.2")
+      expect(decode[4]["[netflow][sourceTransportPort]"]).to eq(35262)
+      expect(decode[4]["[netflow][destinationTransportPort]"]).to eq(53)
+      expect(decode[4]["[netflow][protocolIdentifier]"]).to eq(17)
 
-      expect(decode[5].get("[netflow][sourceIPv4Address]")).to eq("54.214.9.161")
-      expect(decode[5].get("[netflow][destinationIPv4Address]")).to eq("192.168.253.132")
-      expect(decode[5].get("[netflow][sourceTransportPort]")).to eq(443)
-      expect(decode[5].get("[netflow][destinationTransportPort]")).to eq(49935)
-      expect(decode[5].get("[netflow][protocolIdentifier]")).to eq(6)
-      expect(decode[5].get("[netflow][tcpControlBits]")).to eq(26)
+      expect(decode[5]["[netflow][sourceIPv4Address]"]).to eq("54.214.9.161")
+      expect(decode[5]["[netflow][destinationIPv4Address]"]).to eq("192.168.253.132")
+      expect(decode[5]["[netflow][sourceTransportPort]"]).to eq(443)
+      expect(decode[5]["[netflow][destinationTransportPort]"]).to eq(49935)
+      expect(decode[5]["[netflow][protocolIdentifier]"]).to eq(6)
+      expect(decode[5]["[netflow][tcpControlBits]"]).to eq(26)
 
-      expect(decode[6].get("[netflow][sourceIPv4Address]")).to eq("192.168.253.132")
-      expect(decode[6].get("[netflow][destinationIPv4Address]")).to eq("54.214.9.161")
-      expect(decode[6].get("[netflow][sourceTransportPort]")).to eq(49935)
-      expect(decode[6].get("[netflow][destinationTransportPort]")).to eq(443)
-      expect(decode[6].get("[netflow][protocolIdentifier]")).to eq(6)
-      expect(decode[6].get("[netflow][tcpControlBits]")).to eq(26)
+      expect(decode[6]["[netflow][sourceIPv4Address]"]).to eq("192.168.253.132")
+      expect(decode[6]["[netflow][destinationIPv4Address]"]).to eq("54.214.9.161")
+      expect(decode[6]["[netflow][sourceTransportPort]"]).to eq(49935)
+      expect(decode[6]["[netflow][destinationTransportPort]"]).to eq(443)
+      expect(decode[6]["[netflow][protocolIdentifier]"]).to eq(6)
+      expect(decode[6]["[netflow][tcpControlBits]"]).to eq(26)
     end
 
     it "should serialize to json" do

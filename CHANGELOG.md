@@ -1,14 +1,6 @@
-## 3.1.0
+## 2.1.0
 
   - Added IPFIX support
-
-## 3.0.1
-
-  - Republish all the gems under jruby.
-
-## 3.0.0
-
-  - Update the plugin to the version 2.0 of the plugin api, this change is required for Logstash 5.0 compatibility. See https://github.com/elastic/logstash/issues/5141
   - Fixed exception if Netflow data contains MAC addresses (issue #26, issue #34)
   - Fixed exceptions when receiving invalid Netflow v5 and v9 data (issue #17, issue 18)
   - Fixed decoding Netflow templates from multiple (non-identical) exporters
