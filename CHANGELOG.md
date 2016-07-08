@@ -1,3 +1,7 @@
+## 3.1.1
+
+  - Small update due to breaking change in BinData gem (issue #41)
+
 ## 3.1.0
 
   - Added IPFIX support
