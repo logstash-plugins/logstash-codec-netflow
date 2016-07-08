@@ -217,7 +217,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       record.flowset_data.templates.each do |template|
         catch (:field) do
           fields = []
-          template.fields.each do |field|
+          template.record_fields.each do |field|
             entry = netflow_field_for(field.field_type, field.field_length)
             throw :field unless entry
             fields += entry
@@ -333,7 +333,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       record.flowset_data.templates.each do |template|
         catch (:field) do
           fields = []
-          template.fields.each do |field|
+          template.record_fields.each do |field|
             field_type = field.field_type
             field_length = field.field_length
             enterprise_id = field.enterprise ? field.enterprise_id : 0

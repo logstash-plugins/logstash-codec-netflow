@@ -110,7 +110,7 @@ class NetflowTemplateFlowset < BinData::Record
   array  :templates, :read_until => lambda { array.num_bytes == flowset_length - 4 } do
     uint16 :template_id
     uint16 :field_count
-    array  :fields, :initial_length => :field_count do
+    array  :record_fields, :initial_length => :field_count do
       uint16 :field_type
       uint16 :field_length
     end
@@ -159,7 +159,7 @@ class IpfixTemplateFlowset < BinData::Record
   array  :templates, :read_until => lambda { flowset_length - 4 - array.num_bytes <= 2 } do
     uint16 :template_id
     uint16 :field_count
-    array  :fields, :initial_length => :field_count do
+    array  :record_fields, :initial_length => :field_count do
       bit1   :enterprise
       bit15  :field_type
       uint16 :field_length
