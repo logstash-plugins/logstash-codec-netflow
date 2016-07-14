@@ -1,3 +1,6 @@
+## 3.1.2
+  - Relax constraint on logstash-core-plugin-api to >= 1.60 <= 2.99
+
 ## 3.1.1
 
   - Small update due to breaking change in BinData gem (issue #41)
