@@ -18,6 +18,9 @@ require "logstash/timestamp"
 # |Cisco ASA        |    | y  |       |  
 # |Cisco IOS 12.x   |    | y  |       |  
 # |fprobe           |  y |    |       |
+# |Juniper MX80     |  y |    |       | SW > 12.3R8
+# |OpenBSD pflow    |  y | n  |   y   | http://man.openbsd.org/OpenBSD-current/man4/pflow.4
+# |Mikrotik 6.35.4  |  y |    |   n   | http://wiki.mikrotik.com/wiki/Manual:IP/Traffic_Flow
 # |===========================================================================================
 #
 # ==== Usage
