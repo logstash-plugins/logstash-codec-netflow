@@ -1,4 +1,9 @@
+## 3.1.3
+
+  - Confirmed support and tests added for 4 Netflow/IPFIX exporters
+
 ## 3.1.2
+
   - Relax constraint on logstash-core-plugin-api to >= 1.60 <= 2.99
 
 ## 3.1.1

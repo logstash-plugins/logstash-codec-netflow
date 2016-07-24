@@ -247,8 +247,8 @@ describe LogStash::Codecs::Netflow do
   context "Netflow 9 Cisco ASA" do
     let(:data) do
       packets = []
-      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_valid_cisco_asa_tpl.dat"), :mode => "rb")
-      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_valid_cisco_asa_data.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_cisco_asa_1_tpl.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_cisco_asa_1_data.dat"), :mode => "rb")
     end
 
     let(:json_events) do
@@ -679,6 +679,229 @@ describe LogStash::Codecs::Netflow do
       expect(JSON.parse(decode[5].to_json)).to eq(JSON.parse(json_events[5]))
       expect(JSON.parse(decode[6].to_json)).to eq(JSON.parse(json_events[6]))
     end
+
   end
 
+  context "Netflow 9 Cisco ASA #2" do
+    let(:data) do
+      # The ASA sent 2 packets with templates, 260-270, and 270-280
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_cisco_asa_2_tpl_26x.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_cisco_asa_2_tpl_27x.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_cisco_asa_2_data.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "@timestamp": "2016-07-21T13:50:37.000Z",
+          "netflow": {
+            "version": 9,
+            "flow_seq_num": 31,
+            "flowset_id": 263,
+            "conn_id": 742820223,
+            "ipv4_src_addr": "192.168.0.1",
+            "l4_src_port":56651,
+            "input_snmp":3,
+            "ipv4_dst_addr":"192.168.0.18",
+            "l4_dst_port":80,
+            "output_snmp":4,
+            "protocol":6,
+            "icmp_type":0,
+            "icmp_code":0,
+            "xlate_src_addr_ipv4":"192.168.0.1",
+            "xlate_dst_addr_ipv4":"192.168.0.18",
+            "xlate_src_port":56651,
+            "xlate_dst_port":80,
+            "fw_event":2,
+            "fw_ext_event":2030,
+            "event_time_msec":1469109036495,
+            "fwd_flow_delta_bytes":69,
+            "rev_flow_delta_bytes":14178,
+            "flow_start_msec":1469109036395
+          },
+          "@version": "1"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(19)
+      expect(decode[18].get("[netflow][ipv4_src_addr]")).to eq("192.168.0.1")
+      expect(decode[18].get("[netflow][ipv4_dst_addr]")).to eq("192.168.0.18")
+      expect(decode[18].get("[netflow][fwd_flow_delta_bytes]")).to eq(69)
+      expect(decode[18].get("[netflow][conn_id]")).to eq(742820223)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[18].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
+
+  context "IPFIX OpenBSD pflow" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_openbsd_pflow_tpl.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_openbsd_pflow_data.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "@timestamp": "2016-07-21T13:30:37.000Z",
+          "netflow": {
+            "version": 10,
+            "sourceIPv4Address": "192.168.0.1",
+            "destinationIPv4Address": "192.168.0.17",
+            "ingressInterface": 1,
+            "egressInterface": 1,
+            "packetDeltaCount": 8,
+            "octetDeltaCount": 6425,
+            "flowStartMilliseconds": "2016-07-21T13:29:59.000Z",
+            "flowEndMilliseconds": "2016-07-21T13:30:01.000Z",
+            "sourceTransportPort": 80,
+            "destinationTransportPort": 64026,
+            "ipClassOfService": 0,
+            "protocolIdentifier": 6
+          },
+          "@version": "1"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(26)
+      expect(decode[25].get("[netflow][sourceIPv4Address]")).to eq("192.168.0.1")
+      expect(decode[25].get("[netflow][destinationIPv4Address]")).to eq("192.168.0.17")
+      expect(decode[25].get("[netflow][octetDeltaCount]")).to eq(6425)
+      expect(decode[25].get("[netflow][destinationTransportPort]")).to eq(64026)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[25].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
+
+  context "Netflow5 microtik" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow5_test_microtik.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "@timestamp": "2016-07-21T13:51:57.514Z",
+          "netflow": {
+            "version": 5,
+            "flow_seq_num": 8140050,
+            "engine_type": 0,
+            "engine_id": 0,
+            "sampling_algorithm": 0,
+            "sampling_interval": 0,
+            "flow_records": 30,
+            "ipv4_src_addr": "10.0.8.1",
+            "ipv4_dst_addr": "192.168.0.1",
+            "ipv4_next_hop": "192.168.0.1",
+            "input_snmp": 13,
+            "output_snmp": 46,
+            "in_pkts": 13,
+            "in_bytes": 11442,
+            "first_switched": "2016-07-21T13:51:42.514Z",
+            "last_switched": "2016-07-21T13:51:42.514Z",
+            "l4_src_port": 80,
+            "l4_dst_port": 51826,
+            "tcp_flags": 82,
+            "protocol": 6,
+            "src_tos": 40,
+            "src_as": 0,
+            "dst_as": 0,
+            "src_mask": 0,
+            "dst_mask": 0
+          },
+          "@version": "1"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(30)
+      expect(decode[29].get("[netflow][ipv4_src_addr]")).to eq("10.0.8.1")
+      expect(decode[29].get("[netflow][ipv4_dst_addr]")).to eq("192.168.0.1")
+      expect(decode[29].get("[netflow][l4_dst_port]")).to eq(51826)
+      expect(decode[29].get("[netflow][src_tos]")).to eq(40)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[29].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
+
+  context "Netflow5 Juniper MX80" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow5_test_juniper_mx80.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "@timestamp": "2016-07-21T13:52:52.000Z",
+          "netflow": {
+            "version": 5,
+            "flow_seq_num": 528678,
+            "engine_type": 0,
+            "engine_id": 0,
+            "sampling_algorithm": 0,
+            "sampling_interval": 1000,
+            "flow_records": 29,
+            "ipv4_src_addr": "66.249.92.75",
+            "ipv4_dst_addr": "192.168.0.1",
+            "ipv4_next_hop": "192.168.0.1",
+            "input_snmp": 542,
+            "output_snmp": 536,
+            "in_pkts": 2,
+            "in_bytes": 104,
+            "first_switched": "2016-07-21T13:52:34.999Z",
+            "last_switched": "2016-07-21T13:52:34.999Z",
+            "l4_src_port": 37387,
+            "l4_dst_port": 80,
+            "tcp_flags": 16,
+            "protocol": 6,
+            "src_tos": 0,
+            "src_as": 15169,
+            "dst_as": 64496,
+            "src_mask": 19,
+            "dst_mask": 24
+          },
+          "@version": "1"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(29)
+      expect(decode[28].get("[netflow][ipv4_src_addr]")).to eq("66.249.92.75")
+      expect(decode[28].get("[netflow][ipv4_dst_addr]")).to eq("192.168.0.1")
+      expect(decode[28].get("[netflow][l4_dst_port]")).to eq(80)
+      expect(decode[28].get("[netflow][src_as]")).to eq(15169)
+      expect(decode[28].get("[netflow][dst_as]")).to eq(64496)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[28].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
 end
