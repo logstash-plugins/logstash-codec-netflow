@@ -1,5 +1,5 @@
 # encoding: utf-8
-require "logstash/filters/base"
+require "logstash/codecs/base"
 require "logstash/namespace"
 require "logstash/timestamp"
 
