@@ -120,6 +120,8 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   IPFIX_FIELDS = ['version']
   SWITCHED = /_switched$/
   FLOWSET_ID = "flowset_id"
+  DEFAULT_INCLUDED_TEMPLATES = [2,3]
+
 
   def initialize(params = {})
     super(params)
