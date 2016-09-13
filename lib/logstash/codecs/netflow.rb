@@ -106,6 +106,8 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   # See <https://github.com/logstash-plugins/logstash-codec-netflow/blob/master/lib/logstash/codecs/netflow/ipfix.yaml> for the base set.
   config :ipfix_definitions, :validate => :path
 
+  config :included_templates, :validate => :array, :default => []
+  config :excluded_templates, :validate => :array, :default => []
   NETFLOW5_FIELDS = ['version', 'flow_seq_num', 'engine_type', 'engine_id', 'sampling_algorithm', 'sampling_interval', 'flow_records']
   NETFLOW9_FIELDS = ['version', 'flow_seq_num']
   NETFLOW9_SCOPES = {
@@ -329,6 +331,12 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
   def decode_ipfix(flowset, record)
     events = []
+    if not DEFAULT_INCLUDED_TEMPLATES.include?(record.flowset_id)
+        if (@excluded_templates.include?(record.flowset_id)) or (not @included_templates.empty? and not @included_templates.include?(record.flowset_id))
+            @logger.warn("Ignoring record.flowset_id: #{record.flowset_id}")
+            return events
+        end
+    end
 
     case record.flowset_id
     when 2
@@ -511,6 +519,15 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     end
   end # def netflow_field_for
 
+  def string_field(field, type, length)
+	if length == 0xffff
+		field[0] = :var_string
+	else
+		field[0] = :string
+		field += [{:length => length, :trim_padding => true}]
+	end
+	field
+  end
   def ipfix_field_for(type, enterprise, length)
     if @ipfix_fields.include?(enterprise)
       if @ipfix_fields[enterprise].include?(type)
@@ -529,7 +546,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       when :skip
         field += [nil, {:length => length}]
       when :string
-        field += [{:length => length, :trim_padding => true}]
+	    field = string_field(field, type, length)
       when :uint64
         field[0] = uint_field(length, 8)
       when :uint32
