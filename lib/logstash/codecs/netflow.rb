@@ -341,21 +341,6 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
             field_length = field.field_length
             enterprise_id = field.enterprise ? field.enterprise_id : 0
 
-            if field.field_length == 0xffff
-              # FIXME
-              @logger.warn("Cowardly refusing to deal with variable length encoded field", :type => field_type, :enterprise => enterprise_id)
-              throw :field
-            end
-
-            if enterprise_id == 0
-              case field_type
-              when 291, 292, 293
-                # FIXME
-                @logger.warn("Cowardly refusing to deal with complex data types", :type => field_type, :enterprise => enterprise_id)
-                throw :field
-              end
-            end
-
             entry = ipfix_field_for(field_type, enterprise_id, field.field_length)
             throw :field unless entry
             fields += entry
@@ -376,21 +361,6 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
             field_type = field.field_type
             field_length = field.field_length
             enterprise_id = field.enterprise ? field.enterprise_id : 0
-
-            if field.field_length == 0xffff
-              # FIXME
-              @logger.warn("Cowardly refusing to deal with variable length encoded field", :type => field_type, :enterprise => enterprise_id)
-              throw :field
-            end
-
-            if enterprise_id == 0
-              case field_type
-              when 291, 292, 293
-                # FIXME
-                @logger.warn("Cowardly refusing to deal with complex data types", :type => field_type, :enterprise => enterprise_id)
-                throw :field
-              end
-            end
 
             entry = ipfix_field_for(field_type, enterprise_id, field.field_length)
             throw :field unless entry
@@ -482,6 +452,27 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     ("uint" + (((length > 0) ? length : default) * 8).to_s).to_sym
   end # def uint_field
 
+  def skip_field(field, type, length)
+    if (length == 65535)
+      field[0] = :VarSkip
+    else
+      field += [nil, {:length => length}]
+    end
+
+    field
+  end # def skip_field
+
+  def string_field(field, type, length)
+    if (length == 65535)
+      field[0] = :VarString
+    else
+      field[0] = :string
+      field += [{ :length => length, :trim_padding => true }] 
+    end
+
+    field
+  end # def string_field
+
   def netflow_field_for(type, length)
     if @netflow_fields.include?(type)
       field = @netflow_fields[type].clone
@@ -527,9 +518,9 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     if field.is_a?(Array)
       case field[0]
       when :skip
-        field += [nil, {:length => length}]
+        field = skip_field(field, type, length)
       when :string
-        field += [{:length => length, :trim_padding => true}]
+        field = string_field(field, type, length)
       when :uint64
         field[0] = uint_field(length, 8)
       when :uint32
