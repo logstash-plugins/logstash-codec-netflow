@@ -297,3 +297,18 @@
 40005:
 - :uint8
 - :fw_event
+95:
+- :uint32
+- :application_id
+180:
+- :uint16
+- :udp_src_port
+181:
+- :uint16
+- :udp_dst_port
+182:
+- :uint16
+- :tcp_src_port
+183:
+- :uint16
+- :tcp_dst_port
