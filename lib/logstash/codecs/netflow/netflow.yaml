@@ -222,6 +222,15 @@
 86:
 - :uint32
 - :in_permanent_pkts
+89:
+- :uint8
+- :forwarding_status
+95:
+- :uint32
+- :application_id
+136:
+- :uint8
+- :flow_end_reason
 148:
 - :uint32
 - :conn_id
