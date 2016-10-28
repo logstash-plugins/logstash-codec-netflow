@@ -64,6 +64,26 @@ class ACLIdASA < BinData::Primitive
   end
 end
 
+class VarString < BinData::Primitive
+   endian :big
+   uint8 :index_1
+   uint16 :index_2 , :onlyif => lambda { index_1 == 0xff }
+   string :data, :trim_padding => true, :length => lambda { index_1 == 0xff ? index_2 : index_1 }
+
+   def get
+        self.data
+   end
+
+   def set(d)
+        self.data = d
+   end
+
+   def snapshot
+        super.encode("ASCII-8BIT", "UTF-8", invalid: :replace, undef: :replace)
+   end
+
+end
+
 class Header < BinData::Record
   endian :big
   uint16 :version

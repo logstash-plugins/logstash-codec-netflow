@@ -511,6 +511,15 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     end
   end # def netflow_field_for
 
+  def string_field(field, type, length)
+	if length == 0xffff
+		field[0] = :var_string
+	else
+		field[0] = :string
+		field += [{:length => length, :trim_padding => true}]
+	end
+	field
+  end
   def ipfix_field_for(type, enterprise, length)
     if @ipfix_fields.include?(enterprise)
       if @ipfix_fields[enterprise].include?(type)
@@ -529,7 +538,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       when :skip
         field += [nil, {:length => length}]
       when :string
-        field += [{:length => length, :trim_padding => true}]
+	    field = string_field(field, type, length)
       when :uint64
         field[0] = uint_field(length, 8)
       when :uint32
