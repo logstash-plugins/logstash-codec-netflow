@@ -1,3 +1,7 @@
+## 3.1.4
+
+  - Added support for MPLS labels
+
 ## 3.1.3
 
   - Confirmed support and tests added for 4 Netflow/IPFIX exporters

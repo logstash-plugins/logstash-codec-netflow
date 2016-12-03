@@ -64,6 +64,14 @@ class ACLIdASA < BinData::Primitive
   end
 end
 
+class MPLSLabelStackOctets < BinData::Record
+  endian :big
+  bit20  :label
+  bit3   :experimental
+  bit1   :bottom_of_stack
+  uint8  :ttl
+end
+
 class Header < BinData::Record
   endian :big
   uint16 :version

@@ -246,6 +246,9 @@
 179:
 - :uint8
 - :icmp_code_ipv6
+201:
+- mpls_label_stack_octets
+- mpls_label_stack_octets
 225:
 - :ip4_addr
 - :xlate_src_addr_ipv4

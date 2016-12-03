@@ -904,4 +904,67 @@ describe LogStash::Codecs::Netflow do
     end
 
   end
+
+  context "Netflow 9 Ubiquiti Edgerouter with MPLS labels" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_ubnt_edgerouter_tpl.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_ubnt_edgerouter_data1024.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_ubnt_edgerouter_data1025.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "@timestamp": "2016-09-10T16:24:08.000Z", 
+          "netflow": {
+            "output_snmp": 4, 
+            "out_src_mac": "06:be:ef:be:ef:b9", 
+            "in_pkts": 21, 
+            "ip_protocol_version": 4, 
+            "ipv4_dst_addr": "10.2.0.95",
+            "src_tos": 0, 
+            "first_switched": "2016-09-10T15:02:54.999Z", 
+            "flowset_id": 1025, 
+            "l4_src_port": 47690, 
+            "out_dst_mac": "44:d9:e7:be:ef:8e", 
+            "version": 9, 
+            "flow_seq_num": 31664, 
+            "ipv4_src_addr": "192.168.1.102", 
+            "in_bytes": 3668, 
+            "protocol": 6, 
+            "mpls_label_stack_octets": { 
+              "bottom_of_stack": 0, 
+              "experimental": 0, 
+              "label": 0, 
+              "ttl": 4
+            }, 
+            "last_switched": "2016-09-10T15:23:45.999Z", 
+            "input_snmp": 2, 
+            "flows": 0, 
+            "tcp_flags": 27, 
+            "dst_vlan": 0, 
+            "l4_dst_port": 443, 
+            "direction": 1
+          },
+          "@version": "1"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(16)
+      expect(decode[0].get("[netflow][ipv4_src_addr]")).to eq("10.1.0.135")
+      expect(decode[15].get("[netflow][ipv4_src_addr]")).to eq("192.168.1.102")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[15].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
+
+
 end

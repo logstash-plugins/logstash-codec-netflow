@@ -11,16 +11,17 @@ require "logstash/timestamp"
 #
 # [cols="6,^2,^2,^2,12",options="header"]
 # |===========================================================================================
-# |Netflow exporter | v5 | v9 | IPFIX | Remarks
-# |Softflowd        |  y | y  |   y   | IPFIX supported in https://github.com/djmdjm/softflowd
-# |nProbe           |  y | y  |   y   |  
-# |ipt_NETFLOW      |  y | y  |   y   |
-# |Cisco ASA        |    | y  |       |  
-# |Cisco IOS 12.x   |    | y  |       |  
-# |fprobe           |  y |    |       |
-# |Juniper MX80     |  y |    |       | SW > 12.3R8
-# |OpenBSD pflow    |  y | n  |   y   | http://man.openbsd.org/OpenBSD-current/man4/pflow.4
-# |Mikrotik 6.35.4  |  y |    |   n   | http://wiki.mikrotik.com/wiki/Manual:IP/Traffic_Flow
+# |Netflow exporter      | v5 | v9 | IPFIX | Remarks
+# |Softflowd             |  y | y  |   y   | IPFIX supported in https://github.com/djmdjm/softflowd
+# |nProbe                |  y | y  |   y   |  
+# |ipt_NETFLOW           |  y | y  |   y   |
+# |Cisco ASA             |    | y  |       |  
+# |Cisco IOS 12.x        |    | y  |       |  
+# |fprobe                |  y |    |       |
+# |Juniper MX80          |  y |    |       | SW > 12.3R8
+# |OpenBSD pflow         |  y | n  |   y   | http://man.openbsd.org/OpenBSD-current/man4/pflow.4
+# |Mikrotik 6.35.4       |  y |    |   n   | http://wiki.mikrotik.com/wiki/Manual:IP/Traffic_Flow
+# |Ubiquiti Edgerouter X |    | y  |       | With MPLS labels
 # |===========================================================================================
 #
 # ==== Usage
