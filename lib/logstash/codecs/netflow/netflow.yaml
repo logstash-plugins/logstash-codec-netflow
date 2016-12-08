@@ -223,7 +223,7 @@
 - :uint32
 - :in_permanent_pkts
 89:
-- :uint8
+- :forwarding_status
 - :forwarding_status
 95:
 - :uint32

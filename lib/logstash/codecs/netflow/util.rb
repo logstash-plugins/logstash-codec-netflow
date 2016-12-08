@@ -72,6 +72,12 @@ class MPLSLabelStackOctets < BinData::Record
   uint8  :ttl
 end
 
+class Forwarding_Status < BinData::Record
+  endian :big
+  bit2   :status
+  bit6   :reason
+end
+
 class Header < BinData::Record
   endian :big
   uint16 :version
