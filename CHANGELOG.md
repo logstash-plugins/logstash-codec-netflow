@@ -1,3 +1,13 @@
+## 3.2.0
+
+  - Add Netflow v9/v10 template caching, configurable TTL
+  - Add option for including flowset_id for Netflow v10
+  - Refactor/simplify Netflow v9/v10 templates processing
+  - Add variable length field support
+  - Add OctetArray support
+  - Add Citrix Netscaler (IPFIX) support
+  - Add spec tests and anonymized test data for all of the above
+
 ## 3.1.4
 
   - Added support for MPLS labels

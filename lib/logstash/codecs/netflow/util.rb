@@ -51,6 +51,36 @@ class MacAddr < BinData::Primitive
   end
 end
 
+class VarSkip < BinData::Primitive
+  endian :big
+  uint8 :length_1
+  uint16 :length_2, :onlyif => lambda { length_1 == 255 }
+  skip :length => lambda { (length_1 == 255) ? length_2 : length_1 }
+
+  def get
+    ""
+  end
+end
+
+class VarString < BinData::Primitive
+  endian :big
+  uint8 :length_1
+  uint16 :length_2, :onlyif => lambda { length_1 == 255 }
+  string :data, :trim_padding => true, :length => lambda { (length_1 == 255) ? length_2 : length_1 }
+
+  def set(val)
+    self.data = val
+  end
+
+  def get
+    self.data
+  end
+
+  def snapshot
+    super.encode("ASCII-8BIT", "UTF-8", invalid: :replace, undef: :replace)
+  end
+end
+
 class ACLIdASA < BinData::Primitive
   array :bytes, :type => :uint8, :initial_length => 12
 
@@ -76,6 +106,20 @@ class Forwarding_Status < BinData::Record
   endian :big
   bit2   :status
   bit6   :reason
+end
+
+class OctetArray < BinData::Primitive
+  # arg_processor :octetarray
+  mandatory_parameter :initial_length
+  array :bytes, :type => :uint8, :initial_length => :initial_length
+
+  def set(val)
+    self.bytes = val.scan(/../).collect { |hex| hex.to_i(16)}
+  end
+
+  def get
+    self.bytes.collect { |byte| byte.value.to_s(16).rjust(2,'0') }.join
+  end
 end
 
 class Header < BinData::Record
