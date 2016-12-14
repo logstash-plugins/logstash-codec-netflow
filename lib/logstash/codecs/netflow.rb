@@ -2,6 +2,7 @@
 require "logstash/codecs/base"
 require "logstash/namespace"
 require "logstash/timestamp"
+require "logstash/json"
 
 # The "netflow" codec is used for decoding Netflow v5/v9/v10 (IPFIX) flows.
 #
@@ -22,6 +23,7 @@ require "logstash/timestamp"
 # |OpenBSD pflow         |  y | n  |   y   | http://man.openbsd.org/OpenBSD-current/man4/pflow.4
 # |Mikrotik 6.35.4       |  y |    |   n   | http://wiki.mikrotik.com/wiki/Manual:IP/Traffic_Flow
 # |Ubiquiti Edgerouter X |    | y  |       | With MPLS labels
+# |Citrix Netscaler      |    |    |   y   | Still some unknown fields, labeled netscalerUnknown<id>
 # |===========================================================================================
 #
 # ==== Usage
@@ -63,11 +65,22 @@ require "logstash/timestamp"
 class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   config_name "netflow"
 
-  # Netflow v9 template cache TTL (minutes)
+  # Netflow v9/v10 template cache TTL (minutes)
   config :cache_ttl, :validate => :number, :default => 4000
+
+  # Where to save the template cache
+  # This helps speed up processing when restarting logstash
+  # (So you don't have to await the arrival of templates)
+  # cache will save as path/netflow_templates.cache and/or path/ipfix_templates.cache
+  config :cache_save_path, :validate => :path
 
   # Specify into what field you want the Netflow data.
   config :target, :validate => :string, :default => "netflow"
+
+  # Only makes sense for ipfix, v9 already includes this
+  # Setting to true will include the flowset_id in events
+  # Allows you to work with sequences, for instance with the aggregate filter
+  config :include_flowset_id, :validate => :boolean, :default => false
 
   # Specify which Netflow versions you will accept.
   config :versions, :validate => :array, :default => [5, 9, 10]
@@ -137,6 +150,26 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     # Path to default IPFIX field definitions
     filename = ::File.expand_path('netflow/ipfix.yaml', ::File.dirname(__FILE__))
     @ipfix_fields = load_definitions(filename, @ipfix_definitions)
+
+    if @cache_save_path
+      if @versions.include?(9)
+        if File.exists?("#{@cache_save_path}/netflow_templates.cache")
+          @netflow_templates_cache = load_templates_cache("#{@cache_save_path}/netflow_templates.cache")
+          @netflow_templates_cache.each{ |key, fields| @netflow_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields) }
+        else
+          @netflow_templates_cache = {}
+        end
+      end
+
+      if @versions.include?(10)
+        if File.exists?("#{@cache_save_path}/ipfix_templates.cache")
+          @ipfix_templates_cache = load_templates_cache("#{@cache_save_path}/ipfix_templates.cache")
+          @ipfix_templates_cache.each{ |key, fields| @ipfix_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields) }
+        else
+          @ipfix_templates_cache = {}
+        end
+      end
+    end
   end # def register
 
   def decode(payload, metadata = nil, &block)
@@ -216,15 +249,27 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     events = []
 
     case record.flowset_id
-    when 0
+    when 0..1
       # Template flowset
       record.flowset_data.templates.each do |template|
         catch (:field) do
           fields = []
-          template.record_fields.each do |field|
-            entry = netflow_field_for(field.field_type, field.field_length)
-            throw :field unless entry
-            fields += entry
+          # Template flowset (0) or Options template flowset (1) ?
+          if record.flowset_id == 0
+            template.record_fields.each do |field|
+              entry = netflow_field_for(field.field_type, field.field_length)
+              throw :field unless entry
+              fields += entry
+            end
+          else
+            template.scope_fields.each do |field|
+              fields << [uint_field(0, field.field_length), NETFLOW9_SCOPES[field.field_type]]
+            end
+            template.option_fields.each do |field|
+              entry = netflow_field_for(field.field_type, field.field_length)
+              throw :field unless entry
+              fields += entry
+            end
           end
           # We get this far, we have a list of fields
           #key = "#{flowset.source_id}|#{event["source"]}|#{template.template_id}"
@@ -236,31 +281,10 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           @netflow_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
           # Purge any expired templates
           @netflow_templates.cleanup!
-        end
-      end
-    when 1
-      # Options template flowset
-      record.flowset_data.templates.each do |template|
-        catch (:field) do
-          fields = []
-          template.scope_fields.each do |field|
-            fields << [uint_field(0, field.field_length), NETFLOW9_SCOPES[field.field_type]]
+          if @cache_save_path
+            @netflow_templates_cache[key] = fields
+            save_templates_cache(@netflow_templates_cache, "#{@cache_save_path}/netflow_templates.cache")
           end
-          template.option_fields.each do |field|
-            entry = netflow_field_for(field.field_type, field.field_length)
-            throw :field unless entry
-            fields += entry
-          end
-          # We get this far, we have a list of fields
-          #key = "#{flowset.source_id}|#{event["source"]}|#{template.template_id}"
-          if metadata != nil
-            key = "#{flowset.source_id}|#{template.template_id}|#{metadata["host"]}|#{metadata["port"]}"
-          else
-            key = "#{flowset.source_id}|#{template.template_id}"
-          end
-          @netflow_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
-          # Purge any expired templates
-          @netflow_templates.cleanup!
         end
       end
     when 256..65535
@@ -332,30 +356,16 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     events = []
 
     case record.flowset_id
-    when 2
-      # Template flowset
+    when 2..3
       record.flowset_data.templates.each do |template|
         catch (:field) do
           fields = []
-          template.record_fields.each do |field|
+          # Template flowset (2) or Options template flowset (3) ?
+          template_fields = (record.flowset_id == 2) ? template.record_fields : (template.scope_fields.to_ary + template.option_fields.to_ary)
+          template_fields.each do |field|
             field_type = field.field_type
             field_length = field.field_length
             enterprise_id = field.enterprise ? field.enterprise_id : 0
-
-            if field.field_length == 0xffff
-              # FIXME
-              @logger.warn("Cowardly refusing to deal with variable length encoded field", :type => field_type, :enterprise => enterprise_id)
-              throw :field
-            end
-
-            if enterprise_id == 0
-              case field_type
-              when 291, 292, 293
-                # FIXME
-                @logger.warn("Cowardly refusing to deal with complex data types", :type => field_type, :enterprise => enterprise_id)
-                throw :field
-              end
-            end
 
             entry = ipfix_field_for(field_type, enterprise_id, field.field_length)
             throw :field unless entry
@@ -366,42 +376,10 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           @ipfix_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
           # Purge any expired templates
           @ipfix_templates.cleanup!
-        end
-      end
-    when 3
-      # Options template flowset
-      record.flowset_data.templates.each do |template|
-        catch (:field) do
-          fields = []
-          (template.scope_fields.to_ary + template.option_fields.to_ary).each do |field|
-            field_type = field.field_type
-            field_length = field.field_length
-            enterprise_id = field.enterprise ? field.enterprise_id : 0
-
-            if field.field_length == 0xffff
-              # FIXME
-              @logger.warn("Cowardly refusing to deal with variable length encoded field", :type => field_type, :enterprise => enterprise_id)
-              throw :field
-            end
-
-            if enterprise_id == 0
-              case field_type
-              when 291, 292, 293
-                # FIXME
-                @logger.warn("Cowardly refusing to deal with complex data types", :type => field_type, :enterprise => enterprise_id)
-                throw :field
-              end
-            end
-
-            entry = ipfix_field_for(field_type, enterprise_id, field.field_length)
-            throw :field unless entry
-            fields += entry
+          if @cache_save_path
+            @ipfix_templates_cache[key] = fields
+            save_templates_cache(@ipfix_templates_cache, "#{@cache_save_path}/ipfix_templates.cache")
           end
-          # FIXME Source IP address required in key
-          key = "#{flowset.observation_domain_id}|#{template.template_id}"
-          @ipfix_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
-          # Purge any expired templates
-          @ipfix_templates.cleanup!
         end
       end
     when 256..65535
@@ -425,6 +403,10 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
         IPFIX_FIELDS.each do |f|
           event[@target][f] = flowset[f].snapshot
+        end
+
+        if @include_flowset_id
+          event[@target][FLOWSET_ID] = record.flowset_id.snapshot
         end
 
         r.each_pair do |k, v|
@@ -478,10 +460,50 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     fields
   end
 
+  def load_templates_cache(file_path)
+    templates_cache = {}
+    begin
+      templates_cache = JSON.parse(File.read(file_path))
+    rescue Exception => e
+      raise "#{self.class.name}: templates cache file corrupt (#{file_path})"
+    end
+
+    templates_cache
+  end
+
+  def save_templates_cache(templates_cache, file_path)
+    begin
+      File.open(file_path, 'w') {|file| file.write templates_cache.to_json }
+    rescue Exception => e
+      raise "#{self.class.name}: saving templates cache file failed (#{file_path}) with error #{e}"
+    end
+  end
+
   def uint_field(length, default)
     # If length is 4, return :uint32, etc. and use default if length is 0
     ("uint" + (((length > 0) ? length : default) * 8).to_s).to_sym
   end # def uint_field
+
+  def skip_field(field, type, length)
+    if length == 65535
+      field[0] = :VarSkip
+    else
+      field += [nil, {:length => length.to_i}]
+    end
+
+    field
+  end # def skip_field
+
+  def string_field(field, type, length)
+    if length == 65535
+      field[0] = :VarString
+    else
+      field[0] = :string
+      field += [{ :length => length.to_i, :trim_padding => true }]
+    end
+
+    field
+  end # def string_field
 
   def netflow_field_for(type, length)
     if @netflow_fields.include?(type)
@@ -494,9 +516,9 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
         # is dynamic
         case field[0]
         when :skip
-          field += [nil, {:length => length}]
+          field += [nil, {:length => length.to_i}]
         when :string
-          field += [{:length => length, :trim_padding => true}]
+          field += [{:length => length.to_i, :trim_padding => true}]
         end
 
         @logger.debug? and @logger.debug("Definition complete", :field => field)
@@ -528,9 +550,12 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     if field.is_a?(Array)
       case field[0]
       when :skip
-        field += [nil, {:length => length}]
+        field = skip_field(field, type, length.to_i)
       when :string
-        field += [{:length => length, :trim_padding => true}]
+        field = string_field(field, type, length.to_i)
+      when :octetarray
+        field[0] = :OctetArray
+        field += [{:initial_length => length.to_i}]
       when :uint64
         field[0] = uint_field(length, 8)
       when :uint32

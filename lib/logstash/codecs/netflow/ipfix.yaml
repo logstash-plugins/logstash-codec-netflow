@@ -1202,6 +1202,670 @@
   433:
   - :uint64
   - :ignoredLayer2FrameTotalCount
+5951:
+  128:
+  - :uint32
+  - :netscalerRoundTripTime
+  129:
+  - :uint32
+  - :netscalerTransactionId
+  130:
+  - :string
+  - :netscalerHttpReqUrl
+  131:
+  - :string
+  - :netscalerHttpReqCookie
+  132:
+  - :uint64
+  - :netscalerFlowFlags
+  133:
+  - :uint32
+  - :netscalerConnectionId
+  134:
+  - :uint8
+  - :netscalerSyslogPriority
+  135:
+  - :string
+  - :netscalerSyslogMessage
+  136:
+  - :uint64
+  - :netscalerSyslogTimestamp
+  140:
+  - :string
+  - :netscalerHttpReqReferer
+  141:
+  - :string
+  - :netscalerHttpReqMethod
+  142:
+  - :string
+  - :netscalerHttpReqHost
+  143:
+  - :string
+  - :netscalerHttpReqUserAgent
+  144:
+  - :uint16
+  - :netscalerHttpRspStatus
+  145:
+  - :uint64
+  - :netscalerHttpRspLen
+  146:
+  - :uint64
+  - :netscalerServerTTFB
+  147:
+  - :uint64
+  - :netscalerServerTTLB
+  150:
+  - :uint32
+  - :netscalerAppNameIncarnationNumber
+  151:
+  - :uint32
+  - :netscalerAppNameAppId
+  152:
+  - :string
+  - :netscalerAppName
+  153:
+  - :uint64
+  - :netscalerHttpReqRcvFB
+  156:
+  - :uint64
+  - :netscalerHttpReqForwFB
+  157:
+  - :uint64
+  - :netscalerHttpResRcvFB
+  158:
+  - :uint64
+  - :netscalerHttpResForwFB
+  159:
+  - :uint64
+  - :netscalerHttpReqRcvLB
+  160:
+  - :uint64
+  - :netscalerHttpReqForwLB
+  161:
+  - :uint32
+  - :netscalerMainPageId
+  162:
+  - :uint32
+  - :netscalerMainPageCoreId
+  163:
+  - :string
+  - :netscalerHttpClientInteractionStartTime
+  164:
+  - :string
+  - :netscalerHttpClientRenderEndTime
+  165:
+  - :string
+  - :netscalerHttpClientRenderStartTime
+  167:
+  - :string
+  - :netscalerAppTemplateName
+  168:
+  - :string
+  - :netscalerHttpClientInteractionEndTime
+  169:
+  - :uint64
+  - :netscalerHttpResRcvLB
+  170:
+  - :uint64
+  - :netscalerHttpResForwLB
+  171:
+  - :uint32
+  - :netscalerAppUnitNameAppId
+  172:
+  - :uint32
+  - :netscalerDbLoginFlags
+  173:
+  - :uint8
+  - :netscalerDbReqType
+  174:
+  - :uint8
+  - :netscalerDbProtocolName
+  175:
+  - :string
+  - :netscalerDbUserName
+  176:
+  - :string
+  - :netscalerDbDatabaseName
+  177:
+  - :string
+  - :netscalerDbCltHostName
+  178:
+  - :string
+  - :netscalerDbReqString
+  179:
+  - :string
+  - :netscalerDbRespStatusString
+  180:
+  - :uint64
+  - :netscalerDbRespStatus
+  181:
+  - :uint64
+  - :netscalerDbRespLength
+  182:
+  - :uint32
+  - :netscalerClientRTT
+  183:
+  - :string
+  - :netscalerHttpContentType
+  185:
+  - :string
+  - :netscalerHttpReqAuthorization
+  186:
+  - :string
+  - :netscalerHttpReqVia
+  187:
+  - :string
+  - :netscalerHttpResLocation
+  188:
+  - :string
+  - :netscalerHttpResSetCookie
+  189:
+  - :string
+  - :netscalerHttpResSetCookie2
+  190:
+  - :string
+  - :netscalerHttpReqXForwardedFor
+  192:
+  - :octetarray
+  - :netscalerConnectionChainID
+  193:
+  - :uint8
+  - :netscalerConnectionChainHopCount
+  200:
+  - :octetarray
+  - :netscalerICASessionGuid
+  201:
+  - :string
+  - :netscaleIcaClientVersion
+  202:
+  - :uint16
+  - :netscalerIcaClientType
+  203:
+  - :ip4_addr
+  - :netscalerIcaClientIP
+  204:
+  - :string
+  - :netscalerIcaClientHostName
+  205:
+  - :string
+  - :netscalerAaaUsername
+  207:
+  - :string
+  - :netscalerIcaDomainName
+  208:
+  - :uint16
+  - :netscalerIcaClientLauncher
+  209:
+  - :uint32
+  - :netscalerIcaSessionSetupTime
+  210:
+  - :string
+  - :netscalerIcaServerName
+  214:
+  - :uint8
+  - :netscalerIcaSessionReconnects
+  215:
+  - :uint32
+  - :netscalerIcaRTT
+  216:
+  - :uint32
+  - :netscalerIcaClientsideRXBytes
+  217:
+  - :uint32
+  - :netscalerIcaClientsideTXBytes
+  219:
+  - :uint16
+  - :netscalerIcaClientsidePacketsRetransmit
+  220:
+  - :uint16
+  - :netscalerIcaServersidePacketsRetransmit
+  221:
+  - :uint32
+  - :netscalerIcaClientsideRTT
+  222:
+  - :uint32
+  - :netscalerIcaServersideRTT
+  223:
+  - :uint32
+  - :netscalerIcaSessionUpdateBeginSec
+  224:
+  - :uint32
+  - :netscalerIcaSessionUpdateEndSec
+  225:
+  - :uint32
+  - :netscalerIcaChannelId1
+  226:
+  - :uint32
+  - :netscalerIcaChannelId1Bytes
+  227:
+  - :uint32
+  - :netscalerIcaChannelId2
+  228:
+  - :uint32
+  - :netscalerIcaChannelId2Bytes
+  229:
+  - :uint32
+  - :netscalerIcaChannelId3
+  230:
+  - :uint32
+  - :netscalerIcaChannelId3Bytes
+  231:
+  - :uint32
+  - :netscalerIcaChannelId4
+  232:
+  - :uint32
+  - :netscalerIcaChannelId4Bytes
+  233:
+  - :uint32
+  - :netscalerIcaChannelId5
+  234:
+  - :uint32
+  - :netscalerIcaChannelId5Bytes
+  235:
+  - :uint16
+  - :netscalerIcaConnectionPriority
+  236:
+  - :uint32
+  - :netscalerApplicationStartupDuration
+  237:
+  - :uint16
+  - :netscalerIcaLaunchMechanism
+  238:
+  - :string
+  - :netscalerIcaApplicationName
+  239:
+  - :uint32
+  - :netscalerApplicationStartupTime
+  240:
+  - :uint16
+  - :netscalerIcaApplicationTerminationType
+  241:
+  - :uint32
+  - :netscalerIcaApplicationTerminationTime
+  242:
+  - :uint32
+  - :netscalerIcaSessionEndTime
+  243:
+  - :uint32
+  - :netscalerIcaClientsideJitter
+  244:
+  - :uint32
+  - :netscalerIcaServersideJitter
+  245:
+  - :uint32
+  - :netscalerIcaAppProcessID
+  246:
+  - :string
+  - :netscalerIcaAppModulePath
+  247:
+  - :uint32
+  - :netscalerIcaDeviceSerialNo
+  248:
+  - :octetarray
+  - :netscalerMsiClientCookie
+  249:
+  - :uint64
+  - :netscalerIcaFlags
+  250:
+  - :string
+  - :netscalerIcaUsername
+  251:
+  - :uint8
+  - :netscalerLicenseType
+  252:
+  - :uint64
+  - :netscalerMaxLicenseCount
+  253:
+  - :uint64
+  - :netscalerCurrentLicenseConsumed
+  254:
+  - :uint32
+  - :netscalerIcaNetworkUpdateStartTime
+  255:
+  - :uint32
+  - :netscalerIcaNetworkUpdateEndTime
+  256:
+  - :uint32
+  - :netscalerIcaClientsideSRTT
+  257:
+  - :uint32
+  - :netscalerIcaServersideSRTT
+  258:
+  - :uint32
+  - :netscalerIcaClientsideDelay
+  259:
+  - :uint32
+  - :netscalerIcaServersideDelay
+  260:
+  - :uint32
+  - :netscalerIcaHostDelay
+  261:
+  - :uint16
+  - :netscalerIcaClientSideWindowSize
+  262:
+  - :uint16
+  - :netscalerIcaServerSideWindowSize
+  263:
+  - :uint16
+  - :netscalerIcaClientSideRTOCount
+  264:
+  - :uint16
+  - :netscalerIcaServerSideRTOCount
+  265:
+  - :uint32
+  - :netscalerIcaL7ClientLatency
+  266:
+  - :uint32
+  - :netscalerIcaL7ServerLatency
+  267:
+  - :string
+  - :netscalerHttpDomainName
+  268:
+  - :uint32
+  - :netscalerCacheRedirClientConnectionCoreID
+  269:
+  - :uint32
+  - :netscalerCacheRedirClientConnectionTransactionID
+  270:
+  - :uint32
+  - :netscalerUnknown270
+  271:
+  - :uint32
+  - :netscalerUnknown271
+  272:
+  - :uint32
+  - :netscalerUnknown272
+  273:
+  - :uint32
+  - :netscalerUnknown273
+  274:
+  - :uint32
+  - :netscalerUnknown274
+  275:
+  - :uint32
+  - :netscalerUnknown275
+  276:
+  - :uint32
+  - :netscalerUnknown276
+  277:
+  - :uint32
+  - :netscalerUnknown277
+  278:
+  - :uint32
+  - :netscalerUnknown278
+  279:
+  - :uint32
+  - :netscalerUnknown279
+  280:
+  - :uint32
+  - :netscalerUnknown280
+  281:
+  - :uint32
+  - :netscalerUnknown281
+  282:
+  - :uint32
+  - :netscalerUnknown282
+  283:
+  - :uint32
+  - :netscalerUnknown283
+  284:
+  - :uint32
+  - :netscalerUnknown284
+  285:
+  - :uint32
+  - :netscalerUnknown285
+  286:
+  - :uint32
+  - :netscalerUnknown286
+  287:
+  - :uint32
+  - :netscalerUnknown287
+  288:
+  - :uint32
+  - :netscalerUnknown288
+  289:
+  - :uint32
+  - :netscalerUnknown289
+  290:
+  - :uint32
+  - :netscalerUnknown290
+  291:
+  - :uint32
+  - :netscalerUnknown291
+  292:
+  - :uint32
+  - :netscalerUnknown292
+  293:
+  - :uint32
+  - :netscalerUnknown293
+  294:
+  - :uint32
+  - :netscalerUnknown294
+  295:
+  - :uint32
+  - :netscalerUnknown295
+  296:
+  - :uint32
+  - :netscalerUnknown296
+  297:
+  - :uint32
+  - :netscalerUnknown297
+  298:
+  - :uint32
+  - :netscalerUnknown298
+  299:
+  - :uint32
+  - :netscalerUnknown299
+  300:
+  - :uint32
+  - :netscalerUnknown300
+  301:
+  - :uint32
+  - :netscalerUnknown301
+  302:
+  - :uint32
+  - :netscalerUnknown302
+  303:
+  - :uint32
+  - :netscalerUnknown303
+  304:
+  - :uint32
+  - :netscalerUnknown304
+  305:
+  - :uint32
+  - :netscalerUnknown305
+  306:
+  - :uint32
+  - :netscalerUnknown306
+  307:
+  - :uint32
+  - :netscalerUnknown307
+  308:
+  - :uint32
+  - :netscalerUnknown308
+  309:
+  - :uint32
+  - :netscalerUnknown309
+  310:
+  - :uint32
+  - :netscalerUnknown310
+  311:
+  - :uint32
+  - :netscalerUnknown311
+  312:
+  - :uint32
+  - :netscalerUnknown312
+  313:
+  - :uint32
+  - :netscalerUnknown313
+  314:
+  - :uint32
+  - :netscalerUnknown314
+  315:
+  - :uint32
+  - :netscalerUnknown315
+  316:
+  - :string
+  - :netscalerUnknown316
+  317:
+  - :uint32
+  - :netscalerUnknown317
+  318:
+  - :uint32
+  - :netscalerUnknown318
+  319:
+  - :string
+  - :netscalerUnknown319
+  320:
+  - :uint16
+  - :netscalerUnknown320
+  321:
+  - :uint32
+  - :netscalerUnknown321
+  322:
+  - :uint32
+  - :netscalerUnknown322
+  323:
+  - :uint16
+  - :netscalerUnknown323
+  324:
+  - :uint16
+  - :netscalerUnknown324
+  325:
+  - :uint16
+  - :netscalerUnknown325
+  326:
+  - :uint16
+  - :netscalerUnknown326
+  327:
+  - :uint32
+  - :netscalerUnknown327
+  328:
+  - :uint16
+  - :netscalerUnknown328
+  329:
+  - :uint16
+  - :netscalerUnknown329
+  330:
+  - :uint16
+  - :netscalerUnknown330
+  331:
+  - :uint16
+  - :netscalerUnknown331
+  332:
+  - :uint32
+  - :netscalerUnknown332
+  333:
+  - :string
+  - :netscalerUnknown333
+  334:
+  - :string
+  - :netscalerUnknown334
+  335:
+  - :uint32
+  - :netscalerUnknown335
+  336:
+  - :uint32
+  - :netscalerUnknown336
+  337:
+  - :uint32
+  - :netscalerUnknown337
+  338:
+  - :uint32
+  - :netscalerUnknown338
+  339:
+  - :uint32
+  - :netscalerUnknown339
+  340:
+  - :uint32
+  - :netscalerUnknown340
+  341:
+  - :uint32
+  - :netscalerUnknown341
+  342:
+  - :uint32
+  - :netscalerUnknown342
+  343:
+  - :uint32
+  - :netscalerUnknown343
+  344:
+  - :uint32
+  - :netscalerUnknown344
+  345:
+  - :uint32
+  - :netscalerUnknown345
+  346:
+  - :uint32
+  - :netscalerUnknown346
+  347:
+  - :uint32
+  - :netscalerUnknown347
+  348:
+  - :uint16
+  - :netscalerUnknown348
+  349:
+  - :string
+  - :netscalerUnknown349
+  350:
+  - :string
+  - :netscalerUnknown350
+  351:
+  - :string
+  - :netscalerUnknown351
+  352:
+  - :uint16
+  - :netscalerUnknown352
+  353:
+  - :uint32
+  - :netscalerUnknown353
+  354:
+  - :uint32
+  - :netscalerUnknown354
+  355:
+  - :uint32
+  - :netscalerUnknown355
+  356:
+  - :uint32
+  - :netscalerUnknown356
+  357:
+  - :uint32
+  - :netscalerUnknown357
+  363:
+  - :octetarray
+  - :netscalerUnknown363
+  383:
+  - :octetarray
+  - :netscalerUnknown383
+  391:
+  - :uint32
+  - :netscalerUnknown391
+  398:
+  - :uint32
+  - :netscalerUnknown398
+  404:
+  - :uint32
+  - :netscalerUnknown404
+  405:
+  - :uint32
+  - :netscalerUnknown405
+  427:
+  - :uint64
+  - :netscalerUnknown427
+  429:
+  - :uint8
+  - :netscalerUnknown429
+  432:
+  - :uint8
+  - :netscalerUnknown432
+  433:
+  - :uint8
+  - :netscalerUnknown433
+  453:
+  - :uint64
+  - :netscalerUnknown453
+  465:
+  - :uint32
+  - :netscalerUnknown465
 29305:
   1:
   - :uint64
