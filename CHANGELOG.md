@@ -1,3 +1,9 @@
+## 3.2.1
+
+  - Fix/Refactor IPFIX microsecond/nanosecond interpretation (NTP Timestamp based)
+  - Note a possible bug in Netscaler implementation where the fraction is proabably output as microseconds
+  - Correct rspec testing for new/correct implementation of microseconds, never noticed the insane values before, mea culpa
+
 ## 3.2.0
 
   - Add Netflow v9/v10 template caching, configurable TTL

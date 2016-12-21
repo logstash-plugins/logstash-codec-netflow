@@ -414,16 +414,18 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           when /^flow(?:Start|End)Seconds$/
             event[@target][k.to_s] = LogStash::Timestamp.at(v.snapshot).to_iso8601
           when /^flow(?:Start|End)(Milli|Micro|Nano)seconds$/
-            divisor =
-              case $1
-              when 'Milli'
-                1_000
-              when 'Micro'
-                1_000_000
-              when 'Nano'
-                1_000_000_000
-              end
-            event[@target][k.to_s] = LogStash::Timestamp.at(v.snapshot.to_f / divisor).to_iso8601
+            case $1
+            when 'Milli'
+              event[@target][k.to_s] = LogStash::Timestamp.at(v.snapshot.to_f / 1_000).to_iso8601
+            when 'Micro', 'Nano'
+              # For now we'll stick to assuming ntp timestamps,
+              # Netscaler implementation may be buggy though:
+              # https://bugs.wireshark.org/bugzilla/show_bug.cgi?id=11047
+              # This only affects the fraction though
+              ntp_seconds = (v.snapshot >> 32) & 0xFFFFFFFF
+              ntp_fraction = (v.snapshot & 0xFFFFFFFF).to_f / 2**32
+              event[@target][k.to_s] = LogStash::Timestamp.at(Time.utc(1900,1,1).to_i + ntp_seconds, ntp_fraction * 1000000).to_iso8601
+            end
           else
             event[@target][k.to_s] = v.snapshot
           end

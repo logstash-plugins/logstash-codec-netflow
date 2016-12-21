@@ -984,7 +984,7 @@ describe LogStash::Codecs::Netflow do
             "netscalerHttpReqUserAgent": "Mozilla/5.0 (Commodore 64;  kobo.com) Gecko/20100101 Firefox/75.0",
             "destinationTransportPort": 443,
             "netscalerHttpReqCookie": "beer=123456789abcdefghijklmnopqrstuvw; AnotherCookie=1234567890abcdefghijklmnopqr; Shameless.Plug=Thankyou.Rakuten.Kobo.Inc.For.Allowing.me.time.to.work.on.this.and.contribute.back.to.the.community; Padding=aaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbccccccccccccccddddddddddddddddddddddeeeeeeeeeeeeeeeeeeeeeffffffffffffffffffffffgggggggggggggggggggggggghhhhhhhhhhhhhhhhhiiiiiiiiiiiiiiiiiiiiiijjjjjjjjjjjjjjjjjjjjjjjjkkkkkkkkkkkkkkkkkklllllllllllllllmmmmmmmmmm; more=less; GJquote=There.is.no.spoon; GarrySays=Nice!!; LastPadding=aaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbcccccccccccccccccccdddddddddddeeeeeeee",
-            "flowEndMicroseconds": "503894-10-15T08:48:16.972Z",
+            "flowEndMicroseconds": "2016-11-11T12:09:19.000Z",
             "netscalerHttpReqUrl": "/aa/bb/ccccc/ddddddddddddddddddddddddd",
             "sourceIPv4Address": "192.168.0.1",
             "netscalerHttpReqMethod": "GET",
@@ -1003,7 +1003,7 @@ describe LogStash::Codecs::Netflow do
             "netscalerHttpReqVia": "1.1 akamai.net(ghost) (AkamaiGHost)",
             "netscalerConnectionId": 14460661,
             "tcpControlBits": 24,
-            "flowStartMicroseconds": "503894-10-15T08:48:16.972Z",
+            "flowStartMicroseconds": "2016-11-11T12:09:19.000Z",
             "ingressInterface": 8,
             "version": 10,
             "packetDeltaCount": 2,
@@ -1031,7 +1031,7 @@ describe LogStash::Codecs::Netflow do
       expect(decode[0].get("[netflow][version]")).to eq(10)
       expect(decode[0].get("[netflow][sourceIPv4Address]")).to eq('192.168.0.1')
       expect(decode[0].get("[netflow][destinationIPv4Address]")).to eq('10.0.0.1')
-      expect(decode[0].get("[netflow][flowEndMicroseconds]")).to eq('503894-10-15T08:48:16.970Z')
+      expect(decode[0].get("[netflow][flowEndMicroseconds]")).to eq('2016-11-11T12:09:19.000Z')
       expect(decode[0].get("[netflow][netscalerConnectionId]")).to eq(14460661)
       expect(decode[1].get("[netflow][version]")).to eq(10)
       expect(decode[1].get("[netflow][flowId]")).to eq(14460662)
@@ -1215,7 +1215,7 @@ describe LogStash::Codecs::Netflow, 'configured with template caching', :order =
     it "should decode raw data based on cached templates" do
       expect(decode.size).to eq(3)
       expect(decode[0].get("[netflow][version]")).to eq(10)
-      expect(decode[0].get("[netflow][flowEndMicroseconds]")).to eq('503894-10-15T08:48:16.970Z')
+      expect(decode[0].get("[netflow][flowEndMicroseconds]")).to eq('2016-11-11T12:09:19.000Z')
       expect(decode[0].get("[netflow][netscalerConnectionId]")).to eq(14460661)
       expect(decode[1].get("[netflow][version]")).to eq(10)
       expect(decode[1].get("[netflow][observationPointId]")).to eq(167954698)
@@ -1256,7 +1256,7 @@ describe LogStash::Codecs::Netflow, 'configured with include_flowset_id for ipfi
   it "should decode raw data" do
     expect(decode.size).to eq(3)
     expect(decode[0].get("[netflow][version]")).to eq(10)
-    expect(decode[0].get("[netflow][flowEndMicroseconds]")).to eq('503894-10-15T08:48:16.970Z')
+    expect(decode[0].get("[netflow][flowEndMicroseconds]")).to eq('2016-11-11T12:09:19.000Z')
     expect(decode[0].get("[netflow][netscalerConnectionId]")).to eq(14460661)
     expect(decode[1].get("[netflow][version]")).to eq(10)
     expect(decode[1].get("[netflow][observationPointId]")).to eq(167954698)
