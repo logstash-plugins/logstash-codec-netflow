@@ -1866,6 +1866,37 @@
   465:
   - :uint32
   - :netscalerUnknown465
+6876:
+  880:
+  - :uint8
+  - :vmwareUnknown880
+  881:
+  - :uint32
+  - :vmwareUnknown881
+  882:
+  - :uint32
+  - :vmwareUnknown882
+  883:
+  - :string
+  - :vmwareUnknown883
+  884:
+  - :string
+  - :vmwareUnknown884
+  886:
+  - :uint16
+  - :vmwareUnknown886
+  887:
+  - :uint16
+  - :vmwareUnknown887
+  888:
+  - :uint16
+  - :vmwareUnknown888
+  889:
+  - :uint8
+  - :vmwareUnknown889
+  890:
+  - :uint16
+  - :vmwareUnknown890
 29305:
   1:
   - :uint64
