@@ -1062,6 +1062,188 @@ describe LogStash::Codecs::Netflow do
       expect(JSON.parse(decode[2].to_json)).to eq(JSON.parse(json_events[0]))
     end
   end
+
+  context "IPFIX VMware virtual distributed switch" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_vmware_vds_tpl.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_vmware_vds_data264.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_vmware_vds_data266.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_vmware_vds_data266_267.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+      {
+        "netflow": {
+          "destinationIPv4Address": "172.18.65.211",
+          "destinationTransportPort": 5985,
+          "tcpControlBits": 2,
+          "vmwareUnknown890": 1,
+          "sourceIPv4Address": "172.18.65.21",
+          "ingressInterface": 3,
+          "ipClassOfService": 0,
+          "version": 10,
+          "packetDeltaCount": 2,
+          "flowEndReason": 1,
+          "protocolIdentifier": 6,
+          "flowDirection": 1,
+          "layer2SegmentId": 0,
+          "egressInterface": 11,
+          "octetDeltaCount": 100,
+          "sourceTransportPort": 61209,
+          "flowEndMilliseconds": "2016-12-22T12:17:37.000Z",
+          "maximumTTL": 128,
+          "vmwareUnknown888": 2,
+          "flowStartMilliseconds": "2016-12-22T12:17:37.000Z",
+          "vmwareUnknown889": 0
+        },
+        "@timestamp": "2016-12-22T12:17:52.000Z",
+        "@version": "1"
+      }
+      END
+
+      events << <<-END
+      {
+        "netflow": {
+          "destinationIPv4Address": "172.18.65.255",
+          "destinationTransportPort": 138,
+          "tcpControlBits": 0,
+          "vmwareUnknown890": 1,
+          "sourceIPv4Address": "172.18.65.91",
+          "ingressInterface": 2,
+          "ipClassOfService": 0,
+          "version": 10,
+          "packetDeltaCount": 1,
+          "flowEndReason": 1,
+          "protocolIdentifier": 17,
+          "flowDirection": 1,
+          "layer2SegmentId": 0,
+          "egressInterface": 10,
+          "octetDeltaCount": 229,
+          "sourceTransportPort": 138,
+          "flowEndMilliseconds": "2016-12-22T12:17:42.000Z",
+          "maximumTTL": 128,
+          "vmwareUnknown888": 2,
+          "flowStartMilliseconds": "2016-12-22T12:17:42.000Z",
+          "vmwareUnknown889": 0
+        },
+        "@timestamp": "2016-12-22T12:17:56.000Z",
+        "@version": "1"
+      }
+      END
+
+      events << <<-END
+      {
+        "netflow": {
+          "destinationIPv4Address": "172.18.65.255",
+          "destinationTransportPort": 138,
+          "tcpControlBits": 0,
+          "vmwareUnknown890": 1,
+          "sourceIPv4Address": "172.18.65.91",
+          "ingressInterface": 3,
+          "ipClassOfService": 0,
+          "version": 10,
+          "packetDeltaCount": 1,
+          "flowEndReason": 1,
+          "protocolIdentifier": 17,
+          "flowDirection": 1,
+          "layer2SegmentId": 0,
+          "egressInterface": 11,
+          "octetDeltaCount": 229,
+          "sourceTransportPort": 138,
+          "flowEndMilliseconds": "2016-12-22T12:17:42.000Z",
+          "maximumTTL": 128,
+          "vmwareUnknown888": 2,
+          "flowStartMilliseconds": "2016-12-22T12:17:42.000Z",
+          "vmwareUnknown889": 0
+        },
+        "@timestamp": "2016-12-22T12:17:56.000Z",
+        "@version": "1"
+      }
+      END
+
+      events << <<-END
+      {
+        "netflow": {
+          "destinationIPv4Address": "224.0.0.252",
+          "destinationTransportPort": 5355,
+          "tcpControlBits": 0,
+          "vmwareUnknown890": 1,
+          "sourceIPv4Address": "172.18.65.21",
+          "ingressInterface": 3,
+          "ipClassOfService": 0,
+          "version": 10,
+          "packetDeltaCount": 2,
+          "flowEndReason": 1,
+          "protocolIdentifier": 17,
+          "flowDirection": 1,
+          "layer2SegmentId": 0,
+          "egressInterface": 11,
+          "octetDeltaCount": 104,
+          "sourceTransportPort": 61329,
+          "flowEndMilliseconds": "2016-12-22T12:25:49.000Z",
+          "maximumTTL": 1,
+          "vmwareUnknown888": 2,
+          "flowStartMilliseconds": "2016-12-22T12:25:49.000Z",
+          "vmwareUnknown889": 0
+        },
+        "@timestamp": "2016-12-22T12:26:04.000Z",
+        "@version": "1"
+      }
+      END
+
+      events << <<-END
+      {
+        "netflow": {
+          "destinationTransportPort": 5355,
+          "tcpControlBits": 0,
+          "vmwareUnknown890": 1,
+          "ingressInterface": 3,
+          "ipClassOfService": 0,
+          "version": 10,
+          "packetDeltaCount": 2,
+          "flowEndReason": 1,
+          "sourceIPv6Address": "fe80::5187:5cd8:d750:cdc9",
+          "protocolIdentifier": 17,
+          "flowDirection": 1,
+          "layer2SegmentId": 0,
+          "egressInterface": 11,
+          "octetDeltaCount": 144,
+          "destinationIPv6Address": "ff02::1:3",
+          "sourceTransportPort": 61329,
+          "flowEndMilliseconds": "2016-12-22T12:25:49.000Z",
+          "maximumTTL": 1,
+          "vmwareUnknown888": 2,
+          "flowStartMilliseconds": "2016-12-22T12:25:49.000Z",
+          "vmwareUnknown889": 0
+        },
+        "@timestamp": "2016-12-22T12:26:04.000Z",
+        "@version": "1"
+      }
+      END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(5)
+      expect(decode[4].get("[netflow][sourceIPv6Address]")).to eq("fe80::5187:5cd8:d750:cdc9")
+      expect(decode[4].get("[netflow][destinationIPv6Address]")).to eq("ff02::1:3")
+      expect(decode[4].get("[netflow][octetDeltaCount]")).to eq(144)
+      expect(decode[4].get("[netflow][destinationTransportPort]")).to eq(5355)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+      expect(JSON.parse(decode[1].to_json)).to eq(JSON.parse(json_events[1]))
+      expect(JSON.parse(decode[2].to_json)).to eq(JSON.parse(json_events[2]))
+      expect(JSON.parse(decode[3].to_json)).to eq(JSON.parse(json_events[3]))
+      expect(JSON.parse(decode[4].to_json)).to eq(JSON.parse(json_events[4]))
+    end
+
+  end
+
 end
 
 describe LogStash::Codecs::Netflow, 'missing templates, no template caching configured' do
@@ -1270,4 +1452,6 @@ describe LogStash::Codecs::Netflow, 'configured with include_flowset_id for ipfi
     expect(decode[1].get("[netflow][flowset_id]")).to eq(257)
     expect(decode[2].get("[netflow][flowset_id]")).to eq(258)
   end
+
+
 end

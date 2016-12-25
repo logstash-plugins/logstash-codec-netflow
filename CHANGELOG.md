@@ -1,3 +1,7 @@
+## 3.2.2
+
+  - Added support for VMware VDS IPFIX although field definitions are unknown
+
 ## 3.2.1
 
   - Fix/Refactor IPFIX microsecond/nanosecond interpretation (NTP Timestamp based)
