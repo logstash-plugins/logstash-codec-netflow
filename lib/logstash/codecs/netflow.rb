@@ -300,7 +300,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       unless template
         #@logger.warn("No matching template for flow id #{record.flowset_id} from #{event["source"]}")
         @logger.warn("No matching template for flow id #{record.flowset_id}")
-        next
+        return events
       end
 
       length = record.flowset_length - 4
@@ -309,7 +309,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       # be at most 3 padding bytes
       if template.num_bytes > length or ! (length % template.num_bytes).between?(0, 3)
         @logger.warn("Template length doesn't fit cleanly into flowset", :template_id => record.flowset_id, :template_length => template.num_bytes, :record_length => length)
-        next
+        return events
       end
 
       array = BinData::Array.new(:type => template, :initial_length => length / template.num_bytes)
@@ -389,7 +389,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
       unless template
         @logger.warn("No matching template for flow id #{record.flowset_id}")
-        next
+        return events
       end
 
       array = BinData::Array.new(:type => template, :read_until => :eof)
