@@ -1236,10 +1236,41 @@ describe LogStash::Codecs::Netflow do
 
     it "should serialize to json" do
       expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
-      expect(JSON.parse(decode[1].to_json)).to eq(JSON.parse(json_events[1]))
-      expect(JSON.parse(decode[2].to_json)).to eq(JSON.parse(json_events[2]))
-      expect(JSON.parse(decode[3].to_json)).to eq(JSON.parse(json_events[3]))
-      expect(JSON.parse(decode[4].to_json)).to eq(JSON.parse(json_events[4]))
+    end
+
+  end
+
+  context "Juniper SRX options template with 0 scope field length" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_juniper_srx_tplopt.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "netflow": {
+            "flow_seq_num": 338,
+            "flowset_id": 256,
+            "version":9,
+            "sampling_algorithm":2,
+            "sampling_interval":1
+          },
+          "@timestamp":"2016-11-29T00:21:56.000Z",
+          "@version":"1"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(1)
+      expect(decode[0].get("[netflow][sampling_algorithm]")).to eq(2)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
     end
 
   end

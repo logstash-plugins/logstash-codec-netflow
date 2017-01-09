@@ -263,7 +263,9 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
             end
           else
             template.scope_fields.each do |field|
-              fields << [uint_field(0, field.field_length), NETFLOW9_SCOPES[field.field_type]]
+              if field.field_length > 0
+                fields << [uint_field(0, field.field_length), NETFLOW9_SCOPES[field.field_type]]
+              end
             end
             template.option_fields.each do |field|
               entry = netflow_field_for(field.field_type, field.field_length)

@@ -179,15 +179,15 @@ class NetflowOptionFlowset < BinData::Record
   endian :big
   array  :templates, :read_until => lambda { flowset_length - 4 - array.num_bytes <= 2 } do
     uint16 :template_id
-    uint16 :scope_length
-    uint16 :option_length
+    uint16 :scope_length, :assert => lambda { scope_length > 0 }
+    uint16 :option_length, :assert => lambda { option_length > 0 }
     array  :scope_fields, :initial_length => lambda { scope_length / 4 } do
       uint16 :field_type
       uint16 :field_length
     end
     array  :option_fields, :initial_length => lambda { option_length / 4 } do
       uint16 :field_type
-      uint16 :field_length
+      uint16 :field_length, :assert => lambda { field_length > 0 }
     end
   end
   skip   :length => lambda { templates.length.odd? ? 2 : 0 }

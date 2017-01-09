@@ -1,3 +1,8 @@
+## 3.2.3
+
+  - Fixed 0-length scope field length (Juniper SRX)
+  - Fixed JRuby 9K compatibility
+
 ## 3.2.2
 
   - Added support for VMware VDS IPFIX although field definitions are unknown
