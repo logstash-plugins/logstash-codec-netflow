@@ -257,9 +257,11 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           # Template flowset (0) or Options template flowset (1) ?
           if record.flowset_id == 0
             template.record_fields.each do |field|
-              entry = netflow_field_for(field.field_type, field.field_length)
-              throw :field unless entry
-              fields += entry
+              if field.field_length > 0
+                entry = netflow_field_for(field.field_type, field.field_length)
+                throw :field unless entry
+                fields += entry
+              end
             end
           else
             template.scope_fields.each do |field|

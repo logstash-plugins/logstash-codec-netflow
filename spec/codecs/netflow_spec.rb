@@ -1275,6 +1275,57 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+  context "Netflow 9 template with 0 length fields" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_0length_fields_tpl_data.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "netflow":{  
+             "output_snmp":3,
+             "dst_mask":32,
+             "in_pkts":0,
+             "ipv4_dst_addr":"239.255.255.250",
+             "first_switched":"2016-12-23T01:34:52.999Z",
+             "flowset_id":256,
+             "l4_src_port":0,
+             "src_mask":32,
+             "version":9,
+             "flow_seq_num":100728833,
+             "ipv4_src_addr":"192.168.1.33",
+             "in_bytes":0,
+             "protocol":2,
+             "input_snmp":2,
+             "last_switched":"2016-12-23T01:34:52.999Z",
+             "tcp_flags":0,
+             "engine_id":1,
+             "out_pkts":1,
+             "out_bytes":32,
+             "l4_dst_port":0,
+             "direction":1
+          },
+          "@timestamp":"2016-12-23T01:35:31.000Z",
+          "@version":"1"
+        }
+      END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(10)
+      expect(decode[9].get("[netflow][ipv4_src_addr]")).to eq("192.168.1.33")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[9].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
+
 end
 
 describe LogStash::Codecs::Netflow, 'missing templates, no template caching configured' do

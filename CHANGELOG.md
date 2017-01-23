@@ -1,6 +1,10 @@
+## 3.2.4
+
+  - Fixed 0-length template field length (Netflow 9)
+
 ## 3.2.3
 
-  - Fixed 0-length scope field length (Juniper SRX)
+  - Fixed 0-length scope field length (Netflow 9, Juniper SRX)
   - Fixed JRuby 9K compatibility
 
 ## 3.2.2
