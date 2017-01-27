@@ -30,8 +30,8 @@ require "logstash/json"
 #
 # Example Logstash configuration:
 #
-# [source]
-# -----------------------------
+# [source, ruby]
+# --------------------------
 # input {
 #   udp {
 #     host => localhost
@@ -43,24 +43,24 @@ require "logstash/json"
 #   }
 #   udp {
 #     host => localhost
-#         port => 4739
-#         codec => netflow {
+#     port => 4739
+#     codec => netflow {
 #       versions => [10]
 #       target => ipfix
-#     }
-#     type => ipfix
+#    }
+#    type => ipfix
 #   }
 #   tcp {
 #     host => localhost
 #     port => 4739
 #     codec => netflow {
 #       versions => [10]
-#           target => ipfix
+#       target => ipfix
 #     }
 #     type => ipfix
 #   }
 # }
-# -----------------------------
+# --------------------------
 
 class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   config_name "netflow"
@@ -89,15 +89,17 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   #
   # Each Netflow field is defined like so:
   #
-  #    ---
-  #    id:
-  #    - default length in bytes
-  #    - :name
-  #    id:
-  #    - :uintN or :ip4_addr or :ip6_addr or :mac_addr or :string
-  #    - :name
-  #    id:
-  #    - :skip
+  # [source,yaml]
+  # --------------------------
+  # id:
+  # - default length in bytes
+  # - :name
+  # id:
+  # - :uintN or :ip4_addr or :ip6_addr or :mac_addr or :string
+  # - :name
+  # id:
+  # - :skip
+  # --------------------------
   #
   # See <https://github.com/logstash-plugins/logstash-codec-netflow/blob/master/lib/logstash/codecs/netflow/netflow.yaml> for the base set.
   config :netflow_definitions, :validate => :path
@@ -107,13 +109,15 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   # Very similar to the Netflow version except there is a top level Private
   # Enterprise Number (PEN) key added:
   #
-  #    ---
-  #    pen:
-  #      id:
-  #      - :uintN or :ip4_addr or :ip6_addr or :mac_addr or :string
-  #      - :name
-  #      id:
-  #      - :skip
+  # [source,yaml]
+  # --------------------------
+  # pen:
+  # id:
+  # - :uintN or :ip4_addr or :ip6_addr or :mac_addr or :string
+  # - :name
+  # id:
+  # - :skip
+  # --------------------------
   #
   # There is an implicit PEN 0 for the standard fields.
   #
