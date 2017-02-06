@@ -285,6 +285,90 @@
 232:
 - :uint32
 - :rev_flow_delta_bytes
+8192:
+- :uint32
+- :streamcore_wan_rtt
+8193:
+- :uint32
+- :streamcore_net_app_resp_time
+8194:
+- :uint32
+- :streamcore_total_app_resp_time
+8195:
+- :uint16
+- :streamcore_tcp_retrans_rate
+8196:
+- :uint8
+- :streamcore_call_direction
+8256:
+- :string
+- :streamcore_hostname
+8257:
+- :string
+- :streamcore_url
+8258:
+- :string
+- :streamcore_ssl_cn
+8259:
+- :string
+- :streamcore_ssl_org
+8320:
+- :uint16
+- :streamcore_mos_lq
+8321:
+- :uint16
+- :streamcore_net_delay
+8322:
+- :uint16
+- :streamcore_net_loss
+8323:
+- :uint16
+- :streamcore_net_jitter
+8324:
+- :uint16
+- :streamcore_net_discard
+8325:
+- :uint8
+- :streamcore_rtp_clockrate_in
+8326:
+- :uint8
+- :streamcore_rtp_clockrate_out
+8327:
+- :uint8
+- :streamcore_codec_in
+8328:
+- :uint8
+- :streamcore_codec_out
+8384:
+- :uint32
+- :streamcore_id_rule_1
+8385:
+- :uint32
+- :streamcore_id_rule_2
+8386:
+- :uint32
+- :streamcore_id_rule_3
+8387:
+- :uint32
+- :streamcore_id_rule_4
+8388:
+- :uint32
+- :streamcore_id_rule_5
+8389:
+- :uint32
+- :streamcore_id_rule_6
+8390:
+- :uint32
+- :streamcore_id_rule_7
+8391:
+- :uint32
+- :streamcore_id_rule_8
+8392:
+- :uint32
+- :streamcore_id_rule_9
+8393:
+- :uint32
+- :streamcore_id_rule_10
 33000:
 - :acl_id_asa
 - :ingress_acl_id

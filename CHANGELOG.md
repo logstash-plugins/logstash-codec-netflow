@@ -1,3 +1,8 @@
+## 3.2.5
+
+  - Added support for Streamcore StreamGroomer (Netflow v9)
+  - Fixed docs so they can generate
+
 ## 3.2.4
 
   - Fixed 0-length template field length (Netflow 9)

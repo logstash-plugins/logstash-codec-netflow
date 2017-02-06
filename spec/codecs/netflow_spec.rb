@@ -966,6 +966,186 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+  context "Netflow 9 Streamcore" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_streamcore_tpl_data256.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_streamcore_tpl_data260.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "netflow": {
+            "in_pkts": 3,
+            "first_switched": "2017-01-11T11:47:23.999Z",
+            "flowset_id": 256,
+            "l4_src_port": 8080,
+            "streamcore_id_rule_1": 1171,
+            "streamcore_id_rule_2": 1179,
+            "in_bytes": 128,
+            "protocol": 6,
+            "streamcore_id_rule_5": 0,
+            "tcp_flags": 19,
+            "streamcore_id_rule_3": 1192,
+            "streamcore_id_rule_4": 1435,
+            "streamcore_net_app_resp_time": 0,
+            "l4_dst_port": 50073,
+            "output_snmp": 1148,
+            "streamcore_call_direction": 1,
+            "src_tos": 40,
+            "ipv4_dst_addr": "10.231.128.150",
+            "version": 9,
+            "streamcore_tcp_retrans_rate": 0,
+            "flow_seq_num": 2143054578,
+            "ipv4_src_addr": "100.78.40.201",
+            "input_snmp": 1152,
+            "last_switched": "2017-01-11T11:47:29.999Z",
+            "streamcore_wan_rtt": 0,
+            "streamcore_total_app_resp_time": 0
+          },
+          "@timestamp": "2017-01-11T11:48:15.000Z",
+          "@version": "1"
+        }
+      END
+
+      events << <<-END
+        {
+          "netflow": {
+            "in_pkts": 4,
+            "first_switched": "2017-01-11T11:47:23.999Z",
+            "flowset_id": 256,
+            "l4_src_port": 50073,
+            "streamcore_id_rule_1": 1171,
+            "streamcore_id_rule_2": 1179,
+            "in_bytes": 172,
+            "protocol": 6,
+            "streamcore_id_rule_5": 0,
+            "tcp_flags": 19,
+            "streamcore_id_rule_3": 1192,
+            "streamcore_id_rule_4": 1435,
+            "streamcore_net_app_resp_time": 0,
+            "l4_dst_port": 8080,
+            "output_snmp": 1152,
+            "streamcore_call_direction": 0,
+            "src_tos": 40,
+            "ipv4_dst_addr": "100.78.40.201",
+            "version": 9,
+            "streamcore_tcp_retrans_rate": 0,
+            "flow_seq_num": 2143054578,
+            "ipv4_src_addr": "10.231.128.150",
+            "input_snmp": 1148,
+            "last_switched": "2017-01-11T11:47:29.999Z",
+            "streamcore_wan_rtt": 0,
+            "streamcore_total_app_resp_time": 0
+          },
+          "@timestamp": "2017-01-11T11:48:15.000Z",
+          "@version": "1"
+        }
+      END
+
+      events << <<-END
+        {
+          "netflow": {
+            "streamcore_id_rule_10": 0,
+            "in_pkts": 10,
+            "first_switched": "2017-01-11T11:22:44.999Z",
+            "flowset_id": 260,
+            "l4_src_port": 8080,
+            "reamcore_id_rule_1": 1171,
+            "streamcore_id_rule_2": 1179,
+            "in_bytes": 3943,
+            "protocol": 6,
+            "streamcore_id_rule_5": 0,
+            "tcp_flags": 26,
+            "streamcore_id_rule_6": 0,
+            "streamcore_id_rule_3": 1192,
+            "streamcore_id_rule_4": 1435,
+            "streamcore_id_rule_9": 0,
+            "streamcore_id_rule_7": 0,
+            "streamcore_id_rule_8": 0,
+            "streamcore_net_app_resp_time": 17,
+            "l4_dst_port": 53483,
+            "output_snmp": 1148,
+            "streamcore_hostname": "live.lemde.fr",
+            "streamcore_call_direction": 1,
+            "src_tos": 40,
+            "ipv4_dst_addr": "10.27.8.20",
+            "version": 9,
+            "streamcore_tcp_retrans_rate": 0,
+            "flow_seq_num": 2142545188,
+            "ipv4_src_addr": "100.78.40.201",
+            "input_snmp": 1152,
+            "last_switched": "2017-01-11T11:23:35.999Z",
+            "streamcore_url": "\/mux.json",
+            "streamcore_wan_rtt": 0,
+            "streamcore_total_app_resp_time": 19
+          },
+          "@timestamp": "2017-01-11T11:23:51.000Z",
+          "@version": "1"
+        }
+      END
+
+      events << <<-END
+        {
+          "netflow": {
+            "streamcore_id_rule_10": 0,
+            "in_pkts": 11,
+            "first_switched": "2017-01-11T11:22:44.999Z",
+            "flowset_id": 260,
+            "l4_src_port": 53483,
+            "streamcore_id_rule_1": 1171,
+            "streamcore_id_rule_2": 1179,
+            "in_bytes": 3052,
+            "protocol": 6,
+            "streamcore_id_rule_5": 0,
+            "tcp_flags": 26,
+            "streamcore_id_rule_6": 0,
+            "streamcore_id_rule_3": 1192,
+            "streamcore_id_rule_4": 1435,
+            "streamcore_id_rule_9": 0,
+            "streamcore_id_rule_7": 0,
+            "streamcore_id_rule_8": 0,
+            "streamcore_net_app_resp_time": 17,
+            "l4_dst_port": 8080,
+            "output_snmp": 1152,
+            "streamcore_hostname": "live.lemde.fr",
+            "streamcore_call_direction": 0,
+            "src_tos": 40,
+            "ipv4_dst_addr": "100.78.40.201",
+            "version": 9,
+            "streamcore_tcp_retrans_rate": 0,
+            "flow_seq_num": 2142545188,
+            "ipv4_src_addr": "10.27.8.20",
+            "input_snmp": 1148,
+            "last_switched": "2017-01-11T11:23:35.999Z",
+            "streamcore_url": "\/mux.json",
+            "streamcore_wan_rtt": 0,
+            "streamcore_total_app_resp_time": 19
+          },
+          "@timestamp": "2017-01-11T11:23:51.000Z",
+          "@version": "1"
+        }
+      END
+
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(4)
+      expect(decode[0].get("[netflow][streamcore_id_rule_1]")).to eq(1171)
+      expect(decode[3].get("[netflow][streamcore_hostname]")).to eq("live.lemde.fr")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+      expect(JSON.parse(decode[3].to_json)).to eq(JSON.parse(json_events[3]))
+    end
+
+  end
+
+
   context "IPFIX Netscaler with variable length fields" do
     let(:data) do
       # this ipfix raw data was produced by a Netscaler appliance and captured with wireshark
