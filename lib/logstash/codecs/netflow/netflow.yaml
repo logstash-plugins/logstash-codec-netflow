@@ -393,9 +393,6 @@
 40005:
 - :uint8
 - :fw_event
-95:
-- :uint32
-- :application_id
 180:
 - :uint16
 - :udp_src_port
@@ -408,3 +405,9 @@
 183:
 - :uint16
 - :tcp_dst_port
+94:
+- :uint8
+- :application_description
+96:
+- :uint8
+- :application_name
