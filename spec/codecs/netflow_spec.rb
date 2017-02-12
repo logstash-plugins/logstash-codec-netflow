@@ -1506,6 +1506,102 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+  context "Netflow 9 Cisco ASR 9000 series options template 256" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_cisco_asr9k_opttpl256.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_cisco_asr9k_data256.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "netflow": {
+            "flow_seq_num": 24496783,
+            "scope_system": 3250896451,
+            "input_snmp": 104,
+            "if_desc": "TenGigE0_6_0_2",
+            "flowset_id": 256,
+            "version": 9
+          },
+          "@timestamp": "2016-12-06T10:09:48.000Z",
+          "@version": "1"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(19)
+      expect(decode[18].get("[netflow][if_desc]")).to eq("TenGigE0_6_0_2")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[18].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
+
+  context "Netflow 9 Cisco ASR 9000 series template 260" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_cisco_asr9k_tpl260.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_cisco_asr9k_data260.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "netflow": {
+            "dst_as": 64498,
+            "forwarding_status": {
+              "reason": 0,
+              "status": 1
+            },
+            "in_pkts": 2,
+            "first_switched": "2016-12-06T10:08:53.999Z",
+            "flowset_id": 260,
+            "l4_src_port": 443,
+            "in_bytes": 112,
+            "protocol": 6,
+            "tcp_flags": 18,
+            "ingressVRFID": 1610612736,
+            "l4_dst_port": 52364,
+            "src_as": 15169,
+            "direction": 1,
+            "output_snmp": 158,
+            "dst_mask": 24,
+            "ipv4_dst_addr": "10.0.15.38",
+            "src_tos": 0,
+            "src_mask": 24,
+            "version": 9,
+            "flow_seq_num": 24495777,
+            "ipv4_src_addr": "10.0.29.46",
+            "egressVRFID": 1610612736,
+            "input_snmp": 75,
+            "last_switched": "2016-12-06T10:08:54.999Z",
+            "flow_sampler_id": 1,
+            "bgp_ipv4_next_hop": "10.0.14.27"
+          },
+          "@timestamp": "2016-12-06T10:09:24.000Z",
+          "@version": "1"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(21)
+      expect(decode[20].get("[netflow][egressVRFID]")).to eq(1610612736)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[20].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+  end
+
 end
 
 describe LogStash::Codecs::Netflow, 'missing templates, no template caching configured' do
