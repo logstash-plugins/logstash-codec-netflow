@@ -1,3 +1,7 @@
+## 3.3.0
+
+  - Added support for Cisco ASR 9000 (Netflow v9)
+
 ## 3.2.5
 
   - Added support for Streamcore StreamGroomer (Netflow v9)
