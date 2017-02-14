@@ -223,9 +223,15 @@
 89:
 - :forwarding_status
 - :forwarding_status
+94:
+- :string
+- :application_description
 95:
-- :uint32
 - :application_id
+- :application_id
+96:
+- :string
+- :application_name
 136:
 - :uint8
 - :flow_end_reason

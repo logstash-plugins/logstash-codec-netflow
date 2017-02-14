@@ -108,6 +108,21 @@ class Forwarding_Status < BinData::Record
   bit6   :reason
 end
 
+class Application_Id < BinData::Primitive
+  endian  :big
+  unint8  :classification_id
+  unint24 :selector_id
+
+  def set(val)
+    ""
+  end
+
+  def get
+    ""
+  end
+
+end
+
 class OctetArray < BinData::Primitive
   # arg_processor :octetarray
   mandatory_parameter :initial_length
@@ -190,7 +205,7 @@ class NetflowOptionFlowset < BinData::Record
       uint16 :field_length, :assert => lambda { field_length > 0 }
     end
   end
-  skip   :length => lambda { templates.length.odd? ? 2 : 0 }
+#  skip   :length => lambda { templates.length.odd? ? 2 : 0 }
 end
 
 class Netflow9PDU < BinData::Record
