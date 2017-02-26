@@ -265,6 +265,12 @@
 183:
 - :uint16
 - :tcp_dst_port
+194:
+- :uint8
+- :ip_tos
+195:
+- :uint8
+- :ip_dscp
 201:
 - mpls_label_stack_octets
 - mpls_label_stack_octets

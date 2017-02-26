@@ -109,16 +109,17 @@ class Forwarding_Status < BinData::Record
 end
 
 class Application_Id < BinData::Primitive
-  endian  :big
-  unint8  :classification_id
-  unint24 :selector_id
+  endian :big
+  uint8  :classification_id
+  uint24 :selector_id
 
   def set(val)
-    ""
+    self.classification_id=val.to_i<<24
+    self.selector_id = val.to_i-((val.to_i>>24)<<24)
   end
 
   def get
-    ""
+    self.classification_id.to_s + ":" + self.selector_id.to_s
   end
 
 end

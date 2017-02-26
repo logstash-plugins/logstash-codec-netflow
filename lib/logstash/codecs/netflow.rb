@@ -191,7 +191,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
         yield(decode_netflow5(flowset, record))
       end
     elsif header.version == 9
-     BinData::trace_reading do
+#     BinData::trace_reading do
       flowset = Netflow9PDU.read(payload)
       flowset.records.each do |record|
         if metadata != nil
@@ -200,7 +200,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           decode_netflow9(flowset, record).each{|event| yield(event)}
         end
       end
-     end
+#     end
     elsif header.version == 10
       flowset = IpfixPDU.read(payload)
       flowset.records.each do |record|
