@@ -2,7 +2,7 @@
 require "logstash/codecs/base"
 require "logstash/namespace"
 require "logstash/timestamp"
-require "logstash/json"
+#require "logstash/json"
 require "json"
 
 # The "netflow" codec is used for decoding Netflow v5/v9/v10 (IPFIX) flows.
@@ -199,8 +199,8 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
         else
           decode_netflow9(flowset, record).each{|event| yield(event)}
         end
-      end
-#     end
+#      end
+     end
     elsif header.version == 10
       flowset = IpfixPDU.read(payload)
       flowset.records.each do |record|

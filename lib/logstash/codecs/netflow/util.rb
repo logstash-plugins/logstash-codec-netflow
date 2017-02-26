@@ -193,7 +193,7 @@ end
 
 class NetflowOptionFlowset < BinData::Record
   endian :big
-  array  :templates, :read_until => lambda { flowset_length - 4 - array.num_bytes <= 2 } do
+  array  :templates, :read_until => lambda { array.num_bytes == flowset_length - 4 } do
     uint16 :template_id
     uint16 :scope_length, :assert => lambda { scope_length > 0 }
     uint16 :option_length, :assert => lambda { option_length > 0 }
@@ -205,8 +205,8 @@ class NetflowOptionFlowset < BinData::Record
       uint16 :field_type
       uint16 :field_length, :assert => lambda { field_length > 0 }
     end
+    string  :padding, :read_length => lambda { flowset_length - 4 - scope_length - option_length - 2 - 2 -2}
   end
-#  skip   :length => lambda { templates.length.odd? ? 2 : 0 }
 end
 
 class Netflow9PDU < BinData::Record

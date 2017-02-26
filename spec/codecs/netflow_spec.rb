@@ -300,7 +300,7 @@ describe LogStash::Codecs::Netflow do
     end
   end
 
-  context "Netflow 9 multple netflow exporters" do
+  context "Netflow 9 multiple netflow exporters" do
     let(:data) do
       # This tests whether a template from a 2nd netflow exporter overwrites the template sent from the first.
       # In this test the 3rd packet (from nprobe) should still decode succesfully.
@@ -1599,6 +1599,102 @@ describe LogStash::Codecs::Netflow do
 
     it "should serialize to json" do
       expect(JSON.parse(decode[20].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+  end
+
+  context "Netflow 9 Cisco NBAR options template 260" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_cisco_nbar_opttpl260.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "netflow": {
+            "flow_seq_num": 655860,
+            "scope_system": 168755571,
+            "application_name": "argus",
+            "application_description": "ARGUS",
+            "flowset_id": 260,
+            "version": 9,
+            "application_id": "1:13"
+          },
+          "@timestamp": "2017-02-14T11:09:59.000Z",
+          "@version": "1"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(15)
+      expect(decode[14].get("[netflow][application_id]")).to eq("1:13")
+      expect(decode[14].get("[netflow][application_description]")).to eq("ARGUS")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[14].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+  end
+
+  context "Netflow 9 Cisco NBAR flowset 262" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_cisco_nbar_tpl262.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_cisco_nbar_data262.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "netflow": {
+            "dst_as": 0,
+            "in_pkts": 36,
+            "ipv4_src_prefix": "0.0.0.0",
+            "first_switched": "2017-02-14T11:10:20.999Z",
+            "flowset_id": 262,
+            "l4_src_port": 45269,
+            "ipv4_next_hop": "0.0.0.0",
+            "protocol": 17,
+            "in_bytes": 2794,
+            "tcp_src_port": 0,
+            "l4_dst_port": 161,
+            "direction": 0,
+            "src_as": 0,
+            "output_snmp": 0,
+            "ip_dscp": 0,
+            "ipv4_ident": 0,
+            "ipv4_dst_addr": "10.30.19.180",
+            "src_tos": 0,
+            "in_dst_mac": "1c:df:0f:7e:c3:58",
+            "udp_dst_port": 161,
+            "src_mask": 0,
+            "version": 9,
+            "application_id": "5:38",
+            "flow_seq_num": 1509134,
+            "ipv4_src_addr": "10.10.172.60",
+            "in_src_mac": "00:18:19:9e:6c:01",
+            "input_snmp": 1,
+            "last_switched": "2017-02-14T11:10:21.999Z",
+            "flow_sampler_id": 0
+          },
+          "@timestamp": "2017-02-14T11:10:36.000Z",
+          "@version": "1"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(5)
+      expect(decode[4].get("[netflow][application_id]")).to eq("5:38")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[4].to_json)).to eq(JSON.parse(json_events[0]))
     end
   end
 
