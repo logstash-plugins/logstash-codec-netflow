@@ -2,7 +2,7 @@
 require "logstash/codecs/base"
 require "logstash/namespace"
 require "logstash/timestamp"
-require "logstash/json"
+#require "logstash/json"
 require "json"
 
 # The "netflow" codec is used for decoding Netflow v5/v9/v10 (IPFIX) flows.
@@ -264,6 +264,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           template_length = 0
           # Template flowset (0) or Options template flowset (1) ?
           if record.flowset_id == 0
+            @logger.debug? and @logger.debug("Start processing template")
             template.record_fields.each do |field|
               if field.field_length > 0
                 entry = netflow_field_for(field.field_type, field.field_length, template.template_id)
@@ -273,10 +274,12 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
               end
             end
           else
+            @logger.debug? and @logger.debug("Start processing options template")
             template.scope_fields.each do |field|
               if field.field_length > 0
                 fields << [uint_field(0, field.field_length), NETFLOW9_SCOPES[field.field_type]]
               end
+              template_length += field.field_length
             end
             template.option_fields.each do |field|
               entry = netflow_field_for(field.field_type, field.field_length, template.template_id)
@@ -296,7 +299,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           @logger.debug("Received template #{template.template_id} with fields #{fields.inspect}")
           @logger.debug("Received template #{template.template_id} of size #{template_length} bytes. Representing in #{@netflow_templates[key].num_bytes} BinData bytes")
           if template_length != @netflow_templates[key].num_bytes
-            @logger.warn("Received template #{template.template_id} of size (#{template_length} bytes) doesn't match BinData representation we built (#{@netflow_templates[key].num_bytes} bytes)")
+            @logger.warn("Received template #{template.template_id} of size #{template_length} bytes doesn't match BinData representation we built (#{@netflow_templates[key].num_bytes} bytes)")
           end
           # Purge any expired templates
           @netflow_templates.cleanup!
@@ -309,6 +312,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     when 256..65535
       # Data flowset
       #key = "#{flowset.source_id}|#{event["source"]}|#{record.flowset_id}"
+      @logger.debug? and @logger.debug("Start processing data flowset #{record.flowset_id}")
       if metadata != nil
         key = "#{flowset.source_id}|#{record.flowset_id}|#{metadata["host"]}|#{metadata["port"]}"
       else
@@ -334,7 +338,9 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       array = BinData::Array.new(:type => template, :initial_length => length / template.num_bytes)
       records = array.read(record.flowset_data)
 
+      flowcounter = 1
       records.each do |r|
+        @logger.debug? and @logger.debug("Start processing flow #{flowcounter} from data flowset id #{record.flowset_id}")
         event = {
           LogStash::Event::TIMESTAMP => LogStash::Timestamp.at(flowset.unix_sec),
           @target => {}
@@ -361,6 +367,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
         end
 
         events << LogStash::Event.new(event)
+        flowcounter += 1
       end
     else
       @logger.warn("Unsupported flowset id #{record.flowset_id}")
