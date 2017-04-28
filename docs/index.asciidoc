@@ -1,0 +1,199 @@
+:plugin: netflow
+:type: codec
+
+///////////////////////////////////////////
+START - GENERATED VARIABLES, DO NOT EDIT!
+///////////////////////////////////////////
+:version: %VERSION%
+:release_date: %RELEASE_DATE%
+:changelog_url: %CHANGELOG_URL%
+:include_path: ../../../logstash/docs/include
+///////////////////////////////////////////
+END - GENERATED VARIABLES, DO NOT EDIT!
+///////////////////////////////////////////
+
+[id="plugins-{type}-{plugin}"]
+
+=== Netflow
+
+include::{include_path}/plugin_header.asciidoc[]
+
+==== Description
+
+The "netflow" codec is used for decoding Netflow v5/v9/v10 (IPFIX) flows.
+
+==== Supported Netflow/IPFIX exporters
+
+The following Netflow/IPFIX exporters are known to work with the most recent version of the netflow codec:
+
+[cols="6,^2,^2,^2,12",options="header"]
+|===========================================================================================
+|Netflow exporter      | v5 | v9 | IPFIX | Remarks
+|Softflowd             |  y | y  |   y   | IPFIX supported in https://github.com/djmdjm/softflowd
+|nProbe                |  y | y  |   y   |  
+|ipt_NETFLOW           |  y | y  |   y   |
+|Cisco ASA             |    | y  |       |  
+|Cisco IOS 12.x        |    | y  |       |  
+|fprobe                |  y |    |       |
+|Juniper MX80          |  y |    |       | SW > 12.3R8
+|OpenBSD pflow         |  y | n  |   y   | http://man.openbsd.org/OpenBSD-current/man4/pflow.4
+|Mikrotik 6.35.4       |  y |    |   n   | http://wiki.mikrotik.com/wiki/Manual:IP/Traffic_Flow
+|Ubiquiti Edgerouter X |    | y  |       | With MPLS labels
+|Citrix Netscaler      |    |    |   y   | Still some unknown fields, labeled netscalerUnknown<id>
+|===========================================================================================
+
+==== Usage
+
+Example Logstash configuration:
+
+[source, ruby]
+--------------------------
+input {
+  udp {
+    host => localhost
+    port => 2055
+    codec => netflow {
+      versions => [5, 9]
+    }
+    type => netflow
+  }
+  udp {
+    host => localhost
+    port => 4739
+    codec => netflow {
+      versions => [10]
+      target => ipfix
+   }
+   type => ipfix
+  }
+  tcp {
+    host => localhost
+    port => 4739
+    codec => netflow {
+      versions => [10]
+      target => ipfix
+    }
+    type => ipfix
+  }
+}
+--------------------------
+
+[id="plugins-{type}s-{plugin}-options"]
+==== Netflow Codec Configuration Options
+
+This plugin supports the following configuration options plus the <<plugins-{type}s-common-options>> described later.
+
+[cols="<,<,<",options="header",]
+|=======================================================================
+|Setting |Input type|Required
+| <<plugins-{type}s-{plugin}-cache_save_path>> |a valid filesystem path|No
+| <<plugins-{type}s-{plugin}-cache_ttl>> |<<number,number>>|No
+| <<plugins-{type}s-{plugin}-include_flowset_id>> |<<boolean,boolean>>|No
+| <<plugins-{type}s-{plugin}-ipfix_definitions>> |a valid filesystem path|No
+| <<plugins-{type}s-{plugin}-netflow_definitions>> |a valid filesystem path|No
+| <<plugins-{type}s-{plugin}-target>> |<<string,string>>|No
+| <<plugins-{type}s-{plugin}-versions>> |<<array,array>>|No
+|=======================================================================
+
+Also see <<plugins-{type}s-common-options>> for a list of options supported by all
+codec plugins.
+
+&nbsp;
+
+[id="plugins-{type}s-{plugin}-cache_save_path"]
+===== `cache_save_path` 
+
+  * Value type is <<path,path>>
+  * There is no default value for this setting.
+
+Where to save the template cache
+This helps speed up processing when restarting logstash
+(So you don't have to await the arrival of templates)
+cache will save as path/netflow_templates.cache and/or path/ipfix_templates.cache
+
+[id="plugins-{type}s-{plugin}-cache_ttl"]
+===== `cache_ttl` 
+
+  * Value type is <<number,number>>
+  * Default value is `4000`
+
+Netflow v9/v10 template cache TTL (minutes)
+
+[id="plugins-{type}s-{plugin}-include_flowset_id"]
+===== `include_flowset_id` 
+
+  * Value type is <<boolean,boolean>>
+  * Default value is `false`
+
+Only makes sense for ipfix, v9 already includes this
+Setting to true will include the flowset_id in events
+Allows you to work with sequences, for instance with the aggregate filter
+
+[id="plugins-{type}s-{plugin}-ipfix_definitions"]
+===== `ipfix_definitions` 
+
+  * Value type is <<path,path>>
+  * There is no default value for this setting.
+
+Override YAML file containing IPFIX field definitions
+
+Very similar to the Netflow version except there is a top level Private
+Enterprise Number (PEN) key added:
+
+[source,yaml]
+--------------------------
+pen:
+id:
+- :uintN or :ip4_addr or :ip6_addr or :mac_addr or :string
+- :name
+id:
+- :skip
+--------------------------
+
+There is an implicit PEN 0 for the standard fields.
+
+See <https://github.com/logstash-plugins/logstash-codec-netflow/blob/master/lib/logstash/codecs/netflow/ipfix.yaml> for the base set.
+
+[id="plugins-{type}s-{plugin}-netflow_definitions"]
+===== `netflow_definitions` 
+
+  * Value type is <<path,path>>
+  * There is no default value for this setting.
+
+Override YAML file containing Netflow field definitions
+
+Each Netflow field is defined like so:
+
+[source,yaml]
+--------------------------
+id:
+- default length in bytes
+- :name
+id:
+- :uintN or :ip4_addr or :ip6_addr or :mac_addr or :string
+- :name
+id:
+- :skip
+--------------------------
+
+See <https://github.com/logstash-plugins/logstash-codec-netflow/blob/master/lib/logstash/codecs/netflow/netflow.yaml> for the base set.
+
+[id="plugins-{type}s-{plugin}-target"]
+===== `target` 
+
+  * Value type is <<string,string>>
+  * Default value is `"netflow"`
+
+Specify into what field you want the Netflow data.
+
+[id="plugins-{type}s-{plugin}-versions"]
+===== `versions` 
+
+  * Value type is <<array,array>>
+  * Default value is `[5, 9, 10]`
+
+Specify which Netflow versions you will accept.
+
+
+
+include::{include_path}/{type}.asciidoc[]
