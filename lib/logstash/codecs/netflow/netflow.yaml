@@ -310,6 +310,12 @@
 282:
 - :ip6_addr
 - :xlate_dst_addr_ipv6
+298:
+- :uint64
+- :initiatorPackets
+299:
+- :uint64
+- :responderPackets
 323:
 - 8
 - :event_time_msec
