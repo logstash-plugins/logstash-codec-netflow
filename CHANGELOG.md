@@ -1,3 +1,11 @@
+## 3.5.0
+
+  - Added support for Cisco WLC (Netflow v9)
+
+## 3.4.0
+
+  - Added support for Cisco NBAR (Netflow v9)
+
 ## 3.3.0
 
   - Added support for Cisco ASR 9000 (Netflow v9)

@@ -1698,6 +1698,51 @@ describe LogStash::Codecs::Netflow do
     end
   end
 
+  context "Netflow 9 Cisco WLC" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_cisco_wlc_tpl.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_cisco_wlc_data261.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "netflow": {
+            "ip_dscp": 0,
+            "in_pkts": 53362,
+            "wtpMacAddress": "00:f6:63:cc:80:60",
+            "staMacAddress": "34:02:86:75:c0:51",
+            "flowset_id": 261,
+            "version": 9,
+            "application_id": "13:431",
+            "flow_seq_num": 78,
+            "in_bytes": 80973880,
+            "postIpDiffServCodePoint": 0,
+            "wlanSSID": "Test-env",
+            "staIPv4Address": "192.168.20.121",
+            "direction": 1
+          },
+          "@timestamp": "2017-06-22T06:31:14.000Z",
+          "@version": "1"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(19)
+      expect(decode[18].get("[netflow][application_id]")).to eq("13:431")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[18].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+  end
+
+
+
 end
 
 describe LogStash::Codecs::Netflow, 'missing templates, no template caching configured' do

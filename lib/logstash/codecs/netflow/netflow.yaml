@@ -232,9 +232,15 @@
 96:
 - :string
 - :application_name
+98:
+- :uint8
+- :postIpDiffServCodePoint
 136:
 - :uint8
 - :flow_end_reason
+147:
+- :string
+- :wlanSSID
 148:
 - :uint32
 - :conn_id
@@ -325,6 +331,15 @@
 362:
 - :uint16
 - :postNATPortBlockEnd
+365:
+- :mac_addr
+- :staMacAddress
+366:
+- :ip4_addr
+- :staIPv4Address
+367:
+- :mac_addr
+- :wtpMacAddress
 8192:
 - :uint32
 - :streamcore_wan_rtt
