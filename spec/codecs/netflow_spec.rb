@@ -1741,6 +1741,54 @@ describe LogStash::Codecs::Netflow do
     end
   end
 
+  context "IPFIX Barracuda firewall" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_barracuda_tpl.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_barracuda_data256.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "netflow": {
+            "destinationIPv4Address": "10.99.168.140",
+            "octetTotalCount": 113,
+            "destinationTransportPort": 50294,
+            "flowStartSysUpTime": 2395374954,
+            "sourceIPv4Address": "10.98.243.20",
+            "flowEndSysUpTime": 2395395322,
+            "flowDurationMilliseconds": 20368,
+            "ingressInterface": 41874,
+            "version": 10,
+            "packetDeltaCount": 1,
+            "firewallEvent": 2,
+            "protocolIdentifier": 17,
+            "sourceMacAddress": "00:00:00:00:00:00",
+            "egressInterface": 48660,
+            "octetDeltaCount": 113,
+            "sourceTransportPort": 53,
+            "packetTotalCount": 1
+          },
+          "@timestamp": "2017-06-29T13:58:28.000Z",
+          "@version": "1"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(8)
+      expect(decode[7].get("[netflow][firewallEvent]")).to eq(2)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[7].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+  end
+
+
 
 
 end

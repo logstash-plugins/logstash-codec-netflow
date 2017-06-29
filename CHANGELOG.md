@@ -1,3 +1,7 @@
+## 3.5.1
+
+  - Added test for Barracuda firewall (IPFIX)
+
 ## 3.5.0
 
   - Added support for Cisco WLC (Netflow v9)
