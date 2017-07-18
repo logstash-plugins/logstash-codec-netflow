@@ -1,3 +1,8 @@
+## 3.5.2
+
+  - Added test for Fortigate FortiOS 5.2 (Netflow v9)
+  - Clarified confusing warning about missing templates
+
 ## 3.5.1
 
   - Added test for Barracuda firewall (IPFIX)

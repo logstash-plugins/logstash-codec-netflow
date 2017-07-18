@@ -966,6 +966,76 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+  context "Netflow 9 Fortigate FortiOS 5.2.1" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_fortigate_fortios_521_tpl.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_fortigate_fortios_521_data256.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_fortigate_fortios_521_data257.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "netflow": {
+            "flow_seq_num": 13641,
+            "scope_system": 1,
+            "total_bytes_exp": 6871319015,
+            "total_flows_exp": 107864,
+            "flow_active_timeout": 1800,
+            "flow_inactive_timeout": 15,
+            "flowset_id": 256,
+            "total_pkts_exp": 11920854,
+            "version": 9,
+            "sampling_algorithm": 1,
+            "sampling_interval": 1
+          },
+          "@timestamp": "2017-07-18T05:42:14.000Z",
+          "@version": "1"
+        }
+        END
+
+      events << <<-END
+        {
+          "netflow": {
+            "output_snmp": 3,
+            "in_pkts": 3,
+            "ipv4_dst_addr": "31.13.87.36",
+            "first_switched": "2017-07-25T04:44:29.999Z",
+            "flowset_id": 257,
+            "l4_src_port": 61910,
+            "version": 9,
+            "flow_seq_num": 13635,
+            "ipv4_src_addr": "192.168.99.7",
+            "in_bytes": 152,
+            "protocol": 6,
+            "last_switched": "2017-07-25T04:44:38.999Z",
+            "input_snmp": 9,
+            "out_pkts": 0,
+            "out_bytes": 0,
+            "l4_dst_port": 443
+          },
+          "@timestamp": "2017-07-18T05:41:59.000Z",
+          "@version": "1"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(2)
+      expect(decode[0].get("[netflow][total_bytes_exp]")).to eq(6871319015)
+      expect(decode[1].get("[netflow][ipv4_src_addr]")).to eq("192.168.99.7")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+      expect(JSON.parse(decode[1].to_json)).to eq(JSON.parse(json_events[1]))
+    end
+
+  end
+
   context "Netflow 9 Streamcore" do
     let(:data) do
       packets = []

@@ -5,63 +5,7 @@ require "logstash/timestamp"
 #require "logstash/json"
 require "json"
 
-# The "netflow" codec is used for decoding Netflow v5/v9/v10 (IPFIX) flows.
-#
-# ==== Supported Netflow/IPFIX exporters
-#
-# The following Netflow/IPFIX exporters are known to work with the most recent version of the netflow codec:
-#
-# [cols="6,^2,^2,^2,12",options="header"]
-# |===========================================================================================
-# |Netflow exporter      | v5 | v9 | IPFIX | Remarks
-# |Softflowd             |  y | y  |   y   | IPFIX supported in https://github.com/djmdjm/softflowd
-# |nProbe                |  y | y  |   y   |  
-# |ipt_NETFLOW           |  y | y  |   y   |
-# |Cisco ASA             |    | y  |       |  
-# |Cisco IOS 12.x        |    | y  |       |  
-# |fprobe                |  y |    |       |
-# |Juniper MX80          |  y |    |       | SW > 12.3R8
-# |OpenBSD pflow         |  y | n  |   y   | http://man.openbsd.org/OpenBSD-current/man4/pflow.4
-# |Mikrotik 6.35.4       |  y |    |   n   | http://wiki.mikrotik.com/wiki/Manual:IP/Traffic_Flow
-# |Ubiquiti Edgerouter X |    | y  |       | With MPLS labels
-# |Citrix Netscaler      |    |    |   y   | Still some unknown fields, labeled netscalerUnknown<id>
-# |===========================================================================================
-#
-# ==== Usage
-#
-# Example Logstash configuration:
-#
-# [source, ruby]
-# --------------------------
-# input {
-#   udp {
-#     host => localhost
-#     port => 2055
-#     codec => netflow {
-#       versions => [5, 9]
-#     }
-#     type => netflow
-#   }
-#   udp {
-#     host => localhost
-#     port => 4739
-#     codec => netflow {
-#       versions => [10]
-#       target => ipfix
-#    }
-#    type => ipfix
-#   }
-#   tcp {
-#     host => localhost
-#     port => 4739
-#     codec => netflow {
-#       versions => [10]
-#       target => ipfix
-#     }
-#     type => ipfix
-#   }
-# }
-# --------------------------
+# Documentation moved to docs/
 
 class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   config_name "netflow"
@@ -87,42 +31,9 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   config :versions, :validate => :array, :default => [5, 9, 10]
 
   # Override YAML file containing Netflow field definitions
-  #
-  # Each Netflow field is defined like so:
-  #
-  # [source,yaml]
-  # --------------------------
-  # id:
-  # - default length in bytes
-  # - :name
-  # id:
-  # - :uintN or :ip4_addr or :ip6_addr or :mac_addr or :string
-  # - :name
-  # id:
-  # - :skip
-  # --------------------------
-  #
-  # See <https://github.com/logstash-plugins/logstash-codec-netflow/blob/master/lib/logstash/codecs/netflow/netflow.yaml> for the base set.
   config :netflow_definitions, :validate => :path
 
   # Override YAML file containing IPFIX field definitions
-  #
-  # Very similar to the Netflow version except there is a top level Private
-  # Enterprise Number (PEN) key added:
-  #
-  # [source,yaml]
-  # --------------------------
-  # pen:
-  # id:
-  # - :uintN or :ip4_addr or :ip6_addr or :mac_addr or :string
-  # - :name
-  # id:
-  # - :skip
-  # --------------------------
-  #
-  # There is an implicit PEN 0 for the standard fields.
-  #
-  # See <https://github.com/logstash-plugins/logstash-codec-netflow/blob/master/lib/logstash/codecs/netflow/ipfix.yaml> for the base set.
   config :ipfix_definitions, :validate => :path
 
   NETFLOW5_FIELDS = ['version', 'flow_seq_num', 'engine_type', 'engine_id', 'sampling_algorithm', 'sampling_interval', 'flow_records']
