@@ -321,8 +321,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       template = @netflow_templates[key]
 
       unless template
-        #@logger.warn("No matching template for flow id #{record.flowset_id} from #{event["source"]}")
-        @logger.warn("No matching template for flow id #{record.flowset_id}")
+        @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from source id #{flowset.source_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
         return events
       end
 
@@ -414,7 +413,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       template = @ipfix_templates[key]
 
       unless template
-        @logger.warn("No matching template for flow id #{record.flowset_id}")
+        @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from observation domain id #{flowset.observation_domain_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
         return events
       end
 

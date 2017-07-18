@@ -1827,7 +1827,7 @@ describe LogStash::Codecs::Netflow, 'missing templates, no template caching conf
     end
 
     it "should report missing templates" do
-      expect(logger).to receive(:warn).with(/No matching template for flow id/)
+      expect(logger).to receive(:warn).with(/Can't \(yet\) decode flowset id/)
       decode[0]
     end
   end
