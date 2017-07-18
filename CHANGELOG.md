@@ -1,11 +1,8 @@
-## 3.5.2
+## 3.5.1
 
   - Added test for Fortigate FortiOS 5.2 (Netflow v9)
   - Added permission check to templates cache (Issue #80)
   - Clarified confusing warning about missing templates
-
-## 3.5.1
-
   - Added test for Barracuda firewall (IPFIX)
 
 ## 3.5.0
