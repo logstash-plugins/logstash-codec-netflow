@@ -91,10 +91,15 @@ input {
   * Value type is <<path,path>>
   * There is no default value for this setting.
 
-Where to save the template cache
-This helps speed up processing when restarting logstash
-(So you don't have to await the arrival of templates)
-cache will save as path/netflow_templates.cache and/or path/ipfix_templates.cache
+Enables the template cache and saves it in the specified directory. This
+minimizes data loss after Logstash restarts because the codec doesn't have to
+wait for the arrival of templates, but instead reload already received
+templates received during previous runs.
+
+Template caches are saved as:
+
+* <<path,path>>/netflow_templates.cache for Netflow v9 templates.
+* <<path,path>>/ipfix_templates.cache for IPFIX templates.
 
 [id="plugins-{type}s-{plugin}-cache_ttl"]
 ===== `cache_ttl` 

@@ -69,19 +69,25 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
     if @cache_save_path
       if @versions.include?(9)
-        if File.exists?("#{@cache_save_path}/netflow_templates.cache")
+        cache_save_file_netflow = "#{@cache_save_path}/netflow_templates.cache"
+        if File.exists?(cache_save_file_netflow)
+          raise "#{self.class.name}: Template cache file #{cache_save_file_netflow} not writable" unless File.writable?(cache_save_file_netflow)
           @netflow_templates_cache = load_templates_cache("#{@cache_save_path}/netflow_templates.cache")
           @netflow_templates_cache.each{ |key, fields| @netflow_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields) }
         else
+          raise "#{self.class.name}: Template cache directory #{cache_save_path} not writable" unless File.writable?(cache_save_path)
           @netflow_templates_cache = {}
         end
       end
 
       if @versions.include?(10)
-        if File.exists?("#{@cache_save_path}/ipfix_templates.cache")
+        cache_save_file_ipfix = "#{@cache_save_path}/ipfix_templates.cache"
+        if File.exists?(cache_save_file_ipfix)
+          raise "#{self.class.name}: Template cache file #{cache_save_file_ipfix} not writable" unless File.writable?(cache_save_file_ipfix)
           @ipfix_templates_cache = load_templates_cache("#{@cache_save_path}/ipfix_templates.cache")
           @ipfix_templates_cache.each{ |key, fields| @ipfix_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields) }
         else
+          raise "#{self.class.name}: Template cache directory #{cache_save_path} not writable" unless File.writable?(cache_save_path)
           @ipfix_templates_cache = {}
         end
       end
@@ -401,6 +407,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   def load_templates_cache(file_path)
     templates_cache = {}
     begin
+      @logger.debug? and @logger.debug("Loading templates from template cache #{file_path}")
       templates_cache = JSON.parse(File.read(file_path))
     rescue Exception => e
       raise "#{self.class.name}: templates cache file corrupt (#{file_path})"
@@ -411,6 +418,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
   def save_templates_cache(templates_cache, file_path)
     begin
+      @logger.debug? and @logger.debug("Writing templates to template cache #{file_path}")
       File.open(file_path, 'w') {|file| file.write templates_cache.to_json }
     rescue Exception => e
       raise "#{self.class.name}: saving templates cache file failed (#{file_path}) with error #{e}"
