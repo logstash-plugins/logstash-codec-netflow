@@ -205,7 +205,7 @@ class NetflowOptionFlowset < BinData::Record
       uint16 :field_type
       uint16 :field_length, :assert => lambda { field_length > 0 }
     end
-    string  :padding, :read_length => lambda { flowset_length - 4 - scope_length - option_length - 2 - 2 -2}
+    string  :padding, :read_length => lambda { flowset_length - 4 - scope_length - option_length - 2 - 2 - 2 }
   end
 end
 
