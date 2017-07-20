@@ -1215,6 +1215,80 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+  context "IPFIX Mikrotik RouterOS 6.39.2" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_mikrotik_tpl.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_mikrotik_data258.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_mikrotik_data259.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+      {
+        "netflow": {
+          "destinationIPv4Address": "192.168.128.17",
+          "destinationTransportPort": 123,
+          "flowStartSysUpTime": 2666794170,
+          "tcpControlBits": 0,
+          "postNATDestinationIPv4Address": "192.168.128.17",
+          "flowEndSysUpTime": 2666794170,
+          "sourceIPv4Address": "10.10.8.197",
+          "ingressInterface": 13,
+          "version": 10,
+          "packetDeltaCount": 2,
+          "ipVersion": 4,
+          "protocolIdentifier": 17,
+          "postNATSourceIPv4Address": "192.168.230.216",
+          "egressInterface": 7,
+          "octetDeltaCount": 152,
+          "ipNextHopIPv4Address": "192.168.224.1",
+          "sourceTransportPort": 123
+        },
+        "@timestamp": "2017-07-19T16:18:08.000Z",
+        "@version": "1"
+      }
+      END
+
+      events << <<-END
+      {
+        "netflow": {
+          "destinationTransportPort": 5678,
+          "ipNextHopIPv6Address": "ff02::1",
+          "flowStartSysUpTime": 2666795750,
+          "tcpControlBits": 0,
+          "flowEndSysUpTime": 2666795750,
+          "ingressInterface": 17,
+          "version": 10,
+          "packetDeltaCount": 2,
+          "sourceIPv6Address": "fe80::ff:fe00:1201",
+          "ipVersion": 6,
+          "protocolIdentifier": 17,
+          "egressInterface": 0,
+          "octetDeltaCount": 370,
+          "sourceTransportPort": 5678,
+          "destinationIPv6Address": "fe80::ff:fe00:1201"
+        },
+        "@timestamp": "2017-07-19T16:18:08.000Z",
+        "@version": "1"
+      }
+      END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(46)
+      expect(decode[0].get("[netflow][postNATDestinationIPv4Address]")).to eq("192.168.128.17")
+      expect(decode[45].get("[netflow][ipNextHopIPv6Address]")).to eq("ff02::1")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+      expect(JSON.parse(decode[45].to_json)).to eq(JSON.parse(json_events[1]))
+    end
+
+  end
 
   context "IPFIX Netscaler with variable length fields" do
     let(:data) do
