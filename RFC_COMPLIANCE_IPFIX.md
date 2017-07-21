@@ -16,7 +16,7 @@ Summary of collector-relevant requirements implemented versus the total collecto
 | Chapter                               |MUST |SHOULD| MAY| 
 |---------------------------------------|-----|-----|-----|
 | 1. Introduction                       |     |     |     |
-| 1. Terminology                        |     |     |     |
+| 2. Terminology                        |     |     |     |
 | 3. IPFIX message format               | 2/2 | 0/2 |     |
 | 4. Specific reporting requirements    | 0/1 |     |     |
 | 5. Timing considerations              |     | 0/2 |     |
@@ -29,7 +29,7 @@ Summary of collector-relevant requirements implemented versus the total collecto
 | 12. Management considerations         |     |     |     |
 | 13. IANA considerations               |     |     |     |
 
-## RFC 7011 collector compliance summary
+## RFC 7012 collector compliance summary
 
 | Chapter                           | MUST |SHOULD| MAY | 
 |-----------------------------------|------|------|-----|
