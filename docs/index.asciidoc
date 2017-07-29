@@ -42,10 +42,10 @@ The following Netflow/IPFIX exporters are known to work with the most recent ver
 |Cisco WLC                |    | y  |       |
 |Citrix Netscaler         |    |    |   y   | Still some unknown fields, labeled netscalerUnknown<id>
 |fprobe                   |  y |    |       |
-|Fortigate FortiOS 5.2    |    | y  |       |
+|Fortigate FortiOS        |    | y  |       |
 |ipt_NETFLOW              |  y | y  |   y   |
 |Juniper MX80             |  y |    |       | SW > 12.3R8
-|Mikrotik 6.35.4          |  y |    |   n   | http://wiki.mikrotik.com/wiki/Manual:IP/Traffic_Flow
+|Mikrotik                 |  y |    |   y   | http://wiki.mikrotik.com/wiki/Manual:IP/Traffic_Flow
 |nProbe                   |  y | y  |   y   |  
 |OpenBSD pflow            |  y | n  |   y   | http://man.openbsd.org/OpenBSD-current/man4/pflow.4
 |Softflowd                |  y | y  |   y   | IPFIX supported in https://github.com/djmdjm/softflowd
@@ -107,7 +107,7 @@ Template caches are saved as:
   * Value type is <<number,number>>
   * Default value is `4000`
 
-Netflow v9/v10 template cache TTL (minutes)
+Netflow v9/v10 template cache TTL (seconds)
 
 [id="plugins-{type}s-{plugin}-include_flowset_id"]
 ===== `include_flowset_id` 
