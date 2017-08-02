@@ -62,11 +62,30 @@ Example Logstash configuration that will listen on 2055/udp for Netflow v5,v9 an
 --------------------------
 input {
   udp {
-    port => 2055
+    port  => 2055
     codec => netflow
   }
 }
 --------------------------
+
+For high-performance production environments the configuration below will decode up to 6000 flows/sec on an 8 CPU instance. If your total flowrate exceeds 6000 flows/sec, you should use multiple Logstash instances.
+
+
+[source, ruby]
+--------------------------
+input {
+  udp {
+    port                 => 2055
+    receive_buffer_bytes => 16777216
+    codec                => netflow
+    workers              => 6
+  }
+--------------------------
+
+Make sure to increase the Linux kernel receive buffer limit:
+
+ # sysctl -w net.core.rmem_max=$((1024*1024*16))
+
 
 [id="plugins-{type}s-{plugin}-options"]
 ==== Netflow Codec Configuration Options
