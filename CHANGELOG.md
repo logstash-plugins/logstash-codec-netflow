@@ -1,3 +1,6 @@
+## 3.5.2
+  - Fix some documentation issues
+
 ## 3.5.1
 
   - Added test for Fortigate FortiOS 5.2 (Netflow v9)
