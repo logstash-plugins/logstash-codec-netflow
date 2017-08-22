@@ -68,24 +68,22 @@ input {
 }
 --------------------------
 
-For high-performance production environments the configuration below will decode up to 6000 flows/sec on an 8 CPU instance. If your total flowrate exceeds 6000 flows/sec, you should use multiple Logstash instances.
-
+For high-performance production environments the configuration below will decode up to 15000 flows/sec on a dedicated 16 CPU instance. If your total flowrate exceeds 15000 flows/sec, you should use multiple Logstash instances.
 
 [source, ruby]
 --------------------------
 input {
   udp {
     port                 => 2055
-    receive_buffer_bytes => 16777216
     codec                => netflow
-    workers              => 6
+    receive_buffer_bytes => 16777216
+    workers              => 16
   }
 --------------------------
 
-Make sure to increase the Linux kernel receive buffer limit:
+To mitigate dropped packets, make sure to increase the Linux kernel receive buffer limit:
 
  # sysctl -w net.core.rmem_max=$((1024*1024*16))
-
 
 [id="plugins-{type}s-{plugin}-options"]
 ==== Netflow Codec Configuration Options
