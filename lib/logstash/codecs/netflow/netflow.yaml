@@ -451,3 +451,9 @@
 40005:
 - :uint8
 - :fw_event
+56701:
+- :string
+- :app_id
+56702:
+- :string
+- :user_id
