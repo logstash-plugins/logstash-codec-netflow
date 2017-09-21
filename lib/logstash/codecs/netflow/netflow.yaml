@@ -149,7 +149,8 @@
 - :uint32
 - :flow_sampler_random_interval
 51:
-- :skip
+- :uint32
+- :flow_class
 52:
 - :uint8
 - :min_ttl
@@ -274,6 +275,12 @@
 183:
 - :uint16
 - :tcp_dst_port
+184:
+- :uint32
+- :tcpSequenceNumber
+185:
+- :uint32
+- :tcpAcknowledgementNumber
 194:
 - :uint8
 - :ip_tos
@@ -316,6 +323,24 @@
 243:
 - :uint16
 - :dot1qVlanId
+258:
+- :uint64
+- :collectionTimeMilliseconds
+259:
+- :uint16
+- :exportSctpStreamId
+260:
+- :uint32
+- :maxExportSeconds
+261:
+- :uint32
+- :maxFlowEndSeconds
+262:
+- :string
+- :messageMD5Checksum
+263:
+- :uint8
+- :messageScope
 281:
 - :ip6_addr
 - :xlate_src_addr_ipv6
@@ -451,6 +476,36 @@
 33002:
 - :uint16
 - :fw_ext_event
+34000:
+- :uint16
+- :flow_field_cts_src_group_tag
+35001:
+- :uint16
+- :fw_ext_event
+35004:
+- :uint32
+- :fw_blackout_secs
+35005:
+- :uint32
+- :fw_halfopen_high
+35006:
+- :uint32
+- :fw_halfopen_rate
+35007:
+- :uint32
+- :fw_zonepair_id
+35008:
+- :uint32
+- :fw_max_sessions
+35009:
+- :string
+- :fw_zonepair_name
+35010:
+- :string
+- :fw_ext_event_desc
+35011:
+- :uint32
+- :fw_summary_pkt_cnt
 40000:
 - :string
 - :username

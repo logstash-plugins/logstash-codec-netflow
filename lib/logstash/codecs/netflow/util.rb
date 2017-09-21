@@ -111,11 +111,11 @@ end
 class Application_Id16 < BinData::Primitive
   endian :big
   uint8  :classification_id
-  uint24 :selector_id
+  uint8 :selector_id
 
   def set(val)
-    self.classification_id=val.to_i<<24
-    self.selector_id = val.to_i-((val.to_i>>24)<<24)
+    self.classification_id=val.to_i<<8
+    self.selector_id = val.to_i-((val.to_i>>8)<<8)
   end
 
   def get
@@ -269,7 +269,7 @@ class NetflowOptionFlowset < BinData::Record
   endian :big
   array  :templates, :read_until => lambda { array.num_bytes == flowset_length - 4 } do
     uint16 :template_id
-    uint16 :scope_length, :assert => lambda { scope_length > 0 }
+    uint16 :scope_length
     uint16 :option_length, :assert => lambda { option_length > 0 }
     array  :scope_fields, :initial_length => lambda { scope_length / 4 } do
       uint16 :field_type

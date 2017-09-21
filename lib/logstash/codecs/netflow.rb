@@ -130,6 +130,8 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     end
   rescue BinData::ValidityError, IOError => e
     @logger.warn("Invalid netflow packet received (#{e})")
+  rescue NoMethodError => e
+    @logger.warn("Weird error processing netflow packet (#{e})")
   end
 
   private
@@ -298,6 +300,8 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     events
   rescue BinData::ValidityError, IOError => e
     @logger.warn("Invalid netflow packet received (#{e})")
+  rescue NameError => e
+    @logger.warn("Error processing netflow packet (#{e})")
   end
 
   def decode_ipfix(flowset, record)
