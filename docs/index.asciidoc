@@ -39,6 +39,7 @@ The following Netflow/IPFIX exporters are known to work with the most recent ver
 |Cisco ASA                |    | y  |       |  
 |Cisco ASR                |    | y  |       |  
 |Cisco IOS 12.x           |    | y  |       |  
+|Cisco ISR w/ HSL         |    | n  |       | https://github.com/logstash-plugins/logstash-codec-netflow/issues/93
 |Cisco WLC                |    | y  |       |
 |Citrix Netscaler         |    |    |   y   | Still some unknown fields, labeled netscalerUnknown<id>
 |fprobe                   |  y |    |       |
@@ -46,7 +47,7 @@ The following Netflow/IPFIX exporters are known to work with the most recent ver
 |ipt_NETFLOW              |  y | y  |   y   |
 |Juniper MX80             |  y |    |       | SW > 12.3R8
 |Mikrotik                 |  y |    |   y   | http://wiki.mikrotik.com/wiki/Manual:IP/Traffic_Flow
-|nProbe                   |  y | y  |   y   |  
+|nProbe                   |  y | y  |   y   | L7 DPI fields now also supported
 |OpenBSD pflow            |  y | n  |   y   | http://man.openbsd.org/OpenBSD-current/man4/pflow.4
 |Softflowd                |  y | y  |   y   | IPFIX supported in https://github.com/djmdjm/softflowd
 |Streamcore Streamgroomer |    | y  |       |

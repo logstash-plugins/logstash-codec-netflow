@@ -1,4 +1,10 @@
+## 3.6.0
+
+  - Added support for nprobe L7 DPI
+  - Added support for Fortigate FortiOS 5.4.x (application_id)
+
 ## 3.5.2
+
   - Fix some documentation issues
 
 ## 3.5.1

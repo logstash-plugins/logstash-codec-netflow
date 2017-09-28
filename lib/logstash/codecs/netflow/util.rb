@@ -108,7 +108,7 @@ class Forwarding_Status < BinData::Record
   bit6   :reason
 end
 
-class Application_Id < BinData::Primitive
+class Application_Id16 < BinData::Primitive
   endian :big
   uint8  :classification_id
   uint24 :selector_id
@@ -121,7 +121,81 @@ class Application_Id < BinData::Primitive
   def get
     self.classification_id.to_s + ":" + self.selector_id.to_s
   end
+end
 
+class Application_Id24 < BinData::Primitive
+  endian :big
+  uint8  :classification_id
+  uint16 :selector_id
+
+  def set(val)
+    self.classification_id=val.to_i<<16
+    self.selector_id = val.to_i-((val.to_i>>16)<<16)
+  end
+
+  def get
+    self.classification_id.to_s + ":" + self.selector_id.to_s
+  end
+end
+
+class Application_Id32 < BinData::Primitive
+  endian :big
+  uint8  :classification_id
+  uint24 :selector_id
+
+  def set(val)
+    self.classification_id=val.to_i<<24
+    self.selector_id = val.to_i-((val.to_i>>24)<<24)
+  end
+
+  def get
+    self.classification_id.to_s + ":" + self.selector_id.to_s
+  end
+end
+
+class Application_Id40 < BinData::Primitive
+  endian :big
+  uint8  :classification_id
+  uint32 :selector_id
+
+  def set(val)
+    self.classification_id=val.to_i<<32
+    self.selector_id = val.to_i-((val.to_i>>32)<<32)
+  end
+
+  def get
+    self.classification_id.to_s + ":" + self.selector_id.to_s
+  end
+end
+
+class Application_Id64 < BinData::Primitive
+  endian :big
+  uint8  :classification_id
+  uint56 :selector_id
+
+  def set(val)
+    self.classification_id=val.to_i<<56
+    self.selector_id = val.to_i-((val.to_i>>56)<<56)
+  end
+
+  def get
+    self.classification_id.to_s + ":" + self.selector_id.to_s
+  end
+end
+
+class Application_Id72 < BinData::Primitive
+  endian :big
+  uint8  :classification_id
+  uint64 :selector_id
+
+  def set(val)
+    self.classification_id=val.to_i<<64
+    self.selector_id = val.to_i-((val.to_i>>64)<<64)
+  end
+
+  def get
+    self.classification_id.to_s + ":" + self.selector_id.to_s
+  end
 end
 
 class OctetArray < BinData::Primitive

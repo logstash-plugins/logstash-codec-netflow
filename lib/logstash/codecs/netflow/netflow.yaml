@@ -340,6 +340,9 @@
 367:
 - :mac_addr
 - :wtpMacAddress
+372:
+- :string
+- :applicationCategoryName
 8192:
 - :uint32
 - :streamcore_wan_rtt
@@ -457,3 +460,9 @@
 56702:
 - :string
 - :user_id
+57590:
+- :uint16
+- :nprobe_proto
+57591:
+- :string
+- :nprobe_proto_name

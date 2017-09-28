@@ -966,6 +966,55 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+  context "Netflow 9 nprobe DPI L7" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_nprobe_dpi.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "netflow": {
+            "nprobe_proto": 82,
+            "in_pkts": 1,
+            "ipv4_dst_addr": "0.0.0.0",
+            "first_switched": "1970-01-01T00:08:33.000Z",
+            "flowset_id": 256,
+            "l4_src_port": 0,
+            "nprobe_proto_name": "\u0000\u00c1\u0000\u0000\u0001\u00ac\u0010\u0000d\u00e4O\u00ef\u00ff\u00ff\u00fa\u0007",
+            "version": 9,
+            "application_id": "0:82",
+            "flow_seq_num": 2,
+            "ipv4_src_addr": "0.0.0.0",
+            "protocol": 0,
+            "in_bytes": 82,
+            "application_name": "\u0000\u0000\u0000\u0000\u0000\"\u0000\u0000\u0000\u0000\u0004",
+            "last_switched": "1970-01-01T00:08:36.000Z",
+            "l4_dst_port": 0
+          },
+          "@timestamp": "1970-01-01T00:08:22.000Z",
+          "@version": "1",
+          "host": "172.16.32.201"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(1)
+      expect(decode[0].get("[netflow][nprobe_proto]")).to eq(82)
+      expect(decode[0].get("[netflow][application_id]")).to eq("0:82")
+      expect(decode[0].get("[netflow][in_bytes]")).to eq(82)
+    end
+
+    it "should serialize to json" do
+      # We skip this due to unprintable characters in the proto_name and application_name
+      # expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+  end
+
   context "Netflow 9 Fortigate FortiOS 5.2.1" do
     let(:data) do
       packets = []

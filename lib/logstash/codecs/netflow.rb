@@ -244,10 +244,11 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
       length = record.flowset_length - 4
 
-      # Template shouldn't be longer than the record and there should
-      # be at most 3 padding bytes
-      if template.num_bytes > length or ! (length % template.num_bytes).between?(0, 3)
-        @logger.warn("Template length doesn't fit cleanly into flowset", :template_id => record.flowset_id, :template_length => template.num_bytes, :record_length => length)
+      # Template shouldn't be longer than the record 
+      # As fas as padding is concerned, the RFC defines a SHOULD for 4-word alignment
+      # so we won't complain about that.
+      if template.num_bytes > length
+        @logger.warn("Template length exceeds flowset length, skipping", :template_id => record.flowset_id, :template_length => template.num_bytes, :record_length => length)
         return events
       end
 
@@ -460,9 +461,12 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
         # Small bit of fixup for:
         # - skip or string field types where the length is dynamic
-	# - for uint(8|16|24|32} where we use the length as specified by the
+	# - uint(8|16|24|32} where we use the length as specified by the
 	#   template instead of the YAML (e.g. ipv6_flow_label is 3 bytes in
 	#   the YAML and Cisco doc, but Cisco ASR9k sends 4 bytes)
+	# - application_id where we use the length as specified by the 
+	#   template and map it to custom types for handling.
+	#   
 	case field[0]
         when :uint8
           field[0] = uint_field(length, field[0])
@@ -472,6 +476,24 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           field[0] = uint_field(length, field[0])
         when :uint32
           field[0] = uint_field(length, field[0])
+        when :application_id
+          case length
+          when 2
+            field[0] = :Application_Id16
+          when 3
+            field[0] = :Application_Id24
+          when 4
+            field[0] = :Application_Id32
+          when 5
+            field[0] = :Application_Id40
+          when 8
+            field[0] = :Application_Id64
+          when 9
+            field[0] = :Application_Id72
+          else
+            @logger.warn("Unsupported application_id length encountered, skipping", :field => field, :length => length)
+            nil
+          end      
         when :skip
           field += [nil, {:length => length.to_i}]
         when :string
