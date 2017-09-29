@@ -340,6 +340,9 @@
 367:
 - :mac_addr
 - :wtpMacAddress
+371:
+- :string
+- :userName
 372:
 - :string
 - :applicationCategoryName
@@ -427,6 +430,9 @@
 8393:
 - :uint32
 - :streamcore_id_rule_10
+20000:
+- :uint16
+- :wlan_id
 33000:
 - :acl_id_asa
 - :ingress_acl_id

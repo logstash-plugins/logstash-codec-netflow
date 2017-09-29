@@ -1,3 +1,7 @@
+## 3.7.0
+
+  - Added support for Cisco WLC 8510 software 8.2
+
 ## 3.6.0
 
   - Added support for nprobe L7 DPI

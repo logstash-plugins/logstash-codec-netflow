@@ -1934,6 +1934,17 @@ describe LogStash::Codecs::Netflow do
     end
   end
 
+  context "Netflow 9 Cisco WLC 8500 release 8.2 " do
+    let(:data) do
+      data = []
+      data << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_cisco_wlc_8510_tpl_262.dat"), :mode => "rb")
+    end
+
+    it "should not raise_error" do
+      expect{decode.size}.not_to raise_error
+    end
+  end
+
   context "IPFIX Barracuda firewall" do
     let(:data) do
       packets = []
