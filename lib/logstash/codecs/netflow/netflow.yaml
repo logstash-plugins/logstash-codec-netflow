@@ -310,6 +310,9 @@
 236:
 - :string
 - :VRFname
+243:
+- :uint16
+- :dot1qVlanId
 281:
 - :ip6_addr
 - :xlate_src_addr_ipv6

@@ -1,3 +1,8 @@
+## 3.7.1
+
+  - Added support for CISCO1941/K9 software 15.1 
+
+
 ## 3.7.0
 
   - Added support for Cisco WLC 8510 software 8.2

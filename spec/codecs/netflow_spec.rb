@@ -1944,6 +1944,17 @@ describe LogStash::Codecs::Netflow do
       expect{decode.size}.not_to raise_error
     end
   end
+  
+  context "Netflow 9 Cisco 1941/K9 release 15.1 " do
+    let(:data) do
+      data = []
+      data << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_cisco_1941K9.dat"), :mode => "rb")
+    end
+
+    it "should not raise_error" do
+      expect{decode.size}.not_to raise_error
+    end
+  end
 
   context "IPFIX Barracuda firewall" do
     let(:data) do
