@@ -1955,6 +1955,17 @@ describe LogStash::Codecs::Netflow do
       expect{decode.size}.not_to raise_error
     end
   end
+  
+  context "Netflow 9 netflow 259 field 153 " do
+    let(:data) do
+      data = []
+      data << IO.read(File.join(File.dirname(__FILE__), "netflow9_flowset_259.dat"), :mode => "rb")
+    end
+
+    it "should not raise_error" do
+      expect{decode.size}.not_to raise_error
+    end
+  end
 
   context "IPFIX Barracuda firewall" do
     let(:data) do
