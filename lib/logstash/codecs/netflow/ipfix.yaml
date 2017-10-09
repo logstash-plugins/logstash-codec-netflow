@@ -1830,24 +1830,102 @@
   357:
   - :uint32
   - :netscalerUnknown357
+  358:
+  - :uint32
+  - :netscalerUnknown358
+  359:
+  - :uint32
+  - :netscalerUnknown359
+  360:
+  - :uint32
+  - :netscalerUnknown360
+  361:
+  - :octetarray
+  - :netscalerUnknown361
+  362:
+  - :uint32
+  - :netscalerUnknown362
   363:
   - :octetarray
   - :netscalerUnknown363
+  364:
+  - :uint32
+  - :netscalerUnknown364
+  365:
+  - :uint32
+  - :netscalerUnknown365
+  366:
+  - :uint64
+  - :netscalerUnknown366
+  367:
+  - :octetarray
+  - :netscalerUnknown367
+  377:
+  - :uint32
+  - :netscalerUnknown377
+  380:
+  - :uint8
+  - :netscalerUnknown380
   383:
   - :octetarray
   - :netscalerUnknown383
+  384:
+  - :octetarray
+  - :netscalerUnknown384
+  385:
+  - :octetarray
+  - :netscalerUnknown385
+  386:
+  - :string
+  - :netscalerUnknown386
+  387:
+  - :string
+  - :netscalerUnknown387
+  388:
+  - :uint8
+  - :netscalerUnknown388
+  389:
+  - :string
+  - :netscalerUnknown389
   391:
   - :uint32
   - :netscalerUnknown391
+  392:
+  - :uint16
+  - :netscalerUnknown392
+  393:
+  - :uint32
+  - :netscalerUnknown393
+  394:
+  - :uint32
+  - :netscalerUnknown394
   398:
   - :uint32
   - :netscalerUnknown398
+  399:
+  - :uint32
+  - :netscalerUnknown399
+  400:
+  - :uint16
+  - :netscalerUnknown400
+  401:
+  - :uint16
+  - :netscalerUnknown401
+  402:
+  - :uint8
+  - :netscalerUnknown402
+  403:
+  - :uint8
+  - :netscalerUnknown403
   404:
   - :uint32
   - :netscalerUnknown404
   405:
   - :uint32
   - :netscalerUnknown405
+  408:
+  - :uint8
+  - :netscalerUnknown408
   427:
   - :uint64
   - :netscalerUnknown427
@@ -1860,12 +1938,168 @@
   433:
   - :uint8
   - :netscalerUnknown433
+  434:
+  - :uint8
+  - :netscalerUnknown434
+  435:
+  - :uint8
+  - :netscalerUnknown435
+  447:
+  - :uint32
+  - :netscalerUnknown447
+  448:
+  - :uint32
+  - :netscalerUnknown448
+  451:
+  - :uint64
+  - :netscalerUnknown451
+  452:
+  - :uint64
+  - :netscalerUnknown452
   453:
   - :uint64
   - :netscalerUnknown453
+  455:
+  - :uint64
+  - :netscalerUnknown455
+  458:
+  - :uint32
+  - :netscalerUnknown458
+  459:
+  - :uint32
+  - :netscalerUnknown459
+  460:
+  - :uint32
+  - :netscalerUnknown460
+  461:
+  - :uint32
+  - :netscalerUnknown461
+  463:
+  - :uint32
+  - :netscalerUnknown463
+  464:
+  - :uint32
+  - :netscalerUnknown464
   465:
   - :uint32
   - :netscalerUnknown465
+  466:
+  - :uint32
+  - :netscalerUnknown466
+  467:
+  - :uint64
+  - :netscalerUnknown467
+  468:
+  - :uint64
+  - :netscalerUnknown468
+  475:
+  - :string
+  - :netscalerUnknown475
+  476:
+  - :uint8
+  - :netscalerUnknown476
+  477:
+  - :uint32
+  - :netscalerUnknown477
+  478:
+  - :uint32
+  - :netscalerUnknown478
+  479:
+  - :string
+  - :netscalerUnknown479
+  480:
+  - :uint8
+  - :netscalerUnknown480
+  481:
+  - :uint8
+  - :netscalerUnknown481
+  487:
+  - :uint32
+  - :netscalerUnknown487
+  488:
+  - :uint32
+  - :netscalerUnknown488
+  489:
+  - :uint32
+  - :netscalerUnknown489
+  491:
+  - :uint32
+  - :netscalerUnknown491
+  492:
+  - :uint32
+  - :netscalerUnknown492
+  493:
+  - :uint64
+  - :netscalerUnknown493
+  494:
+  - :uint64
+  - :netscalerUnknown494
+  507:
+  - :uint32
+  - :netscalerUnknown507
+  508:
+  - :uint32
+  - :netscalerUnknown508
+  509:
+  - :uint32
+  - :netscalerUnknown509
+  510:
+  - :uint32
+  - :netscalerUnknown510
+  511:
+  - :uint32
+  - :netscalerUnknown511
+  512:
+  - :uint8
+  - :netscalerUnknown512
+  513:
+  - :uint16
+  - :netscalerUnknown513
+  514:
+  - :uint16
+  - :netscalerUnknown514
+  518:
+  - :uint64
+  - :netscalerUnknown518
+  519:
+  - :uint64
+  - :netscalerUnknown519
+  520:
+  - :uint64
+  - :netscalerUnknown520
+  521:
+  - :uint16
+  - :netscalerUnknown521
+  522:
+  - :uint32
+  - :netscalerUnknown522
+  523:
+  - :uint32
+  - :netscalerUnknown523
+  532:
+  - :uint64
+  - :netscalerUnknown532
+  533:
+  - :uint64
+  - :netscalerUnknown533
+  534:
+  - :uint64
+  - :netscalerUnknown534
+  535:
+  - :uint64
+  - :netscalerUnknown535
+  536:
+  - :uint32
+  - :netscalerUnknown536
+  537:
+  - :uint16
+  - :netscalerUnknown537
+  538:
+  - :uint15
+  - :netscalerUnknown538
+  541:
+  - :uint32
+  - :netscalerUnknown541
 6876:
   880:
   - :uint8
