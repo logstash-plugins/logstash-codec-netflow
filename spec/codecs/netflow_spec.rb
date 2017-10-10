@@ -1955,11 +1955,11 @@ describe LogStash::Codecs::Netflow do
       expect{decode.size}.not_to raise_error
     end
   end
-  
-  context "Netflow 9 netflow 259 field 153 " do
+
+  context "Netflow 9 Cisco ASR1001-X " do
     let(:data) do
       data = []
-      data << IO.read(File.join(File.dirname(__FILE__), "netflow9_flowset_259.dat"), :mode => "rb")
+      data << IO.read(File.join(File.dirname(__FILE__), "netflow9_cisco_asr1001x_tpl259.dat"), :mode => "rb")
     end
 
     it "should not raise_error" do
