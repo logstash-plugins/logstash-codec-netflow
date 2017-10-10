@@ -247,6 +247,9 @@
 152:
 - 8
 - :flow_start_msec
+153:
+- 8
+- :flow_end_msec
 176:
 - :uint8
 - :icmp_type
