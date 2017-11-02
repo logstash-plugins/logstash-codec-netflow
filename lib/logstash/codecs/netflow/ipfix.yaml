@@ -3260,3 +3260,20 @@
   433:
   - :uint64
   - :reverseIgnoredLayer2FrameTotalCount
+21373:
+  4:
+  - :uint32
+  - :mark
+  6:
+  - :uint32
+  - :conntrack_id
+9789:
+  1:
+  - :uint16
+  - :afcProtocol
+  2:
+  - :string
+  - :afcProtocolName
+  4:
+  - :uint8
+  - :flowDirection 
