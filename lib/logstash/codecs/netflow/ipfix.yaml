@@ -2100,6 +2100,301 @@
   541:
   - :uint32
   - :netscalerUnknown541
+6871:
+  14:
+  - :uint8
+  - :initialTCPFlags
+  15:
+  - :uint8
+  - :unionTCPFlags
+  18:
+  - :string
+  - :payload
+  21:
+  - :uint32
+  - :reverseFlowDeltaMilliseconds
+  33:
+  - :uint16
+  - :silkAppLabel
+  35:
+  - :uint8
+  - :payloadEntropy
+  36:
+  - :string
+  - :osName
+  37:
+  - :string
+  - :osVersion
+  38:
+  - :string
+  - :firstPacketBanner
+  39:
+  - :string
+  - :secondPacketBanner
+  40:
+  - :uint16
+  - :flowAttributes
+  100:
+  - :uint32
+  - :expiredFragmentCount
+  101:
+  - :uint32
+  - :assembledFragmentCount
+  102:
+  - :uint32
+  - :meanFlowRate
+  103:
+  - :uint32
+  - :meanPacketRate
+  104:
+  - :uint32
+  - :flowTableFlushEventCount
+  105:
+  - :uint32
+  - :flowTablePeakCount
+  107:
+  - :string
+  - :osFingerPrint
+  126:
+  - :string
+  - :tftpFilename
+  127:
+  - :string
+  - :tftpMode
+  174:
+  - :uint8
+  - :dnsQueryResponse
+  175:
+  - :uint16
+  - :dnsQRType
+  176:
+  - :uint8
+  - :dnsAuthoritative
+  177:
+  - :uint8
+  - :dnsNXDomain
+  178:
+  - :uint8
+  - :dnsRRSection
+  179:
+  - :string
+  - :dnsQName
+  180:
+  - :string
+  - :dnsCName
+  181:
+  - :uint16
+  - :dnsMXPreference
+  182:
+  - :string
+  - :dnsMXExchange
+  183:
+  - :string
+  - :dnsNSDName
+  184:
+  - :string
+  - :dnsPTRDName
+  185:
+  - :string
+  - :sslCipher
+  186:
+  - :uint8
+  - :sslClientVersion
+  187:
+  - :uint32
+  - :sslServerCipher
+  188:
+  - :uint8
+  - :sslCompressionMethod
+  189:
+  - :uint8
+  - :sslCertVersion
+  190:
+  - :string
+  - :sslCertSignature
+  199:
+  - :uint32
+  - :dnsTTL
+  208:
+  - :string
+  - :dnsTXTData
+  209:
+  - :uint32
+  - :dnsSOASerial
+  210:
+  - :uint32
+  - :dnsSOARefresh
+  211:
+  - :uint32
+  - :dnsSOARetry
+  212:
+  - :uint32
+  - :dnsSOAExpire
+  213:
+  - :uint32
+  - :dnsSOAMinimum
+  214:
+  - :string
+  - :dnsSOAMName
+  215:
+  - :string
+  - :dnsSOARName
+  216:
+  - :uint16
+  - :dnsSRVPriority
+  217:
+  - :uint16
+  - :dnsSRVWeight
+  218:
+  - :uint16
+  - :dnsSRVPort
+  219:
+  - :uint16
+  - :dnsSRVTarget
+  223:
+  - :uint32
+  - :tcpUrgTotalCount
+  226:
+  - :uint16
+  - :dnsID
+  244:
+  - :string
+  - :sslCertSerialNumber
+  245:
+  - :string
+  - :sslObjectType
+  246:
+  - :string
+  - :sslObjectValue
+  247:
+  - :string
+  - :sslCertValidityNotBefore
+  248:
+  - :string
+  - :sslCertValidityNotAfter
+  249:
+  - :string
+  - :sslPublicKeyAlgorithm
+  250:
+  - :string
+  - :sslPublicKeyLength
+  287:
+  - :uint8
+  - :rtpPayloadType
+  288:
+  - :uint8
+  - :reverseRtpPayloadType
+  289:
+  - :uint64
+  - :mptcpInitialDataSequenceNumber
+  290:
+  - :uint32
+  - :mptcpReceiverToken
+  291:
+  - :uint16
+  - :mptcpMaximumSegmentSize
+  292:
+  - :uint8
+  - :mptcpAddressID
+  294:
+  - :string
+  - :sslServerName
+  295:
+  - :string
+  - :sslCertificateHash
+  293:
+  - :uint8
+  - :mptcpFlags
+  500:
+  - :uint32
+  - :smallPacketCount
+  501:
+  - :uint32
+  - :nonEmptyPacketCount
+  502:
+  - :uint64
+  - :dataByteCount
+  503:
+  - :uint64
+  - :averageInterarrivalTime
+  504:
+  - :uint64
+  - :standardDeviationInterarrivalTime
+  505:
+  - :uint16
+  - :firstNonEmptyPacketSize
+  506:
+  - :uint16
+  - :maxPacketSize
+  507:
+  - :uint8
+  - :firstEightNonEmptyPacketDirections
+  508:
+  - :uint8
+  - :standardDeviationPayloadLength
+  510:
+  - :uint32
+  - :largePacketCount
+  16398:
+  - :uint8
+  - :reverseInitialTCPFlags
+  16399:
+  - :uint8
+  - :reverseUnionTCPFlags
+  16402:
+  - :string
+  - :reversePayload
+  16419:
+  - :uint8
+  - :reversePayloadEntropy
+  16420:
+  - :string
+  - :reverseOsName
+  16421:
+  - :string
+  - :reverseOsVersion
+  16422:
+  - :string
+  - :reverseFirstPacketBanner
+  16423:
+  - :string
+  - :reverseSecondPacketBanner
+  16424:
+  - :uint16
+  - :reverseFlowAttributes
+  16491:
+  - :string
+  - :reverseOsFingerPrint
+  16671:
+  - :uint8
+  - :reverseRtpPayloadType
+  16884:
+  - :uint32
+  - :reverseSmallPacketCount
+  16885:
+  - :uint32
+  - :reverseNonEmptyPacketCount
+  16886:
+  - :uint64
+  - :reverseDataByteCount
+  16887:
+  - :uint64
+  - :reverseAverageInterarrivalTime
+  16888:
+  - :uint64
+  - :reverseStandardDeviationInterarrivalTime
+  16889:
+  - :uint16
+  - :reverseFirstNonEmptyPacketSize
+  16890:
+  - :uint16
+  - :reverseMaxPacketSize
+  16892:
+  - :uint16
+  - :reverseStandardDeviationPayloadLength
+  16894:
+  - :uint32
+  - :reverseLargePacketCount
 6876:
   880:
   - :uint8

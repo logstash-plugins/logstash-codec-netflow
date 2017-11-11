@@ -2014,8 +2014,126 @@ describe LogStash::Codecs::Netflow do
     end
   end
 
+  context "IPFIX YAF basic with applabel" do
+    # These samples have been generated with:
+    # /usr/local/bin/yaf --silk --ipfix=udp --live=pcap --out=host02 --ipfix-port=2055 --in=eth0 --applabel --verbose --mac --verbose --max-payload 384
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_yaf_tpls_option_tpl.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_yaf_tpl45841.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_yaf_data45841.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_yaf_data45873.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_yaf_data53248.dat"), :mode => "rb")
+    end
 
+    let(:json_events) do
+      events = []
+      events << <<-END
+      {
+        "netflow": {
+          "destinationIPv4Address": "172.16.32.100",
+          "octetTotalCount": 132,
+          "destinationTransportPort": 53,
+          "vlanId": 0,
+          "reversePacketTotalCount": 2,
+          "reverseFlowDeltaMilliseconds": 1,
+          "sourceIPv4Address": "172.16.32.201",
+          "reverseVlanId": 0,
+          "reverseIpClassOfService": 0,
+          "reverseOctetTotalCount": 200,
+          "reverseFlowAttributes": 0,
+          "ipClassOfService": 0,
+          "version": 10,
+          "flowEndReason": 1,
+          "protocolIdentifier": 17,
+          "silkAppLabel": 53,
+          "sourceTransportPort": 46086,
+          "packetTotalCount": 2,
+          "flowEndMilliseconds": "2016-12-25T12:58:35.819Z",
+          "flowStartMilliseconds": "2016-12-25T12:58:35.818Z",
+          "flowAttributes": 1
+        },
+        "@timestamp": "2016-12-25T13:03:38.000Z",
+        "@version": "1"
+      }
+      END
 
+      events << <<-END
+      {
+        "netflow": {
+          "destinationTransportPort": 9997,
+          "reversePacketTotalCount": 2,
+          "reverseFlowDeltaMilliseconds": 0,
+          "sourceIPv4Address": "172.16.32.100",
+          "reverseTcpSequenceNumber": 3788795034,
+          "reverseVlanId": 0,
+          "reverseOctetTotalCount": 92,
+          "ipClassOfService": 2,
+          "reverseInitialTCPFlags": 18,
+          "tcpSequenceNumber": 340533701,
+          "silkAppLabel": 0,
+          "sourceTransportPort": 63499,
+          "flowEndMilliseconds": "2016-12-25T12:58:34.346Z",
+          "flowAttributes": 0,
+          "destinationIPv4Address": "172.16.32.215",
+          "octetTotalCount": 172,
+          "vlanId": 0,
+          "reverseIpClassOfService": 0,
+          "reverseFlowAttributes": 0,
+          "unionTCPFlags": 17,
+          "version": 10,
+          "flowEndReason": 3,
+          "protocolIdentifier": 6,
+          "initialTCPFlags": 194,
+          "reverseUnionTCPFlags": 17,
+          "packetTotalCount": 4,
+          "flowStartMilliseconds": "2016-12-25T12:58:33.345Z"
+        },
+        "@timestamp": "2016-12-25T12:58:38.000Z",
+        "@version": "1"
+      }
+      END
+
+      events << <<-END
+      {
+        "netflow": {
+          "droppedPacketTotalCount": 0,
+          "exporterIPv4Address": "172.16.32.201",
+          "ignoredPacketTotalCount": 58,
+          "meanPacketRate": 6,
+          "flowTableFlushEventCount": 39,
+          "flowTablePeakCount": 58,
+          "version": 10,
+          "exportedFlowRecordTotalCount": 31,
+          "systemInitTimeMilliseconds": 1482670712000,
+          "notSentPacketTotalCount": 0,
+          "exportingProcessId": 0,
+          "meanFlowRate": 0,
+          "expiredFragmentCount": 0,
+          "assembledFragmentCount": 0,
+          "packetTotalCount": 1960
+        },
+        "@timestamp": "2016-12-25T13:03:33.000Z",
+        "@version": "1"
+      }
+      END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(3)
+      expect(decode[0].get("[netflow][silkAppLabel]")).to eq(53)
+      expect(decode[1].get("[netflow][initialTCPFlags]")).to eq(194)
+      expect(decode[2].get("[netflow][flowTablePeakCount]")).to eq(58)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+      expect(JSON.parse(decode[1].to_json)).to eq(JSON.parse(json_events[1]))
+      expect(JSON.parse(decode[2].to_json)).to eq(JSON.parse(json_events[2]))
+    end
+
+  end
 
 end
 

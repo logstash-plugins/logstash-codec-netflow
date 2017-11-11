@@ -1,10 +1,12 @@
+## 3.8.0
+
+  - Added initial YAF support with applabel and silk (but without DPI plugins because of complex data types)
+
 ## 3.7.1
+
   - Update gemspec summary
-
-## 3.7.1
-
   - Added support for CISCO1941/K9 software 15.1 
-
+  - Added undocumented Netscaler fields
 
 ## 3.7.0
 
