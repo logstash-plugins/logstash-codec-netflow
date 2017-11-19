@@ -1,5 +1,6 @@
 ## 3.8.1
 
+  - Prevent Netflow and IPFIX templates from being modified concurrently
   - Improved Palo Alto support and added rspec test
 
 ## 3.8.0

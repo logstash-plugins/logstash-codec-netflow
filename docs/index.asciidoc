@@ -51,8 +51,10 @@ The following Netflow/IPFIX exporters are known to work with the most recent ver
 |OpenBSD pflow            |  y | n  |   y   | http://man.openbsd.org/OpenBSD-current/man4/pflow.4
 |Softflowd                |  y | y  |   y   | IPFIX supported in https://github.com/djmdjm/softflowd
 |Streamcore Streamgroomer |    | y  |       |
+|Palo Alto PAN-OS         |    | y  |       |
 |Ubiquiti Edgerouter X    |    | y  |       | With MPLS labels
 |VMware VDS               |    |    |   y   | Still some unknown fields
+|YAF                      |    |    |   y   | With silk and applabel, but no DPI plugin support
 |===========================================================================================
 
 ==== Usage
