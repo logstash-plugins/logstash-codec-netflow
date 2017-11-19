@@ -1,3 +1,7 @@
+## 3.8.1
+
+  - Improved Palo Alto support and added rspec test
+
 ## 3.8.0
 
   - Added initial YAF support with applabel and silk (but without DPI plugins because of complex data types)

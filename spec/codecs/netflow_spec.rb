@@ -1967,6 +1967,60 @@ describe LogStash::Codecs::Netflow do
     end
   end
 
+  context "Netflow 9 Palo Alto PAN-OS with app-id" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_paloalto_panos_tpl.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_paloalto_panos_data.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "netflow": {
+            "output_snmp": 23,
+            "icmp_type": 0,
+            "in_pkts": 1,
+            "src_tos": 0,
+            "ipv4_dst_addr": "162.115.24.30",
+            "first_switched": "2017-11-13T14:33:53.000Z",
+            "flowset_id": 257,
+            "l4_src_port": 39702,
+            "fw_event": 5,
+            "version": 9,
+            "flow_seq_num": 207392627,
+            "ipv4_src_addr": "10.32.105.103",
+            "in_bytes": 111,
+            "protocol": 6,
+            "tcp_flags": 26,
+            "input_snmp": 24,
+            "last_switched": "2017-11-13T14:39:32.000Z",
+            "user_id": "",
+            "conn_id": 415347,
+            "privateEnterpriseNumber": 25461,
+            "l4_dst_port": 443,
+            "app_id": "ssl",
+            "direction": 0
+          },
+          "@version": "1",
+          "@timestamp": "2017-11-13T14:39:31.000Z"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(8)
+      expect(decode[7].get("[netflow][app_id]")).to eq("incomplete")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[1].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+  end
+
+
   context "IPFIX Barracuda firewall" do
     let(:data) do
       packets = []

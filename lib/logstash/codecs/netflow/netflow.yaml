@@ -331,6 +331,9 @@
 323:
 - 8
 - :event_time_msec
+346:
+- :uint32
+- :privateEnterpriseNumber
 361:
 - :uint16
 - :postNATPortBlockStart
