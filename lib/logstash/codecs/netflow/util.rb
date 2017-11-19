@@ -7,15 +7,19 @@ class IP4Addr < BinData::Primitive
   uint32 :storage
 
   def set(val)
-    ip = IPAddr.new(val)
-    if ! ip.ipv4?
-      raise ArgumentError, "invalid IPv4 address '#{val}'"
+    unless val.nil?
+      ip = IPAddr.new(val)
+      if ! ip.ipv4?
+        raise ArgumentError, "invalid IPv4 address '#{val}'"
+      end
+      self.storage = ip.to_i
     end
-    self.storage = ip.to_i
   end
 
   def get
-    IPAddr.new_ntoh([self.storage].pack('N')).to_s
+    unless self.storage.nil?
+      IPAddr.new_ntoh([self.storage].pack('N')).to_s
+    end
   end
 end
 
@@ -24,17 +28,21 @@ class IP6Addr < BinData::Primitive
   uint128 :storage
 
   def set(val)
-    ip = IPAddr.new(val)
-    if ! ip.ipv6?
-      raise ArgumentError, "invalid IPv6 address `#{val}'"
+    unless val.nil?
+      ip = IPAddr.new(val)
+      if ! ip.ipv6?
+        raise ArgumentError, "invalid IPv6 address `#{val}'"
+      end
+      self.storage = ip.to_i
     end
-    self.storage = ip.to_i
   end
 
   def get
-    IPAddr.new_ntoh((0..7).map { |i|
-      (self.storage >> (112 - 16 * i)) & 0xffff
-    }.pack('n8')).to_s
+    unless self.storage.nil?
+      IPAddr.new_ntoh((0..7).map { |i|
+        (self.storage >> (112 - 16 * i)) & 0xffff
+      }.pack('n8')).to_s
+    end
   end
 end
 
@@ -42,12 +50,18 @@ class MacAddr < BinData::Primitive
   array :bytes, :type => :uint8, :initial_length => 6
 
   def set(val)
-    ints = val.split(/:/).collect { |int| int.to_i(16) }
-    self.bytes = ints
+    unless val.nil?
+      ints = val.split(/:/).collect { |int| int.to_i(16) }
+      self.bytes = ints
+    end
   end
 
   def get
-    self.bytes.collect { |byte| byte.value.to_s(16).rjust(2,'0') }.join(":")
+    self.bytes.collect { |byte| 
+      unless byte.nil?
+        byte.value.to_s(16).rjust(2,'0')
+      end
+    }.join(":")
   end
 end
 
@@ -85,11 +99,17 @@ class ACLIdASA < BinData::Primitive
   array :bytes, :type => :uint8, :initial_length => 12
 
   def set(val)
-    self.bytes = val.split("-").collect { |aclid| aclid.scan(/../).collect { |hex| hex.to_i(16)} }.flatten
+    unless val.nil?
+      self.bytes = val.split("-").collect { |aclid| aclid.scan(/../).collect { |hex| hex.to_i(16)} }.flatten
+    end
   end
 
   def get
-    hexstring = self.bytes.collect { |byte| byte.value.to_s(16).rjust(2,'0') }.join
+    hexstring = self.bytes.collect { |byte| 
+      unless byte.nil?
+        byte.value.to_s(16).rjust(2,'0') 
+      end
+    }.join
     hexstring.scan(/......../).collect { |aclid| aclid }.join("-")
   end
 end
@@ -114,8 +134,10 @@ class Application_Id16 < BinData::Primitive
   uint24 :selector_id
 
   def set(val)
-    self.classification_id=val.to_i<<24
-    self.selector_id = val.to_i-((val.to_i>>24)<<24)
+    unless val.nil?
+      self.classification_id=val.to_i<<24
+      self.selector_id = val.to_i-((val.to_i>>24)<<24)
+    end
   end
 
   def get
@@ -129,8 +151,10 @@ class Application_Id24 < BinData::Primitive
   uint16 :selector_id
 
   def set(val)
-    self.classification_id=val.to_i<<16
-    self.selector_id = val.to_i-((val.to_i>>16)<<16)
+    unless val.nil?
+      self.classification_id=val.to_i<<16
+      self.selector_id = val.to_i-((val.to_i>>16)<<16)
+    end
   end
 
   def get
@@ -144,8 +168,10 @@ class Application_Id32 < BinData::Primitive
   uint24 :selector_id
 
   def set(val)
-    self.classification_id=val.to_i<<24
-    self.selector_id = val.to_i-((val.to_i>>24)<<24)
+    unless val.nil?
+      self.classification_id=val.to_i<<24
+      self.selector_id = val.to_i-((val.to_i>>24)<<24)
+    end
   end
 
   def get
@@ -159,8 +185,10 @@ class Application_Id40 < BinData::Primitive
   uint32 :selector_id
 
   def set(val)
-    self.classification_id=val.to_i<<32
-    self.selector_id = val.to_i-((val.to_i>>32)<<32)
+    unless val.nil?
+      self.classification_id=val.to_i<<32
+      self.selector_id = val.to_i-((val.to_i>>32)<<32)
+    end
   end
 
   def get
@@ -174,8 +202,10 @@ class Application_Id64 < BinData::Primitive
   uint56 :selector_id
 
   def set(val)
-    self.classification_id=val.to_i<<56
-    self.selector_id = val.to_i-((val.to_i>>56)<<56)
+    unless val.nil?
+      self.classification_id=val.to_i<<56
+      self.selector_id = val.to_i-((val.to_i>>56)<<56)
+    end
   end
 
   def get
@@ -189,8 +219,10 @@ class Application_Id72 < BinData::Primitive
   uint64 :selector_id
 
   def set(val)
-    self.classification_id=val.to_i<<64
-    self.selector_id = val.to_i-((val.to_i>>64)<<64)
+    unless val.nil?
+      self.classification_id=val.to_i<<64
+      self.selector_id = val.to_i-((val.to_i>>64)<<64)
+    end
   end
 
   def get
@@ -204,7 +236,9 @@ class OctetArray < BinData::Primitive
   array :bytes, :type => :uint8, :initial_length => :initial_length
 
   def set(val)
-    self.bytes = val.scan(/../).collect { |hex| hex.to_i(16)}
+    unless val.nil?
+      self.bytes = val.scan(/../).collect { |hex| hex.to_i(16)}
+    end
   end
 
   def get

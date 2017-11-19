@@ -1,3 +1,7 @@
+## 3.8.2
+
+  - Fixed exceptions due to NilClass in util.rb and netflow.rb
+
 ## 3.8.1
 
   - Prevent Netflow and IPFIX templates from being modified concurrently

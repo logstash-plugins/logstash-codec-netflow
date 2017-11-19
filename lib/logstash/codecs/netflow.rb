@@ -240,9 +240,9 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       else
         key = "#{flowset.source_id}|#{record.flowset_id}"
       end
-      template = @netflow_templates[key]
-
-      unless template
+      if @netflow_templates[key] != nil
+        template = @netflow_templates[key]
+      else
         @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from source id #{flowset.source_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
         return events
       end
@@ -252,9 +252,11 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       # Template shouldn't be longer than the record 
       # As fas as padding is concerned, the RFC defines a SHOULD for 4-word alignment
       # so we won't complain about that.
-      if template.num_bytes > length
-        @logger.warn("Template length exceeds flowset length, skipping", :template_id => record.flowset_id, :template_length => template.num_bytes, :record_length => length)
-        return events
+      if template.num_bytes != nil
+        if template.num_bytes > length
+          @logger.warn("Template length exceeds flowset length, skipping", :template_id => record.flowset_id, :template_length => template.num_bytes, :record_length => length)
+          return events
+        end
       end
 
       array = BinData::Array.new(:type => template, :initial_length => length / template.num_bytes)
@@ -336,9 +338,9 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     when 256..65535
       # Data flowset
       key = "#{flowset.observation_domain_id}|#{record.flowset_id}"
-      template = @ipfix_templates[key]
-
-      unless template
+      if @ipfix_templates[key] != nil
+        template = @ipfix_templates[key]
+      else
         @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from observation domain id #{flowset.observation_domain_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
         return events
       end
