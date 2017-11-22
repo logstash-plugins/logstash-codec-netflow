@@ -50,6 +50,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   FLOWSET_ID = "flowset_id"
 
   def initialize(params = {})
+    @file_cache_mutex = Mutex.new
     super(params)
     @threadsafe = true
     @decode_mutex_netflow = Mutex.new
@@ -240,9 +241,10 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       else
         key = "#{flowset.source_id}|#{record.flowset_id}"
       end
-      if @netflow_templates[key] != nil
-        template = @netflow_templates[key]
-      else
+
+      template = @decode_mutex_netflow.synchronize { @netflow_templates[key] }
+
+      if !template
         @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from source id #{flowset.source_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
         return events
       end
@@ -419,9 +421,10 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     templates_cache = {}
     begin
       @logger.debug? and @logger.debug("Loading templates from template cache #{file_path}")
-      templates_cache = JSON.parse(File.read(file_path))
+      file_data = @file_cache_mutex.synchronize { File.read(file_path)}
+      templates_cache = JSON.parse(file_data)
     rescue Exception => e
-      raise "#{self.class.name}: templates cache file corrupt (#{file_path})"
+      raise "#{self.class.name}: templates cache file could not be read @ (#{file_path}: #{e.class.name} #{e.message})"
     end
 
     templates_cache
@@ -430,7 +433,9 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   def save_templates_cache(templates_cache, file_path)
     begin
       @logger.debug? and @logger.debug("Writing templates to template cache #{file_path}")
-      File.open(file_path, 'w') {|file| file.write templates_cache.to_json }
+      @file_cache_mutex.synchronize do
+        File.open(file_path, 'w') {|file| file.write templates_cache.to_json }
+      end
     rescue Exception => e
       raise "#{self.class.name}: saving templates cache file failed (#{file_path}) with error #{e}"
     end

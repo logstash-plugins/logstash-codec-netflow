@@ -1,3 +1,6 @@
+## 3.8.3
+  - Fixed a race condition that could cause some errors when running in a multithreaded input
+
 ## 3.8.2
 
   - Fixed exceptions due to NilClass in util.rb and netflow.rb
