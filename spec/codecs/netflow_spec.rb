@@ -2020,6 +2020,61 @@ describe LogStash::Codecs::Netflow do
     end
   end
 
+  context "IPFIX vIPtela with VPN id" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_viptela_tpl257.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_viptela_data257.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "@version": "1",
+          "netflow": {
+            "destinationTransportPort": 443,
+            "icmpTypeCodeIPv4": 0,
+            "sourceIPv4Address": "10.113.7.54",
+            "ipClassOfService": 48,
+            "ipPrecedence": 1,
+            "maximumIpTotalLength": 277,
+            "egressInterface": 3,
+            "octetDeltaCount": 775,
+            "ipNextHopIPv4Address": "10.0.0.1",
+            "sourceTransportPort": 41717,
+            "viptelaVPNId": 100,
+            "destinationIPv4Address": "172.16.21.27",
+            "octetTotalCount": 775,
+            "minimumIpTotalLength": 70,
+            "ipDiffServCodePoint": 12,
+            "tcpControlBits": 16,
+            "ingressInterface": 11,
+            "version": 10,
+            "packetDeltaCount": 8,
+            "flowEndReason": 3,
+            "protocolIdentifier": 6,
+            "flowEndSeconds": "2017-11-21T14:32:15.000Z",
+            "flowStartSeconds": "2017-11-21T14:32:15.000Z",
+            "packetTotalCount": 8
+          },
+          "@timestamp": "2017-11-21T14:32:15.000Z"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(1)
+      expect(decode[0].get("[netflow][viptelaVPNId]")).to eq(100)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+  end
+
+
 
   context "IPFIX Barracuda firewall" do
     let(:data) do

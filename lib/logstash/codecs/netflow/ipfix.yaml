@@ -3598,3 +3598,7 @@
   433:
   - :uint64
   - :reverseIgnoredLayer2FrameTotalCount
+41916:
+  4321:
+  - :uint64
+  - :viptelaVPNId

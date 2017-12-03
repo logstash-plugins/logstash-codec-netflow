@@ -1,3 +1,8 @@
+## 3.9.0
+
+  - Added vIPtela support
+  - Added fields for Cisco ASR1k
+
 ## 3.8.3
 
   - Fixed a race condition that could cause some errors when running in a multithreaded input

@@ -37,9 +37,10 @@ The following Netflow/IPFIX exporters are known to work with the most recent ver
 |Netflow exporter         | v5 | v9 | IPFIX | Remarks
 |Barracuda Firewall       |    |    |   y   |
 |Cisco ASA                |    | y  |       |  
-|Cisco ASR                |    | y  |       |  
+|Cisco ASR 1k             |    |    |   n   | Fails because of duplicate fields
+|Cisco ASR 9k             |    | y  |       |  
 |Cisco IOS 12.x           |    | y  |       |  
-|Cisco ISR w/ HSL         |    | n  |       | https://github.com/logstash-plugins/logstash-codec-netflow/issues/93
+|Cisco ISR w/ HSL         |    | n  |       | Fails because of duplicate fields, see: https://github.com/logstash-plugins/logstash-codec-netflow/issues/93
 |Cisco WLC                |    | y  |       |
 |Citrix Netscaler         |    |    |   y   | Still some unknown fields, labeled netscalerUnknown<id>
 |fprobe                   |  y |    |       |
@@ -55,6 +56,7 @@ The following Netflow/IPFIX exporters are known to work with the most recent ver
 |Ubiquiti Edgerouter X    |    | y  |       | With MPLS labels
 |VMware VDS               |    |    |   y   | Still some unknown fields
 |YAF                      |    |    |   y   | With silk and applabel, but no DPI plugin support
+|vIPtela                  |    |    |   y   |
 |===========================================================================================
 
 ==== Usage
