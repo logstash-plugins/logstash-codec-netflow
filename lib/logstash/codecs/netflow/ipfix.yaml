@@ -1202,6 +1202,49 @@
   433:
   - :uint64
   - :ignoredLayer2FrameTotalCount
+9:
+  8337:
+  - :uint64
+  - :ciscoServerBytesNetwork
+  8338:
+  - :uint64
+  - :ciscoClientBytesNetwork
+  9252:
+  - :uint8
+  - :ciscoServicesWaasSegment
+  9253:
+  - :uint8
+  - :ciscoServicesWaasPassthroughReason
+  9357:
+  - :string
+  - :ciscoAppHTTPUriStatistics
+  12232:
+  - :string
+  - :cisoAppCategoryName
+  12234:
+  - :string
+  - :ciscoAppGroupName
+  12235:
+  - :string
+  - :ciscoAppHTTPHost
+  12236:
+  - :ip4_addr
+  - :ciscoClientIPv4Address
+  12237:
+  - :ip4_addr
+  - :ciscoServerIPv4Address
+  12240:
+  - :uint16
+  - :ciscoClientL4Port
+  12241:
+  - :uint16
+  - :ciscoServerL4Port
+  12242:
+  - :uint32
+  - :ciscoConnectionId
+  12244:
+  - :string
+  - :ciscoAppBusiness
 5951:
   128:
   - :uint32
