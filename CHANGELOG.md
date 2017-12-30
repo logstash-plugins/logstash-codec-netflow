@@ -1,3 +1,7 @@
+## 3.9.1
+
+  - Added Netflow v9 IE150 IE151, IE154, IE155
+
 ## 3.9.0
 
   - Added vIPtela support

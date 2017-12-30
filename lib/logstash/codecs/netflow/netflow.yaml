@@ -244,12 +244,24 @@
 148:
 - :uint32
 - :conn_id
+150:
+- :uint32
+- :flowStartSeconds
+151:
+- :uint32
+- :flowEndSeconds
 152:
 - 8
 - :flow_start_msec
 153:
 - 8
 - :flow_end_msec
+154:
+- :uint64
+- :flowStartMicroseconds
+155:
+- :uint64
+- :flowEndMicroseconds
 176:
 - :uint8
 - :icmp_type

@@ -905,6 +905,85 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+  context "Netflow 9 IE150 IE151" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_unknown_tpl266_292_data.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+      {
+        "@version": "1",
+        "netflow": {
+          "in_pkts": 1,
+          "ipv4_dst_addr": "192.168.0.2",
+          "src_tos": 0,
+          "flowset_id": 266,
+          "l4_src_port": 137,
+          "version": 9,
+          "flow_seq_num": 35088,
+          "ipv4_src_addr": "192.168.0.3",
+          "protocol": 17,
+          "in_bytes": 78,
+          "egressVRFID": 0,
+          "input_snmp": 13,
+          "flow_sampler_id": 1,
+          "ingressVRFID": 0,
+          "flowEndSeconds": 1512147866,
+          "l4_dst_port": 137,
+          "flowStartSeconds": 1512147866,
+          "direction": 0
+        },
+        "@timestamp": "2017-12-01T17:04:39.000Z"
+      }
+      END
+
+      events << <<-END
+      {
+        "@version": "1",
+        "netflow": {
+          "output_snmp": 13,
+          "in_pkts": 1,
+          "ipv4_dst_addr": "192.168.0.5",
+          "src_tos": 0,
+          "flowset_id": 292,
+          "l4_src_port": 58130,
+          "version": 9,
+          "flow_seq_num": 35088,
+          "ipv4_src_addr": "192.168.0.4",
+          "protocol": 17,
+          "in_bytes": 232,
+          "egressVRFID": 0,
+          "flow_sampler_id": 1,
+          "ingressVRFID": 0,
+          "flowEndSeconds": 1512147869,
+          "l4_dst_port": 6343,
+          "flowStartSeconds": 1512147869,
+          "direction": 1
+        },
+        "@timestamp": "2017-12-01T17:04:39.000Z"
+      }
+      END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(2)
+      expect(decode[1].get("[netflow][flowStartSeconds]")).to eq(1512147869)
+      expect(decode[1].get("[netflow][flowEndSeconds]")).to eq(1512147869)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+      expect(JSON.parse(decode[1].to_json)).to eq(JSON.parse(json_events[1]))
+    end
+
+  end
+
+
+
   context "Netflow 9 Ubiquiti Edgerouter with MPLS labels" do
     let(:data) do
       packets = []
