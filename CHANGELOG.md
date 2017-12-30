@@ -1,3 +1,7 @@
+## 3.10.0
+
+  - Added support for Nokia BRAS
+
 ## 3.9.1
 
   - Added Netflow v9 IE150 IE151, IE154, IE155

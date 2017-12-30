@@ -1245,6 +1245,16 @@
   12244:
   - :string
   - :ciscoAppBusiness
+637:
+  91:
+  - :uint16
+  - :natInsideSvcid
+  92:
+  - :uint16
+  - :natOutsideSvcid
+  93:
+  - :string
+  - :natSubString
 5951:
   128:
   - :uint32

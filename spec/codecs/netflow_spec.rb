@@ -982,6 +982,51 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+  context "IPFIX Nokia BRAS" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_nokia_bras_tpl.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_nokia_bras_data256.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "@version": "1",
+          "netflow": {
+            "destinationIPv4Address": "10.0.0.34",
+            "destinationTransportPort": 80,
+            "protocolIdentifier": 6,
+            "sourceIPv4Address": "10.0.1.228",
+            "natSubString": "USER1@10.10.0.123",
+            "sourceTransportPort": 5878,
+            "version": 10,
+            "flowId": 3389049088,
+            "natOutsideSvcid": 0,
+            "flowStartMilliseconds": "2017-12-14T07:23:45.148Z",
+            "natInsideSvcid": 100
+          },
+          "@timestamp": "2017-12-14T07:23:45.000Z"
+        }
+      END
+
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(1)
+      expect(decode[0].get("[netflow][natInsideSvcid]")).to eq(100)
+      expect(decode[0].get("[netflow][natOutsideSvcid]")).to eq(0)
+      expect(decode[0].get("[netflow][natSubString]")).to eq("USER1@10.10.0.123")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
+
 
 
   context "Netflow 9 Ubiquiti Edgerouter with MPLS labels" do
