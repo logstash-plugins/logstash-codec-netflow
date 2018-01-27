@@ -74,7 +74,9 @@ input {
 }
 --------------------------
 
-For high-performance production environments the configuration below will decode up to 15000 flows/sec on a dedicated 16 CPU instance. If your total flowrate exceeds 15000 flows/sec, you should use multiple Logstash instances.
+For high-performance production environments the configuration below will decode up to 15000 flows/sec from a Cisco ASR 9000 router on a dedicated 16 CPU instance. If your total flowrate exceeds 15000 flows/sec, you should use multiple Logstash instances.
+
+Note that for richer flows from a Cisco ASA firewall this number will be at least 3x lower.
 
 [source, ruby]
 --------------------------
