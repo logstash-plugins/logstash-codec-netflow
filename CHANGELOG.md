@@ -1,6 +1,7 @@
 ## 3.11.0
 
   - Updated Netflow v9 IE coverage from 10% to 90%
+  - Added support for Huawei Netstream
 
 ## 3.10.0
 

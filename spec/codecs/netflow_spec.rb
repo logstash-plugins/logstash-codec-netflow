@@ -1860,6 +1860,68 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+
+  context "Netflow 9 Huawei Netstream" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_huawei_netstream_tpl.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_huawei_netstream_data.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "@version": "1",
+          "netflow": {
+            "dst_as": 0,
+            "rev_flow_delta_bytes": 0,
+            "forwarding_status": {
+              "reason": 0,
+              "status": 0
+            },
+            "in_pkts": 4,
+            "first_switched": "2018-01-29T02:56:52.999Z",
+            "flowset_id": 1315,
+            "ipv4_next_hop": "10.108.252.41",
+            "l4_src_port": 45587,
+            "src_vlan": 0,
+            "in_bytes": 200,
+            "protocol": 6,
+            "tcp_flags": 24,
+            "dst_vlan": 0,
+            "l4_dst_port": 2598,
+            "src_as": 0,
+            "direction": 1,
+            "output_snmp": 31,
+            "dst_mask": 25,
+            "ipv4_dst_addr": "10.111.112.204",
+            "src_tos": 0,
+            "src_mask": 24,
+            "version": 9,
+            "flow_seq_num": 129954,
+            "ipv4_src_addr": "10.108.219.53",
+            "last_switched": "2018-01-29T03:02:20.000Z",
+            "input_snmp": 8,
+            "bgp_ipv4_next_hop": "0.0.0.0"
+          },
+          "@timestamp": "2018-01-29T03:02:20.000Z"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(1)
+      expect(decode[0].get("[netflow][rev_flow_delta_bytes]")).to eq(0)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+  end
+
+
   context "Netflow 9 field layer2segmentid" do
     let(:data) do
       packets = []
