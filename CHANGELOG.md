@@ -1,3 +1,7 @@
+## 3.11.0
+
+  - Updated Netflow v9 IE coverage from 10% to 90%
+
 ## 3.10.0
 
   - Added support for Nokia BRAS

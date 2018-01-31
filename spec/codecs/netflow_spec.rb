@@ -1860,6 +1860,56 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+  context "Netflow 9 field layer2segmentid" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_field_layer2segmentid_tpl.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_field_layer2segmentid_data.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "@version": "1",
+          "netflow": {
+            "in_pkts": 1,
+            "ipv4_dst_addr": "80.82.237.40",
+            "src_tos": 0,
+            "first_switched": "2018-01-16T09:44:48.000Z",
+            "flowset_id": 266,
+            "l4_src_port": 61926,
+            "version": 9,
+            "flow_seq_num": 4773,
+            "ipv4_src_addr": "192.168.200.136",
+            "src_vlan": 3174,
+            "protocol": 6,
+            "in_bytes": 52,
+            "input_snmp": 7,
+            "last_switched": "2018-01-16T09:44:48.000Z",
+            "flow_sampler_id": 98,
+            "layer2SegmentId": 0,
+            "ingressVRFID": 0,
+            "l4_dst_port": 445,
+            "direction": 0
+          },
+          "@timestamp": "2018-01-16T09:45:02.000Z"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(1)
+      expect(decode[0].get("[netflow][layer2SegmentId]")).to eq(0)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+  end
+
+
   context "Netflow 9 Cisco ASR 9000 series template 260" do
     let(:data) do
       packets = []
