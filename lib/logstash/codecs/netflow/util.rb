@@ -8,17 +8,15 @@ class IP4Addr < BinData::Primitive
 
   def set(val)
     unless val.nil?
-      ip = IPAddr.new(val)
-      if ! ip.ipv4?
-        raise ArgumentError, "invalid IPv4 address '#{val}'"
-      end
-      self.storage = ip.to_i
+      self.storage = val.split('.').inject(0) {|total,value| (total << 8 ) + value.to_i}
     end
   end
 
   def get
+    # This is currently the fastest implementation
+    # For benchmarks see spec/codecs/benchmarks/IPaddr.rb
     unless self.storage.nil?
-      IPAddr.new_ntoh([self.storage].pack('N')).to_s
+      [self.storage].pack('N').unpack('C4').join('.')
     end
   end
 end
@@ -38,6 +36,9 @@ class IP6Addr < BinData::Primitive
   end
 
   def get
+    # There faster implementations, however they come with the 
+    # loss of compressed IPv6 notation.
+    # For benchmarks see spec/codecs/benchmarks/IP6Addr.rb
     unless self.storage.nil?
       IPAddr.new_ntoh((0..7).map { |i|
         (self.storage >> (112 - 16 * i)) & 0xffff
@@ -57,8 +58,10 @@ class MacAddr < BinData::Primitive
   end
 
   def get
-    hexstring = self.bytes.unpack('H*')
-    hexstring[0].scan(/../).collect { |aclid| aclid }.join(":")
+    # This is currently the fastest implementation
+    # For benchmarks see spec/codecs/benchmarks/MacAddr.rb
+    b = self.bytes.unpack('H*')[0]
+    b[0..1] + ":" + b[2..3] + ":" + b[4..5] + ":" + b[6..7] + ":" + b[8..9] + ":" + b[10..11]
   end
 end
 
@@ -102,8 +105,10 @@ class ACLIdASA < BinData::Primitive
   end
 
   def get
-    hexstring = self.bytes.unpack('H*')
-    hexstring[0].scan(/......../).collect { |aclid| aclid }.join("-")
+    # This is currently the fastest implementation
+    # For benchmarks see spec/codecs/benchmarks/ACLIdASA.rb
+    b = self.bytes.unpack('H*')[0]
+    b[0..7] + "-" + b[8..15] + "-" + b[16..23] 
   end
 end
 

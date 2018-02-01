@@ -1,7 +1,13 @@
+## 3.11.2
+
+  - Further improved decoding performance of ASA ACL ids
+  - Further improved decoding performance of MAC addresses
+  - Improved decoding performance of IPv4 addresses
+
 ## 3.11.1
 
-  - Improved decoding performance for ASA ACL ids
-  - Improved decoding performance for mac addresses
+  - Improved decoding performance of ASA ACL ids
+  - Improved decoding performance of mac addresses
 
 ## 3.11.0
 
