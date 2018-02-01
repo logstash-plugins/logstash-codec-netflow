@@ -96,7 +96,7 @@ class VarString < BinData::Primitive
 end
 
 class ACLIdASA < BinData::Primitive
-  array :bytes, :type => :uint8, :initial_length => 12
+  string :bytes, :length => 12
 
   def set(val)
     unless val.nil?
@@ -105,12 +105,8 @@ class ACLIdASA < BinData::Primitive
   end
 
   def get
-    hexstring = self.bytes.collect { |byte| 
-      unless byte.nil?
-        byte.value.to_s(16).rjust(2,'0') 
-      end
-    }.join
-    hexstring.scan(/......../).collect { |aclid| aclid }.join("-")
+    hexstring = self.bytes.unpack('H*')
+    hexstring[0].scan(/......../).collect { |aclid| aclid }.join("-")
   end
 end
 
