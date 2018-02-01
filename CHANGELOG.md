@@ -1,3 +1,8 @@
+## 3.11.1
+
+  - Improved decoding performance for ASA ACL ids
+  - Improved decoding performance for mac addresses
+
 ## 3.11.0
 
   - Updated Netflow v9 IE coverage from 10% to 90%

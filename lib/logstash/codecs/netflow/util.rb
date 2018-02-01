@@ -47,7 +47,7 @@ class IP6Addr < BinData::Primitive
 end
 
 class MacAddr < BinData::Primitive
-  array :bytes, :type => :uint8, :initial_length => 6
+  string :bytes, :length => 6
 
   def set(val)
     unless val.nil?
@@ -57,11 +57,8 @@ class MacAddr < BinData::Primitive
   end
 
   def get
-    self.bytes.collect { |byte| 
-      unless byte.nil?
-        byte.value.to_s(16).rjust(2,'0')
-      end
-    }.join(":")
+    hexstring = self.bytes.unpack('H*')
+    hexstring[0].scan(/../).collect { |aclid| aclid }.join(":")
   end
 end
 
