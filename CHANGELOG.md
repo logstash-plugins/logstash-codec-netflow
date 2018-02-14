@@ -1,7 +1,54 @@
+## 3.11.2
+
+  - Further improved decoding performance of ASA ACL ids
+  - Further improved decoding performance of MAC addresses
+  - Improved decoding performance of IPv4 addresses
+
+## 3.11.1
+
+  - Improved decoding performance of ASA ACL ids
+  - Improved decoding performance of mac addresses
+
+## 3.11.0
+
+  - Updated Netflow v9 IE coverage from 10% to 90%
+  - Added support for Huawei Netstream
+
+## 3.10.0
+
+  - Added support for Nokia BRAS
+
+## 3.9.1
+
+  - Added Netflow v9 IE150 IE151, IE154, IE155
+
+## 3.9.0
+
+  - Added vIPtela support
+  - Added fields for Cisco ASR1k
+
+## 3.8.3
+
+  - Fixed a race condition that could cause some errors when running in a multithreaded input
+
+## 3.8.2
+
+  - Fixed exceptions due to NilClass in util.rb and netflow.rb
+
+## 3.8.1
+
+  - Prevent Netflow and IPFIX templates from being modified concurrently
+  - Improved Palo Alto support and added rspec test
+
+## 3.8.0
+
+  - Added initial YAF support with applabel and silk (but without DPI plugins because of complex data types)
+
 ## 3.7.1
 
+  - Update gemspec summary
   - Added support for CISCO1941/K9 software 15.1 
-
+  - Added undocumented Netscaler fields
 
 ## 3.7.0
 

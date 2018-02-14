@@ -905,6 +905,130 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+  context "Netflow 9 IE150 IE151" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_unknown_tpl266_292_data.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+      {
+        "@version": "1",
+        "netflow": {
+          "in_pkts": 1,
+          "ipv4_dst_addr": "192.168.0.2",
+          "src_tos": 0,
+          "flowset_id": 266,
+          "l4_src_port": 137,
+          "version": 9,
+          "flow_seq_num": 35088,
+          "ipv4_src_addr": "192.168.0.3",
+          "protocol": 17,
+          "in_bytes": 78,
+          "egressVRFID": 0,
+          "input_snmp": 13,
+          "flow_sampler_id": 1,
+          "ingressVRFID": 0,
+          "flowEndSeconds": 1512147866,
+          "l4_dst_port": 137,
+          "flowStartSeconds": 1512147866,
+          "direction": 0
+        },
+        "@timestamp": "2017-12-01T17:04:39.000Z"
+      }
+      END
+
+      events << <<-END
+      {
+        "@version": "1",
+        "netflow": {
+          "output_snmp": 13,
+          "in_pkts": 1,
+          "ipv4_dst_addr": "192.168.0.5",
+          "src_tos": 0,
+          "flowset_id": 292,
+          "l4_src_port": 58130,
+          "version": 9,
+          "flow_seq_num": 35088,
+          "ipv4_src_addr": "192.168.0.4",
+          "protocol": 17,
+          "in_bytes": 232,
+          "egressVRFID": 0,
+          "flow_sampler_id": 1,
+          "ingressVRFID": 0,
+          "flowEndSeconds": 1512147869,
+          "l4_dst_port": 6343,
+          "flowStartSeconds": 1512147869,
+          "direction": 1
+        },
+        "@timestamp": "2017-12-01T17:04:39.000Z"
+      }
+      END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(2)
+      expect(decode[1].get("[netflow][flowStartSeconds]")).to eq(1512147869)
+      expect(decode[1].get("[netflow][flowEndSeconds]")).to eq(1512147869)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+      expect(JSON.parse(decode[1].to_json)).to eq(JSON.parse(json_events[1]))
+    end
+
+  end
+
+  context "IPFIX Nokia BRAS" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_nokia_bras_tpl.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_nokia_bras_data256.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "@version": "1",
+          "netflow": {
+            "destinationIPv4Address": "10.0.0.34",
+            "destinationTransportPort": 80,
+            "protocolIdentifier": 6,
+            "sourceIPv4Address": "10.0.1.228",
+            "natSubString": "USER1@10.10.0.123",
+            "sourceTransportPort": 5878,
+            "version": 10,
+            "flowId": 3389049088,
+            "natOutsideSvcid": 0,
+            "flowStartMilliseconds": "2017-12-14T07:23:45.148Z",
+            "natInsideSvcid": 100
+          },
+          "@timestamp": "2017-12-14T07:23:45.000Z"
+        }
+      END
+
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(1)
+      expect(decode[0].get("[netflow][natInsideSvcid]")).to eq(100)
+      expect(decode[0].get("[netflow][natOutsideSvcid]")).to eq(0)
+      expect(decode[0].get("[netflow][natSubString]")).to eq("USER1@10.10.0.123")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
+
+
+
   context "Netflow 9 Ubiquiti Edgerouter with MPLS labels" do
     let(:data) do
       packets = []
@@ -1736,6 +1860,118 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+
+  context "Netflow 9 Huawei Netstream" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_huawei_netstream_tpl.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_huawei_netstream_data.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "@version": "1",
+          "netflow": {
+            "dst_as": 0,
+            "rev_flow_delta_bytes": 0,
+            "forwarding_status": {
+              "reason": 0,
+              "status": 0
+            },
+            "in_pkts": 4,
+            "first_switched": "2018-01-29T02:56:52.999Z",
+            "flowset_id": 1315,
+            "ipv4_next_hop": "10.108.252.41",
+            "l4_src_port": 45587,
+            "src_vlan": 0,
+            "in_bytes": 200,
+            "protocol": 6,
+            "tcp_flags": 24,
+            "dst_vlan": 0,
+            "l4_dst_port": 2598,
+            "src_as": 0,
+            "direction": 1,
+            "output_snmp": 31,
+            "dst_mask": 25,
+            "ipv4_dst_addr": "10.111.112.204",
+            "src_tos": 0,
+            "src_mask": 24,
+            "version": 9,
+            "flow_seq_num": 129954,
+            "ipv4_src_addr": "10.108.219.53",
+            "last_switched": "2018-01-29T03:02:20.000Z",
+            "input_snmp": 8,
+            "bgp_ipv4_next_hop": "0.0.0.0"
+          },
+          "@timestamp": "2018-01-29T03:02:20.000Z"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(1)
+      expect(decode[0].get("[netflow][rev_flow_delta_bytes]")).to eq(0)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+  end
+
+
+  context "Netflow 9 field layer2segmentid" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_field_layer2segmentid_tpl.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_field_layer2segmentid_data.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "@version": "1",
+          "netflow": {
+            "in_pkts": 1,
+            "ipv4_dst_addr": "80.82.237.40",
+            "src_tos": 0,
+            "first_switched": "2018-01-16T09:44:48.000Z",
+            "flowset_id": 266,
+            "l4_src_port": 61926,
+            "version": 9,
+            "flow_seq_num": 4773,
+            "ipv4_src_addr": "192.168.200.136",
+            "src_vlan": 3174,
+            "protocol": 6,
+            "in_bytes": 52,
+            "input_snmp": 7,
+            "last_switched": "2018-01-16T09:44:48.000Z",
+            "flow_sampler_id": 98,
+            "layer2SegmentId": 0,
+            "ingressVRFID": 0,
+            "l4_dst_port": 445,
+            "direction": 0
+          },
+          "@timestamp": "2018-01-16T09:45:02.000Z"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(1)
+      expect(decode[0].get("[netflow][layer2SegmentId]")).to eq(0)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+  end
+
+
   context "Netflow 9 Cisco ASR 9000 series template 260" do
     let(:data) do
       packets = []
@@ -1967,6 +2203,115 @@ describe LogStash::Codecs::Netflow do
     end
   end
 
+  context "Netflow 9 Palo Alto PAN-OS with app-id" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_paloalto_panos_tpl.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_paloalto_panos_data.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "netflow": {
+            "output_snmp": 23,
+            "icmp_type": 0,
+            "in_pkts": 1,
+            "src_tos": 0,
+            "ipv4_dst_addr": "162.115.24.30",
+            "first_switched": "2017-11-13T14:33:53.000Z",
+            "flowset_id": 257,
+            "l4_src_port": 39702,
+            "fw_event": 5,
+            "version": 9,
+            "flow_seq_num": 207392627,
+            "ipv4_src_addr": "10.32.105.103",
+            "in_bytes": 111,
+            "protocol": 6,
+            "tcp_flags": 26,
+            "input_snmp": 24,
+            "last_switched": "2017-11-13T14:39:32.000Z",
+            "user_id": "",
+            "conn_id": 415347,
+            "privateEnterpriseNumber": 25461,
+            "l4_dst_port": 443,
+            "app_id": "ssl",
+            "direction": 0
+          },
+          "@version": "1",
+          "@timestamp": "2017-11-13T14:39:31.000Z"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(8)
+      expect(decode[7].get("[netflow][app_id]")).to eq("incomplete")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[1].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+  end
+
+  context "IPFIX vIPtela with VPN id" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_viptela_tpl257.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_viptela_data257.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "@version": "1",
+          "netflow": {
+            "destinationTransportPort": 443,
+            "icmpTypeCodeIPv4": 0,
+            "sourceIPv4Address": "10.113.7.54",
+            "ipClassOfService": 48,
+            "ipPrecedence": 1,
+            "maximumIpTotalLength": 277,
+            "egressInterface": 3,
+            "octetDeltaCount": 775,
+            "ipNextHopIPv4Address": "10.0.0.1",
+            "sourceTransportPort": 41717,
+            "viptelaVPNId": 100,
+            "destinationIPv4Address": "172.16.21.27",
+            "octetTotalCount": 775,
+            "minimumIpTotalLength": 70,
+            "ipDiffServCodePoint": 12,
+            "tcpControlBits": 16,
+            "ingressInterface": 11,
+            "version": 10,
+            "packetDeltaCount": 8,
+            "flowEndReason": 3,
+            "protocolIdentifier": 6,
+            "flowEndSeconds": "2017-11-21T14:32:15.000Z",
+            "flowStartSeconds": "2017-11-21T14:32:15.000Z",
+            "packetTotalCount": 8
+          },
+          "@timestamp": "2017-11-21T14:32:15.000Z"
+        }
+        END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(1)
+      expect(decode[0].get("[netflow][viptelaVPNId]")).to eq(100)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+  end
+
+
+
   context "IPFIX Barracuda firewall" do
     let(:data) do
       packets = []
@@ -2014,8 +2359,126 @@ describe LogStash::Codecs::Netflow do
     end
   end
 
+  context "IPFIX YAF basic with applabel" do
+    # These samples have been generated with:
+    # /usr/local/bin/yaf --silk --ipfix=udp --live=pcap --out=host02 --ipfix-port=2055 --in=eth0 --applabel --verbose --mac --verbose --max-payload 384
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_yaf_tpls_option_tpl.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_yaf_tpl45841.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_yaf_data45841.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_yaf_data45873.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_yaf_data53248.dat"), :mode => "rb")
+    end
 
+    let(:json_events) do
+      events = []
+      events << <<-END
+      {
+        "netflow": {
+          "destinationIPv4Address": "172.16.32.100",
+          "octetTotalCount": 132,
+          "destinationTransportPort": 53,
+          "vlanId": 0,
+          "reversePacketTotalCount": 2,
+          "reverseFlowDeltaMilliseconds": 1,
+          "sourceIPv4Address": "172.16.32.201",
+          "reverseVlanId": 0,
+          "reverseIpClassOfService": 0,
+          "reverseOctetTotalCount": 200,
+          "reverseFlowAttributes": 0,
+          "ipClassOfService": 0,
+          "version": 10,
+          "flowEndReason": 1,
+          "protocolIdentifier": 17,
+          "silkAppLabel": 53,
+          "sourceTransportPort": 46086,
+          "packetTotalCount": 2,
+          "flowEndMilliseconds": "2016-12-25T12:58:35.819Z",
+          "flowStartMilliseconds": "2016-12-25T12:58:35.818Z",
+          "flowAttributes": 1
+        },
+        "@timestamp": "2016-12-25T13:03:38.000Z",
+        "@version": "1"
+      }
+      END
 
+      events << <<-END
+      {
+        "netflow": {
+          "destinationTransportPort": 9997,
+          "reversePacketTotalCount": 2,
+          "reverseFlowDeltaMilliseconds": 0,
+          "sourceIPv4Address": "172.16.32.100",
+          "reverseTcpSequenceNumber": 3788795034,
+          "reverseVlanId": 0,
+          "reverseOctetTotalCount": 92,
+          "ipClassOfService": 2,
+          "reverseInitialTCPFlags": 18,
+          "tcpSequenceNumber": 340533701,
+          "silkAppLabel": 0,
+          "sourceTransportPort": 63499,
+          "flowEndMilliseconds": "2016-12-25T12:58:34.346Z",
+          "flowAttributes": 0,
+          "destinationIPv4Address": "172.16.32.215",
+          "octetTotalCount": 172,
+          "vlanId": 0,
+          "reverseIpClassOfService": 0,
+          "reverseFlowAttributes": 0,
+          "unionTCPFlags": 17,
+          "version": 10,
+          "flowEndReason": 3,
+          "protocolIdentifier": 6,
+          "initialTCPFlags": 194,
+          "reverseUnionTCPFlags": 17,
+          "packetTotalCount": 4,
+          "flowStartMilliseconds": "2016-12-25T12:58:33.345Z"
+        },
+        "@timestamp": "2016-12-25T12:58:38.000Z",
+        "@version": "1"
+      }
+      END
+
+      events << <<-END
+      {
+        "netflow": {
+          "droppedPacketTotalCount": 0,
+          "exporterIPv4Address": "172.16.32.201",
+          "ignoredPacketTotalCount": 58,
+          "meanPacketRate": 6,
+          "flowTableFlushEventCount": 39,
+          "flowTablePeakCount": 58,
+          "version": 10,
+          "exportedFlowRecordTotalCount": 31,
+          "systemInitTimeMilliseconds": 1482670712000,
+          "notSentPacketTotalCount": 0,
+          "exportingProcessId": 0,
+          "meanFlowRate": 0,
+          "expiredFragmentCount": 0,
+          "assembledFragmentCount": 0,
+          "packetTotalCount": 1960
+        },
+        "@timestamp": "2016-12-25T13:03:33.000Z",
+        "@version": "1"
+      }
+      END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(3)
+      expect(decode[0].get("[netflow][silkAppLabel]")).to eq(53)
+      expect(decode[1].get("[netflow][initialTCPFlags]")).to eq(194)
+      expect(decode[2].get("[netflow][flowTablePeakCount]")).to eq(58)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+      expect(JSON.parse(decode[1].to_json)).to eq(JSON.parse(json_events[1]))
+      expect(JSON.parse(decode[2].to_json)).to eq(JSON.parse(json_events[2]))
+    end
+
+  end
 
 end
 

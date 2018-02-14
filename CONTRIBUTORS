@@ -4,6 +4,7 @@ reports, or in general have helped logstash along its way.
 Contributors:
 * Aaron Mildenstein (untergeek)
 * Adam Kaminski (thimslugga)
+* Andrew Cholakian (andrewvc)
 * Bjørn Ruberg (bruberg)
 * Colin Surprenant (colinsurprenant)
 * Daniel Nägele (analogbyte)
@@ -19,12 +20,14 @@ Contributors:
 * Marian Craciunescu (marian-craciunescu)
 * Matt Dainty (bodgit)
 * Paul Warren (pwarren)
+* Pedro de Oliveira
 * Philipp Kahr
 * Pier-Hugues Pellerin (ph)
 * Pulkit Agrawal (propulkit)
 * Raju Nair (rajutech76)
 * Richard Pijnenburg (electrical)
 * Salvador Ferrer (salva-ferrer)
+* Vishal Solanki
 * Will Rigby (wrigby)
 * Yehonatan Devorkin (Devorkin)
 * Rojuinex
@@ -35,6 +38,8 @@ Contributors:
 * niempy
 * jstopinsek
 * sliddjur
+* szhong12
+* zwirk
 
 Maintainer:
 * Jorrit Folmer (jorritfolmer)

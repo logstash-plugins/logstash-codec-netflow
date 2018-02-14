@@ -50,8 +50,11 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   FLOWSET_ID = "flowset_id"
 
   def initialize(params = {})
+    @file_cache_mutex = Mutex.new
     super(params)
-    @threadsafe = false
+    @threadsafe = true
+    @decode_mutex_netflow = Mutex.new
+    @decode_mutex_ipfix = Mutex.new
   end
 
   def register
@@ -212,17 +215,20 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           else
             key = "#{flowset.source_id}|#{template.template_id}"
           end
-          @netflow_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
-          @logger.debug("Received template #{template.template_id} with fields #{fields.inspect}")
-          @logger.debug("Received template #{template.template_id} of size #{template_length} bytes. Representing in #{@netflow_templates[key].num_bytes} BinData bytes")
-          if template_length != @netflow_templates[key].num_bytes
-            @logger.warn("Received template #{template.template_id} of size #{template_length} bytes doesn't match BinData representation we built (#{@netflow_templates[key].num_bytes} bytes)")
-          end
-          # Purge any expired templates
-          @netflow_templates.cleanup!
-          if @cache_save_path
-            @netflow_templates_cache[key] = fields
-            save_templates_cache(@netflow_templates_cache, "#{@cache_save_path}/netflow_templates.cache")
+          # Prevent netflow_templates array from being concurrently modified
+          @decode_mutex_netflow.synchronize do
+            @netflow_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
+            @logger.debug("Received template #{template.template_id} with fields #{fields.inspect}")
+            @logger.debug("Received template #{template.template_id} of size #{template_length} bytes. Representing in #{@netflow_templates[key].num_bytes} BinData bytes")
+            if template_length != @netflow_templates[key].num_bytes
+              @logger.warn("Received template #{template.template_id} of size #{template_length} bytes doesn't match BinData representation we built (#{@netflow_templates[key].num_bytes} bytes)")
+            end
+            # Purge any expired templates
+            @netflow_templates.cleanup!
+            if @cache_save_path
+              @netflow_templates_cache[key] = fields
+              save_templates_cache(@netflow_templates_cache, "#{@cache_save_path}/netflow_templates.cache")
+            end
           end
         end
       end
@@ -235,9 +241,10 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       else
         key = "#{flowset.source_id}|#{record.flowset_id}"
       end
-      template = @netflow_templates[key]
 
-      unless template
+      template = @decode_mutex_netflow.synchronize { @netflow_templates[key] }
+
+      if !template
         @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from source id #{flowset.source_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
         return events
       end
@@ -247,9 +254,11 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       # Template shouldn't be longer than the record 
       # As fas as padding is concerned, the RFC defines a SHOULD for 4-word alignment
       # so we won't complain about that.
-      if template.num_bytes > length
-        @logger.warn("Template length exceeds flowset length, skipping", :template_id => record.flowset_id, :template_length => template.num_bytes, :record_length => length)
-        return events
+      if template.num_bytes != nil
+        if template.num_bytes > length
+          @logger.warn("Template length exceeds flowset length, skipping", :template_id => record.flowset_id, :template_length => template.num_bytes, :record_length => length)
+          return events
+        end
       end
 
       array = BinData::Array.new(:type => template, :initial_length => length / template.num_bytes)
@@ -316,21 +325,24 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           end
           # FIXME Source IP address required in key
           key = "#{flowset.observation_domain_id}|#{template.template_id}"
-          @ipfix_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
-          # Purge any expired templates
-          @ipfix_templates.cleanup!
-          if @cache_save_path
-            @ipfix_templates_cache[key] = fields
-            save_templates_cache(@ipfix_templates_cache, "#{@cache_save_path}/ipfix_templates.cache")
+          # Prevent ipfix_templates array from being concurrently modified
+          @decode_mutex_ipfix.synchronize do
+            @ipfix_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
+            # Purge any expired templates
+            @ipfix_templates.cleanup!
+            if @cache_save_path
+              @ipfix_templates_cache[key] = fields
+              save_templates_cache(@ipfix_templates_cache, "#{@cache_save_path}/ipfix_templates.cache")
+            end
           end
         end
       end
     when 256..65535
       # Data flowset
       key = "#{flowset.observation_domain_id}|#{record.flowset_id}"
-      template = @ipfix_templates[key]
-
-      unless template
+      if @ipfix_templates[key] != nil
+        template = @ipfix_templates[key]
+      else
         @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from observation domain id #{flowset.observation_domain_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
         return events
       end
@@ -409,9 +421,10 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     templates_cache = {}
     begin
       @logger.debug? and @logger.debug("Loading templates from template cache #{file_path}")
-      templates_cache = JSON.parse(File.read(file_path))
+      file_data = @file_cache_mutex.synchronize { File.read(file_path)}
+      templates_cache = JSON.parse(file_data)
     rescue Exception => e
-      raise "#{self.class.name}: templates cache file corrupt (#{file_path})"
+      raise "#{self.class.name}: templates cache file could not be read @ (#{file_path}: #{e.class.name} #{e.message})"
     end
 
     templates_cache
@@ -420,7 +433,9 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   def save_templates_cache(templates_cache, file_path)
     begin
       @logger.debug? and @logger.debug("Writing templates to template cache #{file_path}")
-      File.open(file_path, 'w') {|file| file.write templates_cache.to_json }
+      @file_cache_mutex.synchronize do
+        File.open(file_path, 'w') {|file| file.write templates_cache.to_json }
+      end
     rescue Exception => e
       raise "#{self.class.name}: saving templates cache file failed (#{file_path}) with error #{e}"
     end

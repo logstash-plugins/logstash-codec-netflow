@@ -71,53 +71,6 @@ Summary of collector-relevant requirements implemented versus the total collecto
 | subTemplateList       | No      |     |
 | subTemplateMultiList  | No      |     |
 
-## RFC7012 Information Elements support details
-
-IE 1-433 are supported
-
-These are not yet supported:
-
-|id | name                | data type
-|---|---------------------|-------------------------
-|434|mibObjectValueInteger|signed32
-|435|mibObjectValueOctetString|octetArray
-|436|mibObjectValueOID|octetArray
-|437|mibObjectValueBits|octetArray
-|438|mibObjectValueIPAddress|ipv4Address
-|439|mibObjectValueCounter|unsigned64
-|440|mibObjectValueGauge|unsigned32
-|441|mibObjectValueTimeTicks|unsigned32
-|442|mibObjectValueUnsigned|unsigned32
-|443|mibObjectValueTable|subTemplateList
-|444|mibObjectValueRow|subTemplateList
-|445|mibObjectIdentifier|octetArray
-|446|mibSubIdentifier|unsigned32
-|447|mibIndexIndicator|unsigned64
-|448|mibCaptureTimeSemantics|unsigned8
-|449|mibContextEngineID|octetArray
-|450|mibContextName|string
-|451|mibObjectName|string
-|452|mibObjectDescription|string
-|453|mibObjectSyntax|string
-|454|mibModuleName|string
-|455|mobileIMSI|string
-|456|mobileMSISDN|string
-|457|httpStatusCode|unsigned16
-|458|sourceTransportPortsLimit|unsigned16
-|459|httpRequestMethod|string
-|460|httpRequestHost|string
-|461|httpRequestTarget|string
-|462|httpMessageVersion|string
-|463|natInstanceID|unsigned32
-|464|internalAddressRealm|octetArray
-|465|externalAddressRealm|octetArray
-|466|natQuotaExceededEvent|unsigned32
-|467|natThresholdEvent|unsigned32
-|468|httpUserAgent|string
-|469|httpContentType|string
-|470|httpReasonPhrase|string
-
- 
 ## RFC 7011 collector compliance details
 
 The tables below detail the collector-relevant requirements, and whether or not they are implemented:
@@ -228,3 +181,51 @@ The tables below detail the collector-relevant requirements, and whether or not 
 | 11.7 As IPFIX uses length-prefix encodings, Collector implementors should take care to ensure the detection of inconsistent values that could impact IPFIX Message decoding, and proper operation in the presence of such inconsistent values. | | | YES |
 | 11.7 Specifically, IPFIX Message, Set, and variable-length Information  Element lengths must be checked for consistency to avoid buffer-sizing vulnerabilities. | | | YES |
 
+
+## RFC7012 Information Elements support details
+
+IE 1-433 are supported
+
+These are not yet supported:
+
+|id | name                | data type
+|---|---------------------|-------------------------
+|434|mibObjectValueInteger|signed32
+|435|mibObjectValueOctetString|octetArray
+|436|mibObjectValueOID|octetArray
+|437|mibObjectValueBits|octetArray
+|438|mibObjectValueIPAddress|ipv4Address
+|439|mibObjectValueCounter|unsigned64
+|440|mibObjectValueGauge|unsigned32
+|441|mibObjectValueTimeTicks|unsigned32
+|442|mibObjectValueUnsigned|unsigned32
+|443|mibObjectValueTable|subTemplateList
+|444|mibObjectValueRow|subTemplateList
+|445|mibObjectIdentifier|octetArray
+|446|mibSubIdentifier|unsigned32
+|447|mibIndexIndicator|unsigned64
+|448|mibCaptureTimeSemantics|unsigned8
+|449|mibContextEngineID|octetArray
+|450|mibContextName|string
+|451|mibObjectName|string
+|452|mibObjectDescription|string
+|453|mibObjectSyntax|string
+|454|mibModuleName|string
+|455|mobileIMSI|string
+|456|mobileMSISDN|string
+|457|httpStatusCode|unsigned16
+|458|sourceTransportPortsLimit|unsigned16
+|459|httpRequestMethod|string
+|460|httpRequestHost|string
+|461|httpRequestTarget|string
+|462|httpMessageVersion|string
+|463|natInstanceID|unsigned32
+|464|internalAddressRealm|octetArray
+|465|externalAddressRealm|octetArray
+|466|natQuotaExceededEvent|unsigned32
+|467|natThresholdEvent|unsigned32
+|468|httpUserAgent|string
+|469|httpContentType|string
+|470|httpReasonPhrase|string
+
+ 

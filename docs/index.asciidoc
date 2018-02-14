@@ -37,22 +37,28 @@ The following Netflow/IPFIX exporters are known to work with the most recent ver
 |Netflow exporter         | v5 | v9 | IPFIX | Remarks
 |Barracuda Firewall       |    |    |   y   |
 |Cisco ASA                |    | y  |       |  
-|Cisco ASR                |    | y  |       |  
+|Cisco ASR 1k             |    |    |   n   | Fails because of duplicate fields
+|Cisco ASR 9k             |    | y  |       |  
 |Cisco IOS 12.x           |    | y  |       |  
-|Cisco ISR w/ HSL         |    | n  |       | https://github.com/logstash-plugins/logstash-codec-netflow/issues/93
+|Cisco ISR w/ HSL         |    | n  |       | Fails because of duplicate fields, see: https://github.com/logstash-plugins/logstash-codec-netflow/issues/93
 |Cisco WLC                |    | y  |       |
 |Citrix Netscaler         |    |    |   y   | Still some unknown fields, labeled netscalerUnknown<id>
 |fprobe                   |  y |    |       |
 |Fortigate FortiOS        |    | y  |       |
+|Huawei Netstream         |    | y  |       |
 |ipt_NETFLOW              |  y | y  |   y   |
 |Juniper MX80             |  y |    |       | SW > 12.3R8
 |Mikrotik                 |  y |    |   y   | http://wiki.mikrotik.com/wiki/Manual:IP/Traffic_Flow
 |nProbe                   |  y | y  |   y   | L7 DPI fields now also supported
+|Nokia BRAS               |    |    |   y   |
 |OpenBSD pflow            |  y | n  |   y   | http://man.openbsd.org/OpenBSD-current/man4/pflow.4
 |Softflowd                |  y | y  |   y   | IPFIX supported in https://github.com/djmdjm/softflowd
 |Streamcore Streamgroomer |    | y  |       |
+|Palo Alto PAN-OS         |    | y  |       |
 |Ubiquiti Edgerouter X    |    | y  |       | With MPLS labels
 |VMware VDS               |    |    |   y   | Still some unknown fields
+|YAF                      |    |    |   y   | With silk and applabel, but no DPI plugin support
+|vIPtela                  |    |    |   y   |
 |===========================================================================================
 
 ==== Usage
@@ -69,7 +75,9 @@ input {
 }
 --------------------------
 
-For high-performance production environments the configuration below will decode up to 15000 flows/sec on a dedicated 16 CPU instance. If your total flowrate exceeds 15000 flows/sec, you should use multiple Logstash instances.
+For high-performance production environments the configuration below will decode up to 15000 flows/sec from a Cisco ASR 9000 router on a dedicated 16 CPU instance. If your total flowrate exceeds 15000 flows/sec, you should use multiple Logstash instances.
+
+Note that for richer flows from a Cisco ASA firewall this number will be at least 3x lower.
 
 [source, ruby]
 --------------------------
