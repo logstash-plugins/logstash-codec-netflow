@@ -2472,13 +2472,16 @@
   - :vmwareUnknown887
   888:
   - :uint16
-  - :vmwareUnknown888
+  # source: https://github.com/logstash-plugins/logstash-codec-netflow/issues/28#issuecomment-371811848
+  - :vmwareEgressInterfaceTypeID
   889:
   - :uint8
-  - :vmwareUnknown889
+  # source: https://github.com/logstash-plugins/logstash-codec-netflow/issues/28#issuecomment-371811848
+  - :vmwareObservationDomainID
   890:
   - :uint16
-  - :vmwareUnknown890
+  # source: https://github.com/logstash-plugins/logstash-codec-netflow/issues/28#issuecomment-371811848
+  - :vmwareIngressInterfaceTypeID
 29305:
   1:
   - :uint64

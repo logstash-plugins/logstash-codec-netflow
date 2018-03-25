@@ -1,3 +1,7 @@
+## 3.11.3
+
+  - Renamed some unknown VMware VDS fields 
+
 ## 3.11.2
 
   - Further improved decoding performance of ASA ACL ids
