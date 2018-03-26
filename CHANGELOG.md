@@ -1,3 +1,7 @@
+## 3.11.4
+
+  - Workaround for breaking change in Netflow-Input-UDP > 3.2.0, see issue #122
+
 ## 3.11.3
 
   - Renamed some unknown VMware VDS fields 

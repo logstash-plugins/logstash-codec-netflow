@@ -57,6 +57,10 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     @decode_mutex_ipfix = Mutex.new
   end
 
+  def clone
+    self
+  end
+
   def register
     require "logstash/codecs/netflow/util"
     @netflow_templates = Vash.new()
