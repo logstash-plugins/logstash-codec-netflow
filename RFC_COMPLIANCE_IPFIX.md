@@ -20,7 +20,7 @@ Summary of collector-relevant requirements implemented versus the total collecto
 | 3. IPFIX message format               | 2/2 | 0/2 |     |
 | 4. Specific reporting requirements    | 0/1 |     |     |
 | 5. Timing considerations              |     | 0/2 |     |
-| 6. Linkage with the Information Model |     | 0/1 |     |
+| 6. Linkage with the Information Model |     | 0/1 | 0/1 |
 | 7. Variable Length IE                 |     |     |     |
 | 8. Template management                | 4/8 | 1/5 | 1/2 |
 | 9. The collecting process's side      | 4/5 | 1/3 | 0/4 |
@@ -102,6 +102,7 @@ The tables below detail the collector-relevant requirements, and whether or not 
 | Requirement                           |MUST |SHOULD| MAY| 
 |---------------------------------------|-----|-----|-----|
 | 6.1.6 Collecting Processes SHOULD detect and ignore IPFIX Messages containing ill-formed UTF-8 string values for Information Elements | | NO | | 
+| 6.2. Reduced-size encoding of signed, unsigned, or float data types | | | NO |
 
 ### 8. Template Management
 
