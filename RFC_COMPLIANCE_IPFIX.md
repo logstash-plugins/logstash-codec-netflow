@@ -4,7 +4,7 @@ The level of RFC compliance reached for collector-relevant requirements:
 
 | RFC       | Level                                        |
 |-----------|----------------------------------------------|
-| RFC 7011  | 47% of RFC "MUST" requirements implemented   |
+| RFC 7011  | 42% of RFC "MUST" requirements implemented   |
 | RFC 7011  | 19% of RFC "SHOULD" requirements implemented |  
 | RFC 7012  | 83% of IE data types supported
 | RFC 7012  | 90% of IEs supported
@@ -22,7 +22,7 @@ Summary of collector-relevant requirements implemented versus the total collecto
 | 5. Timing considerations              |     | 0/2 |     |
 | 6. Linkage with the Information Model |     | 0/1 | 0/1 |
 | 7. Variable Length IE                 |     |     |     |
-| 8. Template management                | 4/8 | 1/5 | 1/2 |
+| 8. Template management                | 3/9 | 1/5 | 1/2 |
 | 9. The collecting process's side      | 4/5 | 1/3 | 0/4 |
 | 10. Transport protocol                | 5/8 | 1/3 | 3/3 |
 | 11. Security considerations           | 0/8 | 1/5 | 2/3 |
@@ -111,7 +111,7 @@ The tables below detail the collector-relevant requirements, and whether or not 
 |8. The Collecting Process MUST store all received Template Record information for the duration of each Transport Session until reuse or withdrawal as described in Section 8.1, or expiry over UDP as described in Section 8.4, so that it can interpret the corresponding Data Records.| YES | | | 
 |8. The Collecting Process MUST NOT assume that the Template IDs from a given Exporting Process refer to the same Templates as they did in previous Transport Sessions from the same Exporting Process| NO | | |
 |8. Collecting Process MUST NOT use Templates from one Transport Session to decode Data Sets in a subsequent Transport Session.| NO | | |
-|8. Collecting Processes MUST properly handle Templates with multiple identical Information Elements.| ? | | |
+|8. Collecting Processes MUST properly handle Templates with multiple identical Information Elements.| NO | | |
 |8. a Collecting Process MUST NOT assume that the Data Set and the associated Template Set (or Options Template Set) are exported in the same IPFIX Message| YES | | |
 |8. Though a Collecting Process normally receives Template Records from  the Exporting Process before receiving Data Records, this is not always the case, e.g., in the case of reordering or Collecting Process restart over UDP.  In these cases, the Collecting Process MAY buffer Data Records for which it has no Templates, to wait for Template Records describing them; however, note that in the presence of Template withdrawal and redefinition (Section 8.1) this may lead to incorrect interpretation of Data Records.| | | NO |
 | 8.Different Observation Domains within a Transport Session MAY use the same Template ID value to refer to different Templates; Collecting Processes MUST properly handle this case.| NO | | |
