@@ -3632,3 +3632,142 @@
   4321:
   - :uint64
   - :viptelaVPNId
+# List below taken from Procera PacketLogic product guide 15.1 - Not publicly available AFAIK
+# Further updates / additional fields may be present with versions 16/17+
+15397:
+  1:
+  - :string
+  - :proceraService
+  2:
+  - :string
+  - :proceraBaseService
+  3:
+  - :uint64
+  - :proceraIncomingOctets
+  4:
+  - :uint64
+  - :proceraOutgoingOctets
+  5:
+  - :uint64
+  - :proceraIncomingPackets
+  6:
+  - :uint64
+  - :proceraOutgoingPackets
+  7:
+  - :uint16
+  - :proceraIncomingShapingLatency
+  8:
+  - :uint16
+  - :proceraOutgoingShapingLatency
+  9:
+  - :uint32
+  - :proceraIncomingShapingDrops
+  10:
+  - :uint32
+  - :proceraOutgoingShapingDrops
+  11:
+  - :int32
+  - :proceraInternalRtt
+  12:
+  - :int32
+  - :proceraExternalRtt
+  15:
+  - :string
+  - :proceraFlowBehavior
+  16:
+  - :string
+  - :proceraContentCategories
+  17:
+  - :string
+  - :proceraProperty
+  18:
+  - :string
+  - :proceraServerHostname
+  19:
+  - :string
+  - :proceraHttpRequestMethod
+  20:
+  - :string
+  - :proceraHttpUserAgent
+  21:
+  - :string
+  - :proceraHttpContentType
+  22:
+  - :string
+  - :proceraHttpUrl
+  23:
+  - :string
+  - :proceraHttpReferer
+  24:
+  - :uint16
+  - :proceraHttpResponseStatus
+  25:
+  - :uint32
+  - :proceraHttpFileLength
+  26:
+  - :string
+  - :proceraHttpLocation
+  27:
+  - :string
+  - :proceraHttpLanguage
+  28:
+  - :string
+  - :proceraSubscriberIdentifier
+  29:
+  - :uint64
+  - :proceraMsisdn
+  30:
+  - :uint64
+  - :proceraImsi
+  31:
+  - :string
+  - :proceraRat
+  32:
+  - :uint64
+  - :proceraDeviceId
+  33:
+  - :string
+  - :proceraSgsn
+  34:
+  - :uint16
+  - :proceraRnc
+  35:
+  - :string
+  - :proceraApn
+  36:
+  - :string
+  - :proceraUserLocationInformation
+  37:
+  - :string
+  - :proceraGgsn
+  38:
+  - :float32
+  - :proceraQoeIncomingInternal
+  39:
+  - :float32
+  - :proceraQoeIncomingExternal
+  40:
+  - :float32
+  - :proceraQoeOutgoingInternal
+  41:
+  - :float32
+  - :proceraQoeOutgoingExternal
+  42:
+  - :ip4_addr
+  - :proceraLocalIPv4Host
+  43:
+  - :ip6_addr
+  - :proceraLocalIPv6Host
+  44:
+  - :ip4_addr
+  - :proceraRemoteIPv4Host
+  45:
+  - :ip6_addr
+  - :proceraRemoteIPv6Host
+  46:
+  - :string
+  - :proceraHttpRequestVersion
+  47:
+  - :string
+  - :proceraTemplateName
+
