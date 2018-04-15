@@ -52,6 +52,7 @@ The following Netflow/IPFIX exporters are known to work with the most recent ver
 |nProbe                   |  y | y  |   y   | L7 DPI fields now also supported
 |Nokia BRAS               |    |    |   y   |
 |OpenBSD pflow            |  y | n  |   y   | http://man.openbsd.org/OpenBSD-current/man4/pflow.4
+|Sandvine Procera PacketLogic| |    |   y   | v15.1
 |Softflowd                |  y | y  |   y   | IPFIX supported in https://github.com/djmdjm/softflowd
 |Streamcore Streamgroomer |    | y  |       |
 |Palo Alto PAN-OS         |    | y  |       |

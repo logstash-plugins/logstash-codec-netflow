@@ -1,3 +1,7 @@
+## 3.12.0
+
+  - Added support for IPFIX from Procera/NetIntact/Sandvine 15.1
+
 ## 3.11.4
 
   - Workaround for breaking change in Netflow-Input-UDP > 3.2.0, see issue #122

@@ -1027,6 +1027,64 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+  context "IPFIX Procera" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_procera_tpl52935.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_procera_data52935.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+        {
+          "@timestamp": "2018-04-15T03:30:00.000Z",
+          "@version": "1",
+          "netflow": {
+            "proceraFlowBehavior": "INTERACTIVE,CLIENT_IS_LOCAL,INBOUND,ESTABLISHED,ACTIVE",
+            "sourceIPv6Address": "::",
+            "proceraOutgoingOctets": 3310,
+            "sourceTransportPort": 33689,
+            "destinationIPv6Address": "::",
+            "destinationTransportPort": 179,
+            "flowStartSeconds": "2018-04-15T03:25:00.000Z",
+            "proceraHttpContentType": "",
+            "proceraContentCategories": "",
+            "proceraSubscriberIdentifier": "",
+            "proceraTemplateName": "IPFIX",
+            "proceraHttpLocation": "",
+            "protocolIdentifier": 6,
+            "sourceIPv4Address": "138.44.161.14",
+            "flowEndSeconds": "2018-04-15T03:30:00.000Z",
+            "version": 10,
+            "proceraBaseService": "BGP-4",
+            "bgpSourceAsNumber": 7575,
+            "proceraIncomingOctets": 7076,
+            "bgpDestinationAsNumber": 7575,
+            "proceraHttpUrl": "",
+            "proceraService": "BGP-4",
+            "proceraHttpFileLength": 0,
+            "destinationIPv4Address": "138.44.161.13"
+          }
+        }
+      END
+
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(8)
+      expect(decode[7].get("[netflow][sourceIPv4Address]")).to eq("138.44.161.14")
+      expect(decode[7].get("[netflow][proceraBaseService]")).to eq("BGP-4")
+      expect(decode[7].get("[netflow][proceraFlowBehavior]")).to eq("INTERACTIVE,CLIENT_IS_LOCAL,INBOUND,ESTABLISHED,ACTIVE")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[7].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
+
 
 
   context "Netflow 9 Ubiquiti Edgerouter with MPLS labels" do
