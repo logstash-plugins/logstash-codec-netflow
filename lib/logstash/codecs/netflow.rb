@@ -495,6 +495,14 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           field[0] = uint_field(length, field[0])
         when :uint32
           field[0] = uint_field(length, field[0])
+        when :uint64
+          case length
+          when 5..7
+            @logger.warn("Unsupported field length encountered, skipping", :field => field, :length => length)
+            nil
+          else
+            field[0] = uint_field(length, field[0])
+          end
         when :application_id
           case length
           when 2
