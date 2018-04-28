@@ -3770,4 +3770,77 @@
   47:
   - :string
   - :proceraTemplateName
-
+10704:
+  1:
+  - :uint32
+  - :Timestamp
+  2:
+  - :uint8
+  - :LogOp
+  3:
+  - :uint8
+  - TrafficType
+  4:
+  - :string
+  - :FW_Rule
+  5:
+  - :string
+  - :ServiceName
+  6:
+  - :uint32
+  - :Reason
+  7:
+  - :string
+  - :ReasonText
+  8:
+  - :ip4_addr
+  - :BindIPv4Address
+  9:
+  - :uint16
+  - :BindTransportPort
+  10:
+  - :ip4_addr
+  - :ConnIPv4Address
+  11:
+  - :uint16
+  - :ConnTransportPort
+  12:
+  - :uint32
+  - :AuditCounter
+12326:
+  1:
+  - :uint32
+  - :Timestamp
+  2:
+  - :uint8
+  - :LogOp
+  3:
+  - :uint8
+  - TrafficType
+  4:
+  - :string
+  - :FW_Rule
+  5:
+  - :string
+  - :ServiceName
+  6:
+  - :uint32
+  - :Reason
+  7:
+  - :string
+  - :ReasonText
+  8:
+  - :ip4_addr
+  - :BindIPv4Address
+  9:
+  - :uint16
+  - :BindTransportPort
+  10:
+  - :ip4_addr
+  - :ConnIPv4Address
+  11:
+  - :uint16
+  - :ConnTransportPort
+  12:
+  - :uint32
+  - :AuditCounter

@@ -1085,6 +1085,70 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+  context "IPFIX Barracuda extended uniflow template 256" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_barracuda_extended_uniflow_tpl256.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_barracuda_extended_uniflow_data256.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+      {
+        "netflow": {
+        "FW_Rule": "MTH:MTH-MC-to-Inet",
+        "AuditCounter": 4157725,
+        "sourceIPv4Address": "64.235.151.76",
+        "version": 10,
+        "sourceTransportPort": 443,
+        "sourceMacAddress": "00:00:00:00:00:00",
+        "ingressInterface": 3689,
+        "flowEndSysUpTime": 1957197969,
+        "octetTotalCount": 0,
+        "ConnTransportPort": 443,
+        "ConnIPv4Address": "64.235.151.76",
+        "firewallEvent": 1,
+        "protocolIdentifier": 6,
+        "flowStartSysUpTime": 1957197969,
+        "TrafficType": 0,
+        "destinationTransportPort": 51917,
+        "packetTotalCount": 0,
+        "BindIPv4Address": "213.208.150.99",
+        "Timestamp": 1524039407,
+        "flowDurationMilliseconds": 0,
+        "ServiceName": "https",
+        "BindTransportPort": 64238,
+        "octetDeltaCount": 0,
+        "packetDeltaCount": 0,
+        "destinationIPv4Address": "10.236.5.4",
+        "LogOp": 1,
+        "Reason": 0,
+        "egressInterface": 35233,
+        "ReasonText": "Normal Operation"
+        },
+        "@version": "1",
+        "@timestamp": "2018-04-18T08:16:47.000Z"
+      } 
+      END
+
+      events.map{|event| event.gsub(/\s+/, "")}
+      events.map{|event| event.gsub(/NormalOperation/, "Normal Operation")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(2)
+      expect(decode[1].get("[netflow][FW_Rule]")).to eq("MTH:MTH-MC-to-Inet")
+      expect(decode[1].get("[netflow][ReasonText]")).to eq("Normal Operation")
+      expect(decode[1].get("[netflow][BindIPv4Address]")).to eq("213.208.150.99")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[1].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
+
 
 
   context "Netflow 9 Ubiquiti Edgerouter with MPLS labels" do
