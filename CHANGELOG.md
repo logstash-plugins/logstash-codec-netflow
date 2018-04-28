@@ -1,3 +1,8 @@
+## 3.13.0
+
+  - Added support for Netflow 9 reduced-size encoding support
+  - Added support for Barracuda IPFIX Extended Uniflow
+
 ## 3.12.0
 
   - Added support for IPFIX from Procera/NetIntact/Sandvine 15.1
