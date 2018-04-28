@@ -480,9 +480,10 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
         # Small bit of fixup for:
         # - skip or string field types where the length is dynamic
-	# - uint(8|16|24|32} where we use the length as specified by the
+	# - uint(8|16|24|32|64} where we use the length as specified by the
 	#   template instead of the YAML (e.g. ipv6_flow_label is 3 bytes in
-	#   the YAML and Cisco doc, but Cisco ASR9k sends 4 bytes)
+	#   the YAML and Cisco doc, but Cisco ASR9k sends 4 bytes).
+	#   Another usecase is supporting reduced-size encoding as per RFC7011 6.2
 	# - application_id where we use the length as specified by the 
 	#   template and map it to custom types for handling.
 	#   
@@ -490,19 +491,22 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
         when :uint8
           field[0] = uint_field(length, field[0])
         when :uint16
+          if length>2
+            @logger.warn("Reduced-size encoding for uint16 is larger than uint16", :field => field, :length => length)
+          end
           field[0] = uint_field(length, field[0])
         when :uint24
           field[0] = uint_field(length, field[0])
         when :uint32
+          if length>4
+            @logger.warn("Reduced-size encoding for uint32 is larger than uint32", :field => field, :length => length)
+          end
           field[0] = uint_field(length, field[0])
         when :uint64
-          case length
-          when 5..7
-            @logger.warn("Unsupported field length encountered, skipping", :field => field, :length => length)
-            nil
-          else
-            field[0] = uint_field(length, field[0])
+          if length>8
+            @logger.warn("Reduced-size encoding for uint64 is larger than uint64", :field => field, :length => length)
           end
+          field[0] = uint_field(length, field[0])
         when :application_id
           case length
           when 2

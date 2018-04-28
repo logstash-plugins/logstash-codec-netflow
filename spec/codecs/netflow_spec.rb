@@ -905,6 +905,62 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+  context "Netflow 9 ipt_netflow reduced size encoding" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_iptnetflow_reduced_size_encoding_tpldata260.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+      {
+        "netflow": {
+          "l4_src_port": 443,
+          "last_switched": "2018-02-18T05:46:54.999Z",
+          "ingressPhysicalInterface": 7,
+          "in_bytes": 187,
+          "tcpOptions": 2164260864,
+          "in_dst_mac": "00:1b:21:bc:24:dd",
+          "protocol": 6,
+          "output_snmp": 8,
+          "ethernetType": 2048,
+          "src_tos": 0,
+          "l4_dst_port": 38164,
+          "input_snmp": 7,
+          "version": 9,
+          "in_pkts": 3,
+          "flow_seq_num": 344481,
+          "ipv4_next_hop": "10.232.5.1",
+          "flowset_id": 260,
+          "first_switched": "2018-02-18T05:46:54.999Z",
+          "tcp_flags": 25,
+          "ipv4_dst_addr": "10.233.150.21",
+          "ipv4_src_addr": "2.17.140.47",
+          "in_src_mac": "90:e2:ba:23:09:fc",
+          "egressPhysicalInterface": 8
+        },
+        "@timestamp": "2018-02-18T05:47:09.000Z",
+        "@version": "1"
+      }
+      END
+
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(12)
+      expect(decode[11].get("[netflow][in_dst_mac]")).to eq("00:1b:21:bc:24:dd")
+      expect(decode[11].get("[netflow][ipv4_src_addr]")).to eq("2.17.140.47")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[11].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
+
+
   context "Netflow 9 IE150 IE151" do
     let(:data) do
       packets = []
