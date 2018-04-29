@@ -344,9 +344,10 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     when 256..65535
       # Data flowset
       key = "#{flowset.observation_domain_id}|#{record.flowset_id}"
-      if @ipfix_templates[key] != nil
-        template = @ipfix_templates[key]
-      else
+      
+      template = @decode_mutex_ipfix.synchronize { @ipfix_templates[key] }
+
+      if !template
         @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from observation domain id #{flowset.observation_domain_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
         return events
       end
