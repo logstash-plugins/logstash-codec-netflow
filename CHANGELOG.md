@@ -1,3 +1,7 @@
+## 3.13.1
+
+  - Fixes exceptions due to concurrent access of IPFIX templates, see issue #134
+
 ## 3.13.0
 
   - Added support for Netflow 9 reduced-size encoding support
