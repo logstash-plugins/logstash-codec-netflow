@@ -547,10 +547,10 @@
 - :uint8
 - :natEvent
 231:
-- :uint32 
+- :uint64
 - :fwd_flow_delta_bytes
 232:
-- :uint32
+- :uint64
 - :rev_flow_delta_bytes
 233:
 - :uint8

@@ -1,3 +1,7 @@
+## 3.13.2
+
+  - Fixes incorrect definitions of IE 231 and IE 232
+
 ## 3.13.1
 
   - Fixes exceptions due to concurrent access of IPFIX templates, see issue #134
