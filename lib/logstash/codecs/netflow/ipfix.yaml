@@ -1,5 +1,8 @@
 ---
 0:
+  0:
+  - 1
+  - :field0_reserved
   1:
   - :uint64
   - :octetDeltaCount

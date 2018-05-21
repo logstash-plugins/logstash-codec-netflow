@@ -960,6 +960,72 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+  context "Netflow 9 H3C" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_h3c_tpl3281.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_h3c_data3281.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+      {
+        "netflow": {
+          "in_pkts": 9,
+          "src_as": 0,
+          "flowset_id": 3281,
+          "l4_dst_port": 0,
+          "last_switched": "2018-05-21T09:25:04.999Z",
+          "dst_mask": 24,
+          "tcp_flags": 0,
+          "src_tos": 0,
+          "dst_as": 0,
+          "input_snmp": 2662,
+          "direction": 0,
+          "version": 9,
+          "src_mask": 24,
+          "sampling_algorithm": 0,
+          "sampling_interval": 0,
+          "flow_seq_num": 60342277,
+          "src_traffic_index": 0,
+          "in_bytes": 5092,
+          "ipv4_src_addr": "10.22.166.36",
+          "first_switched": "2018-05-21T09:24:04.999Z",
+          "ipv4_dst_addr": "10.21.75.38",
+          "ipv4_next_hop": "10.21.17.78",
+          "forwarding_status": {
+            "status": 0,
+            "reason": 0
+          },
+          "l4_src_port": 0,
+          "protocol": 6,
+          "output_snmp": 1743,
+          "dst_traffic_index": 4294967295,
+          "ip_protocol_version": 4,
+          "field0_reserved": 0
+        },
+        "@version": "1",
+        "@timestamp": "2018-05-21T09:25:04.000Z"
+      }
+      END
+
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(16)
+      expect(decode[11].get("[netflow][dst_traffic_index]")).to eq(4294967295)
+      expect(decode[11].get("[netflow][src_traffic_index]")).to eq(0)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[15].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
+
+
 
   context "Netflow 9 IE150 IE151" do
     let(:data) do
