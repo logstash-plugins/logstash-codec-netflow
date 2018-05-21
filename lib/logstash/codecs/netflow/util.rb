@@ -139,7 +139,7 @@ class Application_Id16 < BinData::Primitive
   end
 
   def get
-    self.classification_id.to_s + ":" + self.selector_id.to_s
+    self.classification_id.to_s + ".." + self.selector_id.to_s
   end
 end
 
@@ -156,7 +156,7 @@ class Application_Id24 < BinData::Primitive
   end
 
   def get
-    self.classification_id.to_s + ":" + self.selector_id.to_s
+    self.classification_id.to_s + ".." + self.selector_id.to_s
   end
 end
 
@@ -173,7 +173,7 @@ class Application_Id32 < BinData::Primitive
   end
 
   def get
-    self.classification_id.to_s + ":" + self.selector_id.to_s
+    self.classification_id.to_s + ".." + self.selector_id.to_s
   end
 end
 
@@ -190,7 +190,7 @@ class Application_Id40 < BinData::Primitive
   end
 
   def get
-    self.classification_id.to_s + ":" + self.selector_id.to_s
+    self.classification_id.to_s + ".." + self.selector_id.to_s
   end
 end
 
@@ -207,24 +207,26 @@ class Application_Id64 < BinData::Primitive
   end
 
   def get
-    self.classification_id.to_s + ":" + self.selector_id.to_s
+    self.classification_id.to_s + ".." + self.selector_id.to_s
   end
 end
 
 class Application_Id72 < BinData::Primitive
   endian :big
   uint8  :classification_id
-  uint64 :selector_id
+  uint32 :pen_id
+  uint23 :selector_id
 
   def set(val)
     unless val.nil?
-      self.classification_id=val.to_i<<64
-      self.selector_id = val.to_i-((val.to_i>>64)<<64)
+      self.classification_id =val.to_i<<64
+      self.pen_id            = val.to_i-((val.to_i>>64)<<64)>>32
+      self.selector_id       = val.to_i-((val.to_i>>32)<<32)
     end
   end
 
   def get
-    self.classification_id.to_s + ":" + self.selector_id.to_s
+    self.classification_id.to_s + ".." + self.pen_id + ".." . self.selector_id.to_s
   end
 end
 
