@@ -143,6 +143,7 @@ class Application_Id16 < BinData::Primitive
   end
 end
 
+
 class Application_Id24 < BinData::Primitive
   endian :big
   uint8  :classification_id
@@ -159,6 +160,7 @@ class Application_Id24 < BinData::Primitive
     self.classification_id.to_s + ".." + self.selector_id.to_s
   end
 end
+
 
 class Application_Id32 < BinData::Primitive
   endian :big
@@ -177,6 +179,7 @@ class Application_Id32 < BinData::Primitive
   end
 end
 
+
 class Application_Id40 < BinData::Primitive
   endian :big
   uint8  :classification_id
@@ -194,39 +197,126 @@ class Application_Id40 < BinData::Primitive
   end
 end
 
-class Application_Id64 < BinData::Primitive
+
+class Appid56PanaL7Pen < BinData::Record
+  # RFC6759 chapter 4.1: PANA-L7-PEN
+  # This implements the "application ids MAY be encoded in a smaller number of bytes"
+  # Used in Application_Id56 choice statement
+  endian :big
+  uint32 :pen_id
+  uint16 :selector_id
+end
+
+
+class Application_Id56 < BinData::Primitive
   endian :big
   uint8  :classification_id
-  uint56 :selector_id
+  choice :selector_id, :selection => :classification_id do
+    # for classification engine id 20 we switch to Appid64PanaL7Pen to decode
+    appid56_pana_l7_pen 20
+    uint48              :default
+  end
 
   def set(val)
     unless val.nil?
-      self.classification_id=val.to_i<<56
-      self.selector_id = val.to_i-((val.to_i>>56)<<56)
+      self.classification_id=val.to_i<<48
+      if self.classification_id == 20
+        # classification engine id 20 (PANA_L7_PEN) contains a 4-byte PEN:
+        self.pen_id            = val.to_i-((val.to_i>>48)<<48)>>16
+        self.selector_id       = val.to_i-((val.to_i>>16)<<16)
+      else
+        self.selector_id       = val.to_i-((val.to_i>>48)<<48)
+      end
     end
   end
 
   def get
-    self.classification_id.to_s + ".." + self.selector_id.to_s
+    if self.classification_id == 20
+      self.classification_id.to_s + ".." + self.selector_id[:pen_id].to_s + ".." + self.selector_id[:selector_id].to_s
+    else
+      self.classification_id.to_s + ".." + self.selector_id.to_s
+    end
   end
+end
+
+
+class Appid64PanaL7Pen < BinData::Record
+  # RFC6759 chapter 4.1: PANA-L7-PEN
+  # This implements the 3 bytes default selector id length
+  # Used in Application_Id64 choice statement
+  endian :big
+  uint32 :pen_id
+  uint24 :selector_id
+end
+
+class Application_Id64 < BinData::Primitive
+  endian :big
+  uint8  :classification_id
+  choice :selector_id, :selection => :classification_id do
+    # for classification engine id 20 we switch to Appid64PanaL7Pen to decode
+    appid64_pana_l7_pen 20
+    uint56              :default
+  end
+
+  def set(val)
+    unless val.nil?
+      self.classification_id=val.to_i<<56
+      if self.classification_id == 20
+        # classification engine id 20 (PANA_L7_PEN) contains a 4-byte PEN:
+        self.pen_id            = val.to_i-((val.to_i>>56)<<56)>>24
+        self.selector_id       = val.to_i-((val.to_i>>24)<<24)
+      else
+        self.selector_id       = val.to_i-((val.to_i>>56)<<56)
+      end
+    end
+  end
+
+  def get
+    if self.classification_id == 20
+      self.classification_id.to_s + ".." + self.selector_id[:pen_id].to_s + ".." + self.selector_id[:selector_id].to_s
+    else
+      self.classification_id.to_s + ".." + self.selector_id.to_s
+    end
+  end
+end
+
+class Appid72PanaL7Pen < BinData::Record
+  # RFC6759 chapter 4.1: PANA-L7-PEN
+  # This implements the "application ids MAY be encoded with a larger length"
+  # Used in Application_Id72 choice statement
+  endian :big
+  uint32 :pen_id
+  uint32 :selector_id
 end
 
 class Application_Id72 < BinData::Primitive
   endian :big
   uint8  :classification_id
-  uint32 :pen_id
-  uint23 :selector_id
+  choice :selector_id, :selection => :classification_id do
+    # for classification engine id 20 we switch to Appid72PanaL7Pen to decode
+    appid72_pana_l7_pen 20
+    uint64              :default
+  end
 
   def set(val)
     unless val.nil?
-      self.classification_id =val.to_i<<64
-      self.pen_id            = val.to_i-((val.to_i>>64)<<64)>>32
-      self.selector_id       = val.to_i-((val.to_i>>32)<<32)
+      self.classification_id   = val.to_i<<64
+      if self.classification_id == 20 
+        # classification engine id 20 (PANA_L7_PEN) contains a 4-byte PEN:
+        self.pen_id            = val.to_i-((val.to_i>>64)<<64)>>32
+        self.selector_id       = val.to_i-((val.to_i>>32)<<32)
+      else
+        self.selector_id       = val.to_i-((val.to_i>>64)<<64)
+      end
     end
   end
 
   def get
-    self.classification_id.to_s + ".." + self.pen_id + ".." . self.selector_id.to_s
+    if self.classification_id == 20
+      self.classification_id.to_s + ".." + self.selector_id[:pen_id].to_s + ".." + self.selector_id[:selector_id].to_s
+    else
+      self.classification_id.to_s + ".." + self.selector_id.to_s
+    end
   end
 end
 

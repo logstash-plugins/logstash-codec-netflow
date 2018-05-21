@@ -1352,7 +1352,7 @@ describe LogStash::Codecs::Netflow do
             "l4_src_port": 0,
             "nprobe_proto_name": "\u0000\u00c1\u0000\u0000\u0001\u00ac\u0010\u0000d\u00e4O\u00ef\u00ff\u00ff\u00fa\u0007",
             "version": 9,
-            "application_id": "0:82",
+            "application_id": "0..82",
             "flow_seq_num": 2,
             "ipv4_src_addr": "0.0.0.0",
             "protocol": 0,
@@ -1372,7 +1372,7 @@ describe LogStash::Codecs::Netflow do
     it "should decode raw data" do
       expect(decode.size).to eq(1)
       expect(decode[0].get("[netflow][nprobe_proto]")).to eq(82)
-      expect(decode[0].get("[netflow][application_id]")).to eq("0:82")
+      expect(decode[0].get("[netflow][application_id]")).to eq("0..82")
       expect(decode[0].get("[netflow][in_bytes]")).to eq(82)
     end
 
@@ -2291,7 +2291,7 @@ describe LogStash::Codecs::Netflow do
             "application_description": "ARGUS",
             "flowset_id": 260,
             "version": 9,
-            "application_id": "1:13"
+            "application_id": "1..13"
           },
           "@timestamp": "2017-02-14T11:09:59.000Z",
           "@version": "1"
@@ -2302,7 +2302,7 @@ describe LogStash::Codecs::Netflow do
 
     it "should decode raw data" do
       expect(decode.size).to eq(15)
-      expect(decode[14].get("[netflow][application_id]")).to eq("1:13")
+      expect(decode[14].get("[netflow][application_id]")).to eq("1..13")
       expect(decode[14].get("[netflow][application_description]")).to eq("ARGUS")
     end
 
@@ -2345,7 +2345,7 @@ describe LogStash::Codecs::Netflow do
             "udp_dst_port": 161,
             "src_mask": 0,
             "version": 9,
-            "application_id": "5:38",
+            "application_id": "5..38",
             "flow_seq_num": 1509134,
             "ipv4_src_addr": "10.10.172.60",
             "in_src_mac": "00:18:19:9e:6c:01",
@@ -2362,7 +2362,7 @@ describe LogStash::Codecs::Netflow do
 
     it "should decode raw data" do
       expect(decode.size).to eq(5)
-      expect(decode[4].get("[netflow][application_id]")).to eq("5:38")
+      expect(decode[4].get("[netflow][application_id]")).to eq("5..38")
     end
 
     it "should serialize to json" do
@@ -2388,7 +2388,7 @@ describe LogStash::Codecs::Netflow do
             "staMacAddress": "34:02:86:75:c0:51",
             "flowset_id": 261,
             "version": 9,
-            "application_id": "13:431",
+            "application_id": "13..431",
             "flow_seq_num": 78,
             "in_bytes": 80973880,
             "postIpDiffServCodePoint": 0,
@@ -2405,7 +2405,7 @@ describe LogStash::Codecs::Netflow do
 
     it "should decode raw data" do
       expect(decode.size).to eq(19)
-      expect(decode[18].get("[netflow][application_id]")).to eq("13:431")
+      expect(decode[18].get("[netflow][application_id]")).to eq("13..431")
     end
 
     it "should serialize to json" do
