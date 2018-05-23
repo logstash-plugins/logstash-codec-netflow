@@ -1002,8 +1002,7 @@ describe LogStash::Codecs::Netflow do
           "protocol": 6,
           "output_snmp": 1743,
           "dst_traffic_index": 4294967295,
-          "ip_protocol_version": 4,
-          "field0_reserved": 0
+          "ip_protocol_version": 4
         },
         "@version": "1",
         "@timestamp": "2018-05-21T09:25:04.000Z"

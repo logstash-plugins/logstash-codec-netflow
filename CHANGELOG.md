@@ -1,3 +1,7 @@
+## 3.14.1
+
+  - Fixes exception when receiving Netflow 9 from H3C devices
+
 ## 3.14.0
 
   - Added support for Netflow 9 from H3C devices
