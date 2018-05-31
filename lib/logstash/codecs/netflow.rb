@@ -472,6 +472,29 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     field
   end # def string_field
 
+  def get_rfc6759_application_id_class(field,length)
+    case length
+    when 2
+      field[0] = :Application_Id16
+    when 3
+      field[0] = :Application_Id24
+    when 4
+      field[0] = :Application_Id32
+    when 5
+      field[0] = :Application_Id40
+    when 7
+      field[0] = :Application_Id56
+    when 8
+      field[0] = :Application_Id64
+    when 9
+      field[0] = :Application_Id72
+    else
+      @logger.warn("Unsupported application_id length encountered, skipping", :field => field, :length => length)
+      nil
+    end      
+    field[0]
+  end
+
   def netflow_field_for(type, length, template_id)
     if @netflow_fields.include?(type)
       field = @netflow_fields[type].clone
@@ -509,23 +532,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           end
           field[0] = uint_field(length, field[0])
         when :application_id
-          case length
-          when 2
-            field[0] = :Application_Id16
-          when 3
-            field[0] = :Application_Id24
-          when 4
-            field[0] = :Application_Id32
-          when 5
-            field[0] = :Application_Id40
-          when 8
-            field[0] = :Application_Id64
-          when 9
-            field[0] = :Application_Id72
-          else
-            @logger.warn("Unsupported application_id length encountered, skipping", :field => field, :length => length)
-            nil
-          end      
+          field[0] = get_rfc6759_application_id_class(field,length)
         when :skip
           field += [nil, {:length => length.to_i}]
         when :string
@@ -573,6 +580,8 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
         field[0] = uint_field(length, 4)
       when :uint16
         field[0] = uint_field(length, 2)
+      when :application_id
+        field[0] = get_rfc6759_application_id_class(field,length)
       end
 
       @logger.debug("Definition complete", :field => field)
