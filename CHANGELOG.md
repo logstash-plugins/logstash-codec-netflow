@@ -1,3 +1,7 @@
+## 4.0.0
+
+  - Added support for RFC6759 decoding of application_id. **This is a breaking change to the way application_id is decoded. The format changes from e.g. 0:40567 to 0..12356..40567**
+
 ## 3.14.1
 
   - Fixes exception when receiving Netflow 9 from H3C devices
