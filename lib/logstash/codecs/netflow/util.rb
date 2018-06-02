@@ -443,7 +443,7 @@ end
 
 class IpfixOptionFlowset < BinData::Record
   endian :big
-  array  :templates, :read_until => lambda { flowset_length - 4 - array.num_bytes <= 2 } do
+  array  :templates, :read_until => lambda { flowset_length - 4 } do
     uint16 :template_id
     uint16 :field_count
     uint16 :scope_count, :assert => lambda { scope_count > 0 }
@@ -459,6 +459,7 @@ class IpfixOptionFlowset < BinData::Record
       uint16 :field_length
       uint32 :enterprise_id, :onlyif => lambda { enterprise != 0 }
     end
+    string  :padding, :read_length => lambda { flowset_length - 4 - 2 - 2 - 2 - scope_fields.num_bytes - option_fields.num_bytes }
   end
 end
 

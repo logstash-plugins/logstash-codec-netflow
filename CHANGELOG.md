@@ -1,3 +1,7 @@
+## 4.0.1
+
+  - Fixed IPFIX options template parsing for Juniper MX240 JunOS 15.1 
+
 ## 4.0.0
 
   - Added support for RFC6759 decoding of application_id. **This is a breaking change to the way application_id is decoded. The format changes from e.g. 0:40567 to 0..12356..40567**

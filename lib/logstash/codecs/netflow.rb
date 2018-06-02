@@ -102,6 +102,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   end # def register
 
   def decode(payload, metadata = nil, &block)
+#   BinData::trace_reading do
     header = Header.read(payload)
 
     unless @versions.include?(header.version)
@@ -126,13 +127,16 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 #      end
      end
     elsif header.version == 10
+#     BinData::trace_reading do
       flowset = IpfixPDU.read(payload)
       flowset.records.each do |record|
         decode_ipfix(flowset, record).each { |event| yield(event) }
       end
+#     end
     else
       @logger.warn("Unsupported Netflow version v#{header.version}")
     end
+#   end
   rescue BinData::ValidityError, IOError => e
     @logger.warn("Invalid netflow packet received (#{e})")
   end

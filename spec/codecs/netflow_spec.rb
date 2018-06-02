@@ -1161,6 +1161,51 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+  context "IPFIX options template from Juniper MX240 JunOS 15.1 R6 S3" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_juniper_mx240_junos151r6s3_opttpl512.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_juniper_mx240_junos151r6s3_data512.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+      {
+        "@timestamp": "2018-06-01T15:11:53.000Z",
+        "@version": "1",
+        "netflow": {
+          "exportProtocolVersion": 10,
+          "exportingProcessId": 2,
+          "flowActiveTimeout": 60,
+          "exportTransportProtocol": 17,
+          "flowIdleTimeout": 60,
+          "exportedFlowRecordTotalCount": 76,
+          "exportedMessageTotalCount": 76,
+          "samplingInterval": 1000,
+          "exporterIPv6Address": "::",
+          "systemInitTimeMilliseconds": 1262761598000,
+          "version": 10,
+          "exporterIPv4Address": "10.0.0.1"
+        }
+      }
+      END
+
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(1)
+      expect(decode[0].get("[netflow][exporterIPv4Address]")).to eq("10.0.0.1")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
+
+
   context "IPFIX Nokia BRAS" do
     let(:data) do
       packets = []
