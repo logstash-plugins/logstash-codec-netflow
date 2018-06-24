@@ -183,6 +183,11 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   def decode_netflow9(flowset, record, metadata = nil)
     events = []
 
+    # Check for block of trailing padding
+    if record.flowset_length == 0
+      return events
+    end 
+
     case record.flowset_id
     when 0..1
       # Template flowset

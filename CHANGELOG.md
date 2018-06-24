@@ -1,3 +1,7 @@
+## 4.0.2
+
+  - Fixed incorrect parsing of zero-filled Netflow 9 packets from Palo Alto
+
 ## 4.0.1
 
   - Fixed IPFIX options template parsing for Juniper MX240 JunOS 15.1 

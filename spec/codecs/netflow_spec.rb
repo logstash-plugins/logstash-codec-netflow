@@ -1101,6 +1101,60 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+  context "Netflow 9 Palo Alto 1 flowset in large zero filled packet" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_paloalto_81_tpl256-263.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_paloalto_81_data257_1flowset_in_large_zerofilled_packet.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+      {
+        "netflow": {
+          "output_snmp":500010002,
+          "icmp_type":0,
+          "in_pkts":3,
+          "src_tos":0,
+          "ipv4_dst_addr":"134.220.1.156",
+          "first_switched":"2018-06-06T13:20:03.000Z",
+          "flowset_id":257,
+          "l4_src_port":88,
+          "fw_event":2,
+          "version":9,
+          "flow_seq_num":970830115,
+          "ipv4_src_addr":"134.220.2.6",
+          "in_bytes":363,
+          "protocol":6,
+          "tcp_flags":94,
+          "input_snmp":500010024,
+          "last_switched":"2018-06-06T13:20:03.000Z",
+          "user_id":"unknown",
+          "conn_id":1428388,
+          "privateEnterpriseNumber":25461,
+          "l4_dst_port":50234,
+          "app_id":"kerberos",
+          "direction":0
+        },
+        "@timestamp":"2018-06-06T13:20:17.000Z",
+        "@version":"1"
+      }
+      END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(1)
+      expect(decode[0].get("[netflow][app_id]")).to eq("kerberos")
+      expect(decode[0].get("[netflow][ipv4_src_addr]")).to eq("134.220.2.6")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
 
   context "Netflow 9 Fortigate FortiOS 54x appid" do
     let(:data) do

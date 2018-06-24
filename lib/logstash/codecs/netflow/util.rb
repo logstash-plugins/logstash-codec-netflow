@@ -379,7 +379,7 @@ end
 
 class NetflowTemplateFlowset < BinData::Record
   endian :big
-  array  :templates, :read_until => lambda { array.num_bytes == flowset_length - 4 } do
+  array  :templates, :read_until => lambda { flowset_length == 0 || array.num_bytes == flowset_length - 4 } do
     uint16 :template_id
     uint16 :field_count
     array  :record_fields, :initial_length => :field_count do
@@ -387,6 +387,7 @@ class NetflowTemplateFlowset < BinData::Record
       uint16 :field_length
     end
   end
+  rest  :rest, :onlyif => lambda { flowset_length == 0 }
 end
 
 class NetflowOptionFlowset < BinData::Record
@@ -417,7 +418,7 @@ class Netflow9PDU < BinData::Record
   uint32 :source_id
   array  :records, :read_until => :eof do
     uint16 :flowset_id, :assert => lambda { [0, 1, *(256..65535)].include?(flowset_id) }
-    uint16 :flowset_length, :assert => lambda { flowset_length > 4 }
+    uint16 :flowset_length, :assert => lambda { flowset_length == 0 || flowset_length > 4 }
     choice :flowset_data, :selection => :flowset_id do
       netflow_template_flowset 0
       netflow_option_flowset   1
