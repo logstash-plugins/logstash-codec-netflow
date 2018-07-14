@@ -1274,6 +1274,24 @@
 56702:
 - :string
 - :user_id
+57554:
+- :uint32
+- :nprobe_client_nw_delay_sec
+57555:
+- :uint32
+- :nprobe_client_nw_delay_usec
+57556:
+- :uint32
+- :nprobe_server_nw_delay_sec
+57557:
+- :uint32
+- :nprobe_server_nw_delay_usec
+57558:
+- :uint32
+- :nprobe_appl_latency_sec
+57559:
+- :uint32
+- :nprobe_appl_latency_usec
 57590:
 - :uint16
 - :nprobe_proto
