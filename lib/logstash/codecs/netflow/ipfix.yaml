@@ -1,5 +1,7 @@
 ---
 0:
+  0:
+  - :skip
   1:
   - :uint64
   - :octetDeltaCount

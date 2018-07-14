@@ -1,4 +1,6 @@
 ---
+0:
+- :skip
 1:
 - 4
 - :in_bytes
@@ -223,6 +225,12 @@
 89:
 - :forwarding_status
 - :forwarding_status
+92:
+- :uint32
+- :src_traffic_index
+93:
+- :uint32
+- :dst_traffic_index
 94:
 - :string
 - :application_description
@@ -547,10 +555,10 @@
 - :uint8
 - :natEvent
 231:
-- :uint32 
+- :uint64
 - :fwd_flow_delta_bytes
 232:
-- :uint32
+- :uint64
 - :rev_flow_delta_bytes
 233:
 - :uint8

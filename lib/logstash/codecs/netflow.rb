@@ -102,6 +102,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   end # def register
 
   def decode(payload, metadata = nil, &block)
+#   BinData::trace_reading do
     header = Header.read(payload)
 
     unless @versions.include?(header.version)
@@ -126,13 +127,16 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 #      end
      end
     elsif header.version == 10
+#     BinData::trace_reading do
       flowset = IpfixPDU.read(payload)
       flowset.records.each do |record|
         decode_ipfix(flowset, record).each { |event| yield(event) }
       end
+#     end
     else
       @logger.warn("Unsupported Netflow version v#{header.version}")
     end
+#   end
   rescue BinData::ValidityError, IOError => e
     @logger.warn("Invalid netflow packet received (#{e})")
   end
@@ -178,6 +182,11 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
   def decode_netflow9(flowset, record, metadata = nil)
     events = []
+
+    # Check for block of trailing padding
+    if record.flowset_length == 0
+      return events
+    end 
 
     case record.flowset_id
     when 0..1
@@ -344,9 +353,10 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     when 256..65535
       # Data flowset
       key = "#{flowset.observation_domain_id}|#{record.flowset_id}"
-      if @ipfix_templates[key] != nil
-        template = @ipfix_templates[key]
-      else
+      
+      template = @decode_mutex_ipfix.synchronize { @ipfix_templates[key] }
+
+      if !template
         @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from observation domain id #{flowset.observation_domain_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
         return events
       end
@@ -471,6 +481,29 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     field
   end # def string_field
 
+  def get_rfc6759_application_id_class(field,length)
+    case length
+    when 2
+      field[0] = :Application_Id16
+    when 3
+      field[0] = :Application_Id24
+    when 4
+      field[0] = :Application_Id32
+    when 5
+      field[0] = :Application_Id40
+    when 7
+      field[0] = :Application_Id56
+    when 8
+      field[0] = :Application_Id64
+    when 9
+      field[0] = :Application_Id72
+    else
+      @logger.warn("Unsupported application_id length encountered, skipping", :field => field, :length => length)
+      nil
+    end      
+    field[0]
+  end
+
   def netflow_field_for(type, length, template_id)
     if @netflow_fields.include?(type)
       field = @netflow_fields[type].clone
@@ -508,23 +541,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           end
           field[0] = uint_field(length, field[0])
         when :application_id
-          case length
-          when 2
-            field[0] = :Application_Id16
-          when 3
-            field[0] = :Application_Id24
-          when 4
-            field[0] = :Application_Id32
-          when 5
-            field[0] = :Application_Id40
-          when 8
-            field[0] = :Application_Id64
-          when 9
-            field[0] = :Application_Id72
-          else
-            @logger.warn("Unsupported application_id length encountered, skipping", :field => field, :length => length)
-            nil
-          end      
+          field[0] = get_rfc6759_application_id_class(field,length)
         when :skip
           field += [nil, {:length => length.to_i}]
         when :string
@@ -572,6 +589,8 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
         field[0] = uint_field(length, 4)
       when :uint16
         field[0] = uint_field(length, 2)
+      when :application_id
+        field[0] = get_rfc6759_application_id_class(field,length)
       end
 
       @logger.debug("Definition complete", :field => field)

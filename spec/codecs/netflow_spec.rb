@@ -960,6 +960,69 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+  context "Netflow 9 H3C" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_h3c_tpl3281.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_h3c_data3281.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+      {
+        "netflow": {
+          "in_pkts": 9,
+          "src_as": 0,
+          "flowset_id": 3281,
+          "l4_dst_port": 0,
+          "last_switched": "2018-05-21T09:25:04.999Z",
+          "dst_mask": 24,
+          "tcp_flags": 0,
+          "src_tos": 0,
+          "dst_as": 0,
+          "input_snmp": 2662,
+          "direction": 0,
+          "version": 9,
+          "src_mask": 24,
+          "sampling_algorithm": 0,
+          "sampling_interval": 0,
+          "flow_seq_num": 60342277,
+          "src_traffic_index": 0,
+          "in_bytes": 5092,
+          "ipv4_src_addr": "10.22.166.36",
+          "first_switched": "2018-05-21T09:24:04.999Z",
+          "ipv4_dst_addr": "10.21.75.38",
+          "ipv4_next_hop": "10.21.17.78",
+          "forwarding_status": {
+            "status": 0,
+            "reason": 0
+          },
+          "l4_src_port": 0,
+          "protocol": 6,
+          "output_snmp": 1743,
+          "dst_traffic_index": 4294967295,
+          "ip_protocol_version": 4
+        },
+        "@version": "1",
+        "@timestamp": "2018-05-21T09:25:04.000Z"
+      }
+      END
+
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(16)
+      expect(decode[11].get("[netflow][dst_traffic_index]")).to eq(4294967295)
+      expect(decode[11].get("[netflow][src_traffic_index]")).to eq(0)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[15].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
 
   context "Netflow 9 IE150 IE151" do
     let(:data) do
@@ -1037,6 +1100,165 @@ describe LogStash::Codecs::Netflow do
     end
 
   end
+
+  context "Netflow 9 Palo Alto 1 flowset in large zero filled packet" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_paloalto_81_tpl256-263.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_paloalto_81_data257_1flowset_in_large_zerofilled_packet.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+      {
+        "netflow": {
+          "output_snmp":500010002,
+          "icmp_type":0,
+          "in_pkts":3,
+          "src_tos":0,
+          "ipv4_dst_addr":"134.220.1.156",
+          "first_switched":"2018-06-06T13:20:03.000Z",
+          "flowset_id":257,
+          "l4_src_port":88,
+          "fw_event":2,
+          "version":9,
+          "flow_seq_num":970830115,
+          "ipv4_src_addr":"134.220.2.6",
+          "in_bytes":363,
+          "protocol":6,
+          "tcp_flags":94,
+          "input_snmp":500010024,
+          "last_switched":"2018-06-06T13:20:03.000Z",
+          "user_id":"unknown",
+          "conn_id":1428388,
+          "privateEnterpriseNumber":25461,
+          "l4_dst_port":50234,
+          "app_id":"kerberos",
+          "direction":0
+        },
+        "@timestamp":"2018-06-06T13:20:17.000Z",
+        "@version":"1"
+      }
+      END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(1)
+      expect(decode[0].get("[netflow][app_id]")).to eq("kerberos")
+      expect(decode[0].get("[netflow][ipv4_src_addr]")).to eq("134.220.2.6")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
+
+  context "Netflow 9 Fortigate FortiOS 54x appid" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_fortigate_fortios_542_appid_tpl258-269.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_fortigate_fortios_542_appid_data258_262.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+      {
+        "netflow": {
+          "output_snmp": 2,
+          "forwarding_status": {
+            "reason": 0,
+            "status": 1
+          },
+          "xlate_src_port": 45380,
+          "in_pkts": 6,
+          "ipv4_dst_addr": "182.50.136.239",
+          "first_switched": "2018-05-11T00:54:10.999Z",
+          "flowset_id": 262,
+          "l4_src_port": 45380,
+          "xlate_dst_port": 0,
+          "version": 9,
+          "application_id": "20..12356..36660",
+          "flow_seq_num": 350,
+          "ipv4_src_addr": "192.168.100.151",
+          "in_bytes": 748,
+          "protocol": 6,
+          "flow_end_reason": 3,
+          "last_switched": "2018-05-11T00:54:10.999Z",
+          "input_snmp": 8,
+          "out_pkts": 6,
+          "out_bytes": 748,
+          "xlate_src_addr_ipv4": "10.0.0.250",
+          "xlate_dst_addr_ipv4": "0.0.0.0",
+          "l4_dst_port": 80
+        },
+        "@timestamp": "2018-05-11T00:54:11.000Z",
+        "@version": "1"
+      }
+      END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(17)
+      expect(decode[1].get("[netflow][application_id]")).to eq("20..12356..40568")
+      expect(decode[2].get("[netflow][application_id]")).to eq("20..12356..40568")
+      expect(decode[16].get("[netflow][application_id]")).to eq("20..12356..0")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
+
+  context "IPFIX options template from Juniper MX240 JunOS 15.1 R6 S3" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_juniper_mx240_junos151r6s3_opttpl512.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_juniper_mx240_junos151r6s3_data512.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+      {
+        "@timestamp": "2018-06-01T15:11:53.000Z",
+        "@version": "1",
+        "netflow": {
+          "exportProtocolVersion": 10,
+          "exportingProcessId": 2,
+          "flowActiveTimeout": 60,
+          "exportTransportProtocol": 17,
+          "flowIdleTimeout": 60,
+          "exportedFlowRecordTotalCount": 76,
+          "exportedMessageTotalCount": 76,
+          "samplingInterval": 1000,
+          "exporterIPv6Address": "::",
+          "systemInitTimeMilliseconds": 1262761598000,
+          "version": 10,
+          "exporterIPv4Address": "10.0.0.1"
+        }
+      }
+      END
+
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(1)
+      expect(decode[0].get("[netflow][exporterIPv4Address]")).to eq("10.0.0.1")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
+
 
   context "IPFIX Nokia BRAS" do
     let(:data) do
@@ -1287,7 +1509,7 @@ describe LogStash::Codecs::Netflow do
             "l4_src_port": 0,
             "nprobe_proto_name": "\u0000\u00c1\u0000\u0000\u0001\u00ac\u0010\u0000d\u00e4O\u00ef\u00ff\u00ff\u00fa\u0007",
             "version": 9,
-            "application_id": "0:82",
+            "application_id": "0..82",
             "flow_seq_num": 2,
             "ipv4_src_addr": "0.0.0.0",
             "protocol": 0,
@@ -1307,7 +1529,7 @@ describe LogStash::Codecs::Netflow do
     it "should decode raw data" do
       expect(decode.size).to eq(1)
       expect(decode[0].get("[netflow][nprobe_proto]")).to eq(82)
-      expect(decode[0].get("[netflow][application_id]")).to eq("0:82")
+      expect(decode[0].get("[netflow][application_id]")).to eq("0..82")
       expect(decode[0].get("[netflow][in_bytes]")).to eq(82)
     end
 
@@ -2226,7 +2448,7 @@ describe LogStash::Codecs::Netflow do
             "application_description": "ARGUS",
             "flowset_id": 260,
             "version": 9,
-            "application_id": "1:13"
+            "application_id": "1..13"
           },
           "@timestamp": "2017-02-14T11:09:59.000Z",
           "@version": "1"
@@ -2237,7 +2459,7 @@ describe LogStash::Codecs::Netflow do
 
     it "should decode raw data" do
       expect(decode.size).to eq(15)
-      expect(decode[14].get("[netflow][application_id]")).to eq("1:13")
+      expect(decode[14].get("[netflow][application_id]")).to eq("1..13")
       expect(decode[14].get("[netflow][application_description]")).to eq("ARGUS")
     end
 
@@ -2280,7 +2502,7 @@ describe LogStash::Codecs::Netflow do
             "udp_dst_port": 161,
             "src_mask": 0,
             "version": 9,
-            "application_id": "5:38",
+            "application_id": "5..38",
             "flow_seq_num": 1509134,
             "ipv4_src_addr": "10.10.172.60",
             "in_src_mac": "00:18:19:9e:6c:01",
@@ -2297,7 +2519,7 @@ describe LogStash::Codecs::Netflow do
 
     it "should decode raw data" do
       expect(decode.size).to eq(5)
-      expect(decode[4].get("[netflow][application_id]")).to eq("5:38")
+      expect(decode[4].get("[netflow][application_id]")).to eq("5..38")
     end
 
     it "should serialize to json" do
@@ -2323,7 +2545,7 @@ describe LogStash::Codecs::Netflow do
             "staMacAddress": "34:02:86:75:c0:51",
             "flowset_id": 261,
             "version": 9,
-            "application_id": "13:431",
+            "application_id": "13..431",
             "flow_seq_num": 78,
             "in_bytes": 80973880,
             "postIpDiffServCodePoint": 0,
@@ -2340,7 +2562,7 @@ describe LogStash::Codecs::Netflow do
 
     it "should decode raw data" do
       expect(decode.size).to eq(19)
-      expect(decode[18].get("[netflow][application_id]")).to eq("13:431")
+      expect(decode[18].get("[netflow][application_id]")).to eq("13..431")
     end
 
     it "should serialize to json" do
