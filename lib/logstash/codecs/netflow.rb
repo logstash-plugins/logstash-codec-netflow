@@ -545,7 +545,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
         when :skip
           field += [nil, {:length => length.to_i}]
         when :string
-          field += [{:length => length.to_i, :trim_padding => true}]
+          field = string_field(field, type, length.to_i)
         end
 
         @logger.debug? and @logger.debug("Field definition complete for template #{template_id}", :field => field)

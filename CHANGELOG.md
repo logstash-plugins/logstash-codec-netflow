@@ -1,3 +1,7 @@
+## 4.1.0
+
+  - Added support for Netflow v9 devices with VarString fields (H3C Netstream)
+
 ## 4.0.2
 
   - Fixed incorrect parsing of zero-filled Netflow 9 packets from Palo Alto
