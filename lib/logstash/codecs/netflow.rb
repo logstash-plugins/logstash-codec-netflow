@@ -1,4 +1,4 @@
-# encoding: utf-8
+# encodin: utf-8
 require "logstash/codecs/base"
 require "logstash/namespace"
 require "logstash/timestamp"
@@ -77,7 +77,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     if @cache_save_path
       if @versions.include?(9)
         cache_save_file_netflow = "#{@cache_save_path}/netflow_templates.cache"
-        if File.exists?(cache_save_file_netflow)
+        if File.size?(cache_save_file_netflow)
           raise "#{self.class.name}: Template cache file #{cache_save_file_netflow} not writable" unless File.writable?(cache_save_file_netflow)
           @netflow_templates_cache = load_templates_cache("#{@cache_save_path}/netflow_templates.cache")
           @netflow_templates_cache.each{ |key, fields| @netflow_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields) }
@@ -89,7 +89,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
       if @versions.include?(10)
         cache_save_file_ipfix = "#{@cache_save_path}/ipfix_templates.cache"
-        if File.exists?(cache_save_file_ipfix)
+        if File.size?(cache_save_file_ipfix)
           raise "#{self.class.name}: Template cache file #{cache_save_file_ipfix} not writable" unless File.writable?(cache_save_file_ipfix)
           @ipfix_templates_cache = load_templates_cache("#{@cache_save_path}/ipfix_templates.cache")
           @ipfix_templates_cache.each{ |key, fields| @ipfix_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields) }
