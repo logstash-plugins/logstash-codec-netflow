@@ -1,4 +1,4 @@
-# encodin: utf-8
+# encoding: utf-8
 require "logstash/codecs/base"
 require "logstash/namespace"
 require "logstash/timestamp"
