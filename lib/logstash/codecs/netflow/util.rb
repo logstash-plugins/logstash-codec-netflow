@@ -139,9 +139,10 @@ class Application_Id16 < BinData::Primitive
   end
 
   def get
-    self.classification_id.to_s + ":" + self.selector_id.to_s
+    self.classification_id.to_s + ".." + self.selector_id.to_s
   end
 end
+
 
 class Application_Id24 < BinData::Primitive
   endian :big
@@ -156,9 +157,10 @@ class Application_Id24 < BinData::Primitive
   end
 
   def get
-    self.classification_id.to_s + ":" + self.selector_id.to_s
+    self.classification_id.to_s + ".." + self.selector_id.to_s
   end
 end
+
 
 class Application_Id32 < BinData::Primitive
   endian :big
@@ -173,9 +175,10 @@ class Application_Id32 < BinData::Primitive
   end
 
   def get
-    self.classification_id.to_s + ":" + self.selector_id.to_s
+    self.classification_id.to_s + ".." + self.selector_id.to_s
   end
 end
+
 
 class Application_Id40 < BinData::Primitive
   endian :big
@@ -190,41 +193,130 @@ class Application_Id40 < BinData::Primitive
   end
 
   def get
-    self.classification_id.to_s + ":" + self.selector_id.to_s
+    self.classification_id.to_s + ".." + self.selector_id.to_s
   end
+end
+
+
+class Appid56PanaL7Pen < BinData::Record
+  # RFC6759 chapter 4.1: PANA-L7-PEN
+  # This implements the "application ids MAY be encoded in a smaller number of bytes"
+  # Used in Application_Id56 choice statement
+  endian :big
+  uint32 :pen_id
+  uint16 :selector_id
+end
+
+
+class Application_Id56 < BinData::Primitive
+  endian :big
+  uint8  :classification_id
+  choice :selector_id, :selection => :classification_id do
+    # for classification engine id 20 we switch to Appid64PanaL7Pen to decode
+    appid56_pana_l7_pen 20
+    uint48              :default
+  end
+
+  def set(val)
+    unless val.nil?
+      self.classification_id=val.to_i<<48
+      if self.classification_id == 20
+        # classification engine id 20 (PANA_L7_PEN) contains a 4-byte PEN:
+        self.pen_id            = val.to_i-((val.to_i>>48)<<48)>>16
+        self.selector_id       = val.to_i-((val.to_i>>16)<<16)
+      else
+        self.selector_id       = val.to_i-((val.to_i>>48)<<48)
+      end
+    end
+  end
+
+  def get
+    if self.classification_id == 20
+      self.classification_id.to_s + ".." + self.selector_id[:pen_id].to_s + ".." + self.selector_id[:selector_id].to_s
+    else
+      self.classification_id.to_s + ".." + self.selector_id.to_s
+    end
+  end
+end
+
+
+class Appid64PanaL7Pen < BinData::Record
+  # RFC6759 chapter 4.1: PANA-L7-PEN
+  # This implements the 3 bytes default selector id length
+  # Used in Application_Id64 choice statement
+  endian :big
+  uint32 :pen_id
+  uint24 :selector_id
 end
 
 class Application_Id64 < BinData::Primitive
   endian :big
   uint8  :classification_id
-  uint56 :selector_id
+  choice :selector_id, :selection => :classification_id do
+    # for classification engine id 20 we switch to Appid64PanaL7Pen to decode
+    appid64_pana_l7_pen 20
+    uint56              :default
+  end
 
   def set(val)
     unless val.nil?
       self.classification_id=val.to_i<<56
-      self.selector_id = val.to_i-((val.to_i>>56)<<56)
+      if self.classification_id == 20
+        # classification engine id 20 (PANA_L7_PEN) contains a 4-byte PEN:
+        self.pen_id            = val.to_i-((val.to_i>>56)<<56)>>24
+        self.selector_id       = val.to_i-((val.to_i>>24)<<24)
+      else
+        self.selector_id       = val.to_i-((val.to_i>>56)<<56)
+      end
     end
   end
 
   def get
-    self.classification_id.to_s + ":" + self.selector_id.to_s
+    if self.classification_id == 20
+      self.classification_id.to_s + ".." + self.selector_id[:pen_id].to_s + ".." + self.selector_id[:selector_id].to_s
+    else
+      self.classification_id.to_s + ".." + self.selector_id.to_s
+    end
   end
+end
+
+class Appid72PanaL7Pen < BinData::Record
+  # RFC6759 chapter 4.1: PANA-L7-PEN
+  # This implements the "application ids MAY be encoded with a larger length"
+  # Used in Application_Id72 choice statement
+  endian :big
+  uint32 :pen_id
+  uint32 :selector_id
 end
 
 class Application_Id72 < BinData::Primitive
   endian :big
   uint8  :classification_id
-  uint64 :selector_id
+  choice :selector_id, :selection => :classification_id do
+    # for classification engine id 20 we switch to Appid72PanaL7Pen to decode
+    appid72_pana_l7_pen 20
+    uint64              :default
+  end
 
   def set(val)
     unless val.nil?
-      self.classification_id=val.to_i<<64
-      self.selector_id = val.to_i-((val.to_i>>64)<<64)
+      self.classification_id   = val.to_i<<64
+      if self.classification_id == 20 
+        # classification engine id 20 (PANA_L7_PEN) contains a 4-byte PEN:
+        self.pen_id            = val.to_i-((val.to_i>>64)<<64)>>32
+        self.selector_id       = val.to_i-((val.to_i>>32)<<32)
+      else
+        self.selector_id       = val.to_i-((val.to_i>>64)<<64)
+      end
     end
   end
 
   def get
-    self.classification_id.to_s + ":" + self.selector_id.to_s
+    if self.classification_id == 20
+      self.classification_id.to_s + ".." + self.selector_id[:pen_id].to_s + ".." + self.selector_id[:selector_id].to_s
+    else
+      self.classification_id.to_s + ".." + self.selector_id.to_s
+    end
   end
 end
 
@@ -287,7 +379,7 @@ end
 
 class NetflowTemplateFlowset < BinData::Record
   endian :big
-  array  :templates, :read_until => lambda { array.num_bytes == flowset_length - 4 } do
+  array  :templates, :read_until => lambda { flowset_length == 0 || array.num_bytes == flowset_length - 4 } do
     uint16 :template_id
     uint16 :field_count
     array  :record_fields, :initial_length => :field_count do
@@ -295,6 +387,7 @@ class NetflowTemplateFlowset < BinData::Record
       uint16 :field_length
     end
   end
+  rest  :rest, :onlyif => lambda { flowset_length == 0 }
 end
 
 class NetflowOptionFlowset < BinData::Record
@@ -325,7 +418,7 @@ class Netflow9PDU < BinData::Record
   uint32 :source_id
   array  :records, :read_until => :eof do
     uint16 :flowset_id, :assert => lambda { [0, 1, *(256..65535)].include?(flowset_id) }
-    uint16 :flowset_length, :assert => lambda { flowset_length > 4 }
+    uint16 :flowset_length, :assert => lambda { flowset_length == 0 || flowset_length > 4 }
     choice :flowset_data, :selection => :flowset_id do
       netflow_template_flowset 0
       netflow_option_flowset   1
@@ -351,7 +444,7 @@ end
 
 class IpfixOptionFlowset < BinData::Record
   endian :big
-  array  :templates, :read_until => lambda { flowset_length - 4 - array.num_bytes <= 2 } do
+  array  :templates, :read_until => lambda { flowset_length - 4 } do
     uint16 :template_id
     uint16 :field_count
     uint16 :scope_count, :assert => lambda { scope_count > 0 }
@@ -367,6 +460,7 @@ class IpfixOptionFlowset < BinData::Record
       uint16 :field_length
       uint32 :enterprise_id, :onlyif => lambda { enterprise != 0 }
     end
+    string  :padding, :read_length => lambda { flowset_length - 4 - 2 - 2 - 2 - scope_fields.num_bytes - option_fields.num_bytes }
   end
 end
 

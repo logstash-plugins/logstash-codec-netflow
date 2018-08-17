@@ -1,3 +1,44 @@
+## 4.1.0
+
+  - Added support for Netflow v9 devices with VarString fields (H3C Netstream)
+
+## 4.0.2
+
+  - Fixed incorrect parsing of zero-filled Netflow 9 packets from Palo Alto
+
+## 4.0.1
+
+  - Fixed IPFIX options template parsing for Juniper MX240 JunOS 15.1 
+
+## 4.0.0
+
+  - Added support for RFC6759 decoding of application_id. **This is a breaking change to the way application_id is decoded. The format changes from e.g. 0:40567 to 0..12356..40567**
+
+## 3.14.1
+
+  - Fixes exception when receiving Netflow 9 from H3C devices
+
+## 3.14.0
+
+  - Added support for Netflow 9 from H3C devices
+
+## 3.13.2
+
+  - Fixes incorrect definitions of IE 231 and IE 232
+
+## 3.13.1
+
+  - Fixes exceptions due to concurrent access of IPFIX templates, see issue #134
+
+## 3.13.0
+
+  - Added support for Netflow 9 reduced-size encoding support
+  - Added support for Barracuda IPFIX Extended Uniflow
+
+## 3.12.0
+
+  - Added support for IPFIX from Procera/NetIntact/Sandvine 15.1
+
 ## 3.11.4
 
   - Workaround for breaking change in Netflow-Input-UDP > 3.2.0, see issue #122
