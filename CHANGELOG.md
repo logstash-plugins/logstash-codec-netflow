@@ -1,3 +1,7 @@
+## 4.1.1
+
+  - Reduced complexity of creating, persisting, loading an retrieving template caches.
+
 ## 4.1.0
 
   - Added support for Netflow v9 devices with VarString fields (H3C Netstream)
