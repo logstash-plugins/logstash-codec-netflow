@@ -243,6 +243,12 @@
 98:
 - :uint8
 - :postIpDiffServCodePoint
+99:
+- :uint32
+- :multicastReplicationFactor
+101:
+- :uint8
+- :classificationEngineId
 128:
 - :uint32
 - :bgpNextAdjacentAsNumber
