@@ -1,3 +1,7 @@
+## 4.1.2
+
+  - Fixed issue where TTL in template registry was not being respected.
+
 ## 4.1.1
 
   - Reduced complexity of creating, persisting, loading an retrieving template caches.
