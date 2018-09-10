@@ -605,8 +605,8 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       catch(:invalid_template) do
         yield(template) if block_given?
 
-        @bindata_spec_cache[key] = field_tuples
-        @bindata_struct_cache[key] = template
+        @bindata_spec_cache[key, @ttl] = field_tuples
+        @bindata_struct_cache[key, @ttl] = template
 
         do_persist
 
