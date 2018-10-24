@@ -3743,16 +3743,16 @@
   - :string
   - :proceraGgsn
   38:
-  - :float32
+  - :float
   - :proceraQoeIncomingInternal
   39:
-  - :float32
+  - :float
   - :proceraQoeIncomingExternal
   40:
-  - :float32
+  - :float
   - :proceraQoeOutgoingInternal
   41:
-  - :float32
+  - :float
   - :proceraQoeOutgoingExternal
   42:
   - :ip4_addr
