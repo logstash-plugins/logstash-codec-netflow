@@ -3846,3 +3846,113 @@
   12:
   - :uint32
   - :AuditCounter
+# Ixia Communications (3054)
+3054:
+  110:
+  - :uint32
+  - :ixiaL7ApplicationId
+  111:
+  - :string
+  - :ixiaL7ApplicationName
+  120:
+  - :string
+  - :ixiaSourceIpCountryCode
+  121:
+  - :string
+  - :ixiaSourceIpCountryName
+  122:
+  - :string
+  - :ixiaSourceIpRegionCode
+  123:
+  - :string
+  - :ixiaSourceIpRegionName
+  125:
+  - :string
+  - :ixiaSourceIpCityName
+  126:
+  - :float
+  - :ixiaSourceIpLatitude
+  127:
+  - :float
+  - :ixiaSourceIpLongitude
+  140:
+  - :string
+  - :ixiaDestinationIpCountryCode
+  141:
+  - :string
+  - :ixiaDestinationIpCountryName
+  142:
+  - :string
+  - :ixiaDestinationIpRegionCode
+  143:
+  - :string
+  - :ixiaDestinationIpRegionNode
+  145:
+  - :string
+  - :ixiaDestinationIpCityName
+  146:
+  - :float
+  - :ixiaDestinationIpLatitude
+  147:
+  - :float
+  - :ixiaDestinationIpLongitude
+  160:
+  - :uint8
+  - :ixiaOsDeviceId
+  161:
+  - :string
+  - :ixiaOsDeviceName
+  162:
+  - :uint8
+  - :ixiaBrowserId
+  163:
+  - :string
+  - :ixiaBrowserName
+  176:
+  - :uint64
+  - :ixiaReverseOctetDeltaCount
+  177:
+  - :uint64
+  - :ixiaReversePacketDeltaCount
+  178:
+  - :string
+  - :ixiaConnectionEncryptionType
+  179:
+  - :string
+  - :ixiaEncryptionCipherSuite
+  180:
+  - :uint16
+  - :ixiaEncryptionKeyLength
+  181:
+  - :string
+  - :ixiaImsi3g4gSubscriber
+  182:
+  - :string
+  - :ixiaHttpRequestUserAgent
+  183:
+  - :string
+  - :ixiaHostName
+  184:
+  - :string
+  - :ixiaHttpUri
+  185:
+  - :string
+  - :ixiaDnsRecordTxt
+  186:
+  - :string
+  - :ixiaSourceAsName
+  187:
+  - :string
+  - :ixiaDestinationAsName
+  188:
+  - :uint32
+  - :ixiaTransactionLatency
+  189:
+  - :string
+  - :ixiaDnsQueryNames
+  190:
+  - :string
+  - :ixiaDnsAnswerNames
+  191:
+  - :string
+  - :ixiaDnsClasses
