@@ -50,11 +50,8 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   FLOWSET_ID = "flowset_id"
 
   def initialize(params = {})
-    @file_cache_mutex = Mutex.new
     super(params)
     @threadsafe = true
-    @decode_mutex_netflow = Mutex.new
-    @decode_mutex_ipfix = Mutex.new
   end
 
   def clone
@@ -63,8 +60,9 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
   def register
     require "logstash/codecs/netflow/util"
-    @netflow_templates = Vash.new()
-    @ipfix_templates = Vash.new()
+
+    @netflow_templates = TemplateRegistry.new(logger, @cache_ttl, @cache_save_path && "#{@cache_save_path}/netflow_templates.cache")
+    @ipfix_templates = TemplateRegistry.new(logger, @cache_ttl, @cache_save_path && "#{@cache_save_path}/ipfix_templates.cache")
 
     # Path to default Netflow v9 field definitions
     filename = ::File.expand_path('netflow/netflow.yaml', ::File.dirname(__FILE__))
@@ -73,32 +71,6 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     # Path to default IPFIX field definitions
     filename = ::File.expand_path('netflow/ipfix.yaml', ::File.dirname(__FILE__))
     @ipfix_fields = load_definitions(filename, @ipfix_definitions)
-
-    if @cache_save_path
-      if @versions.include?(9)
-        cache_save_file_netflow = "#{@cache_save_path}/netflow_templates.cache"
-        if File.exists?(cache_save_file_netflow)
-          raise "#{self.class.name}: Template cache file #{cache_save_file_netflow} not writable" unless File.writable?(cache_save_file_netflow)
-          @netflow_templates_cache = load_templates_cache("#{@cache_save_path}/netflow_templates.cache")
-          @netflow_templates_cache.each{ |key, fields| @netflow_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields) }
-        else
-          raise "#{self.class.name}: Template cache directory #{cache_save_path} not writable" unless File.writable?(cache_save_path)
-          @netflow_templates_cache = {}
-        end
-      end
-
-      if @versions.include?(10)
-        cache_save_file_ipfix = "#{@cache_save_path}/ipfix_templates.cache"
-        if File.exists?(cache_save_file_ipfix)
-          raise "#{self.class.name}: Template cache file #{cache_save_file_ipfix} not writable" unless File.writable?(cache_save_file_ipfix)
-          @ipfix_templates_cache = load_templates_cache("#{@cache_save_path}/ipfix_templates.cache")
-          @ipfix_templates_cache.each{ |key, fields| @ipfix_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields) }
-        else
-          raise "#{self.class.name}: Template cache directory #{cache_save_path} not writable" unless File.writable?(cache_save_path)
-          @ipfix_templates_cache = {}
-        end
-      end
-    end
   end # def register
 
   def decode(payload, metadata = nil, &block)
@@ -228,19 +200,11 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           else
             key = "#{flowset.source_id}|#{template.template_id}"
           end
-          # Prevent netflow_templates array from being concurrently modified
-          @decode_mutex_netflow.synchronize do
-            @netflow_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
+          @netflow_templates.register(key, fields) do |bindata|
             @logger.debug("Received template #{template.template_id} with fields #{fields.inspect}")
-            @logger.debug("Received template #{template.template_id} of size #{template_length} bytes. Representing in #{@netflow_templates[key].num_bytes} BinData bytes")
-            if template_length != @netflow_templates[key].num_bytes
-              @logger.warn("Received template #{template.template_id} of size #{template_length} bytes doesn't match BinData representation we built (#{@netflow_templates[key].num_bytes} bytes)")
-            end
-            # Purge any expired templates
-            @netflow_templates.cleanup!
-            if @cache_save_path
-              @netflow_templates_cache[key] = fields
-              save_templates_cache(@netflow_templates_cache, "#{@cache_save_path}/netflow_templates.cache")
+            @logger.debug("Received template #{template.template_id} of size #{template_length} bytes. Representing in #{bindata.num_bytes} BinData bytes")
+            if template_length != bindata.num_bytes
+              @logger.warn("Received template #{template.template_id} of size #{template_length} bytes doesn't match BinData representation we built (#{bindata.num_bytes} bytes)")
             end
           end
         end
@@ -255,7 +219,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
         key = "#{flowset.source_id}|#{record.flowset_id}"
       end
 
-      template = @decode_mutex_netflow.synchronize { @netflow_templates[key] }
+      template = @netflow_templates.fetch(key)
 
       if !template
         @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from source id #{flowset.source_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
@@ -338,23 +302,14 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           end
           # FIXME Source IP address required in key
           key = "#{flowset.observation_domain_id}|#{template.template_id}"
-          # Prevent ipfix_templates array from being concurrently modified
-          @decode_mutex_ipfix.synchronize do
-            @ipfix_templates[key, @cache_ttl] = BinData::Struct.new(:endian => :big, :fields => fields)
-            # Purge any expired templates
-            @ipfix_templates.cleanup!
-            if @cache_save_path
-              @ipfix_templates_cache[key] = fields
-              save_templates_cache(@ipfix_templates_cache, "#{@cache_save_path}/ipfix_templates.cache")
-            end
-          end
+
+          @ipfix_templates.register(key, fields)
         end
       end
     when 256..65535
       # Data flowset
       key = "#{flowset.observation_domain_id}|#{record.flowset_id}"
-      
-      template = @decode_mutex_ipfix.synchronize { @ipfix_templates[key] }
+      template = @ipfix_templates.fetch(key)
 
       if !template
         @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from observation domain id #{flowset.observation_domain_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
@@ -429,30 +384,6 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     end
 
     fields
-  end
-
-  def load_templates_cache(file_path)
-    templates_cache = {}
-    begin
-      @logger.debug? and @logger.debug("Loading templates from template cache #{file_path}")
-      file_data = @file_cache_mutex.synchronize { File.read(file_path)}
-      templates_cache = JSON.parse(file_data)
-    rescue Exception => e
-      raise "#{self.class.name}: templates cache file could not be read @ (#{file_path}: #{e.class.name} #{e.message})"
-    end
-
-    templates_cache
-  end
-
-  def save_templates_cache(templates_cache, file_path)
-    begin
-      @logger.debug? and @logger.debug("Writing templates to template cache #{file_path}")
-      @file_cache_mutex.synchronize do
-        File.open(file_path, 'w') {|file| file.write templates_cache.to_json }
-      end
-    rescue Exception => e
-      raise "#{self.class.name}: saving templates cache file failed (#{file_path}) with error #{e}"
-    end
   end
 
   def uint_field(length, default)
@@ -545,7 +476,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
         when :skip
           field += [nil, {:length => length.to_i}]
         when :string
-          field += [{:length => length.to_i, :trim_padding => true}]
+          field = string_field(field, type, length.to_i)
         end
 
         @logger.debug? and @logger.debug("Field definition complete for template #{template_id}", :field => field)
@@ -597,6 +528,146 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       [field]
     else
       @logger.warn("Definition should be an array", :field => field)
+    end
+  end
+
+  class TemplateRegistry
+    ##
+    # @param logger [Logger]
+    # @param ttl [Integer]
+    # @param file_path [String] (optional)
+    def initialize(logger, ttl, file_path=nil)
+      @logger = logger
+      @ttl = Integer(ttl)
+      @file_path = file_path
+
+      @mutex = Mutex.new
+
+      @bindata_struct_cache = Vash.new
+      @bindata_spec_cache = Vash.new
+
+      do_load unless file_path.nil?
+    end
+
+    ##
+    # Register a Template by name using an array of type/name tuples.
+    #
+    # @param key [String]: the key under which to save this template
+    # @param field_tuples [Array<Array<String>>]: an array of [type,name] tuples, e.g., ["uint32","fieldName"]
+    # @return [BinData::Struct]
+    #
+    # If a block is given, the template is yielded to the block _before_ being saved in the cache.
+    #
+    # @yieldparam [BinData::Struct]
+    # @yieldreturn [void]
+    # @yieldthrow :invalid_template : if the template is deemed invalid within the block, throwing this symbol causes
+    #                                the template to not be cached.
+    #
+    # @threadsafe
+    def register(key, field_tuples, &block)
+      @mutex.synchronize do
+        do_register(key, field_tuples, &block)
+      end
+    end
+
+    ##
+    # Fetch a Template by name
+    #
+    # @param key [String]
+    # @return [BinData::Struct]
+    #
+    # @threadsafe
+    def fetch(key)
+      @mutex.synchronize do
+        do_fetch(key)
+      end
+    end
+
+    ##
+    # Force persist, potentially cleaning up elements from the file-based cache that have already been evicted from
+    # the memory-based cache
+    def persist()
+      @mutex.synchronize do
+        do_persist
+      end
+    end
+
+    private
+    attr_reader :logger
+    attr_reader :file_path
+
+    ##
+    # @see `TemplateRegistry#register(String,Array<>)`
+    # @api private
+    def do_register(key, field_tuples)
+      template = BinData::Struct.new(:fields => field_tuples, :endian => :big)
+
+      catch(:invalid_template) do
+        yield(template) if block_given?
+
+        @bindata_spec_cache[key, @ttl] = field_tuples
+        @bindata_struct_cache[key, @ttl] = template
+
+        do_persist
+
+        template
+      end
+    end
+
+    ##
+    # @api private
+    def do_load
+      unless File.exists?(file_path)
+        logger.warn('Template Cache does not exist', :file_path => file_path)
+        return
+      end
+
+      logger.debug? and logger.debug('Loading templates from template cache', :file_path => file_path)
+      file_data = File.read(file_path)
+      templates_cache = JSON.parse(file_data)
+      templates_cache.each do |key, fields|
+        do_register(key, fields)
+      end
+
+      logger.warn('Template Cache not writable', file_path: file_path) unless File.writable?(file_path)
+    rescue => e
+      logger.error('Template Cache could not be loaded', :file_path => file_path, :exception => e.message)
+    end
+
+    ##
+    # @see `TemplateRegistry#persist`
+    # @api private
+    def do_persist
+      return if file_path.nil?
+
+      logger.debug? and logger.debug('Writing templates to template cache', :file_path => file_path)
+
+      fail('Template Cache not writable') if File.exists?(file_path) && !File.writable?(file_path)
+
+      do_cleanup!
+
+      templates_cache = @bindata_spec_cache
+
+      File.open(file_path, 'w') do |file|
+        file.write(templates_cache.to_json)
+      end
+    rescue Exception => e
+      logger.error('Template Cache could not be saved', :file_path => file_path, :exception => e.message)
+    end
+
+    ##
+    # @see `TemplateRegistry#cleanup`
+    # @api private
+    def do_cleanup!
+      @bindata_spec_cache.cleanup!
+      @bindata_struct_cache.cleanup!
+    end
+
+    ##
+    # @see `TemplateRegistry#fetch(String)`
+    # @api private
+    def do_fetch(key)
+      @bindata_struct_cache[key]
     end
   end
 end # class LogStash::Filters::Netflow

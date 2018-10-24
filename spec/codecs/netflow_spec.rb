@@ -1156,6 +1156,71 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+  context "Netflow 9 H3C Netstream with varstring" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_h3c_netstream_varstring_tpl3281.dat"), :mode => "rb")
+      packets << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_h3c_netstream_varstring_data3281.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+      {
+        "@version": "1",
+        "@timestamp": "2018-07-18T01:35:35.000Z",
+        "netflow": {
+          "in_pkts": 9,
+          "last_switched": "2018-07-18T01:35:03.999Z",
+          "direction": 0,
+          "first_switched": "2018-07-18T01:34:34.999Z",
+          "ipv4_dst_addr": "20.20.255.255",
+          "src_tos": 0,
+          "ipv4_src_addr": "20.20.20.20",
+          "output_snmp": 0,
+          "protocol": 17,
+          "l4_src_port": 137,
+          "ipv4_next_hop": "0.0.0.0",
+          "flowset_id": 3281,
+          "l4_dst_port": 137,
+          "input_snmp": 17,
+          "ip_protocol_version": 4,
+          "version": 9,
+          "sampling_algorithm": 0,
+          "forwarding_status": {
+            "status": 0,
+            "reason": 0
+          },
+          "tcp_flags": 0,
+          "sampling_interval": 0,
+          "flow_seq_num": 133,
+          "dst_traffic_index": 4294967295,
+          "src_mask": 32,
+          "src_as": 0,
+          "dst_as": 0,
+          "dst_mask": 32,
+          "VRFname": "",
+          "in_bytes": 702,
+          "src_traffic_index": 0
+        }
+      }
+      END
+      events.map{|event| event.gsub(/\s+/, "")}
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(1)
+      expect(decode[0].get("[netflow][VRFname]")).to eq("")
+      expect(decode[0].get("[netflow][l4_src_port]")).to eq(137)
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
+
+
   context "Netflow 9 Fortigate FortiOS 54x appid" do
     let(:data) do
       packets = []

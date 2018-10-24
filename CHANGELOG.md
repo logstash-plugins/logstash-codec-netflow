@@ -1,3 +1,15 @@
+## 4.1.2
+
+  - Fixed issue where TTL in template registry was not being respected.
+
+## 4.1.1
+
+  - Reduced complexity of creating, persisting, loading an retrieving template caches.
+
+## 4.1.0
+
+  - Added support for Netflow v9 devices with VarString fields (H3C Netstream)
+
 ## 4.0.2
 
   - Fixed incorrect parsing of zero-filled Netflow 9 packets from Palo Alto
