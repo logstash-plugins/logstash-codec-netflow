@@ -3850,58 +3850,58 @@
 3054:
   110:
   - :uint32
-  - :ixiaL7ApplicationId
+  - :ixiaL7AppId
   111:
   - :string
-  - :ixiaL7ApplicationName
+  - :ixiaL7AppName
   120:
   - :string
-  - :ixiaSourceIpCountryCode
+  - :ixiaSrcCountryCode
   121:
   - :string
-  - :ixiaSourceIpCountryName
+  - :ixiaSrcCountryName
   122:
   - :string
-  - :ixiaSourceIpRegionCode
+  - :ixiaSrcRegionCode
   123:
   - :string
-  - :ixiaSourceIpRegionName
+  - :ixiaSrcRegionName
   125:
   - :string
-  - :ixiaSourceIpCityName
+  - :ixiaSrcCityName
   126:
   - :float
-  - :ixiaSourceIpLatitude
+  - :ixiaSrcLatitude
   127:
   - :float
-  - :ixiaSourceIpLongitude
+  - :ixiaSrcLongitude
   140:
   - :string
-  - :ixiaDestinationIpCountryCode
+  - :ixiaDstCountryCode
   141:
   - :string
-  - :ixiaDestinationIpCountryName
+  - :ixiaDstCountryName
   142:
   - :string
-  - :ixiaDestinationIpRegionCode
+  - :ixiaDstRegionCode
   143:
   - :string
-  - :ixiaDestinationIpRegionNode
+  - :ixiaDstRegionNode
   145:
   - :string
-  - :ixiaDestinationIpCityName
+  - :ixiaDstCityName
   146:
   - :float
-  - :ixiaDestinationIpLatitude
+  - :ixiaDstLatitude
   147:
   - :float
-  - :ixiaDestinationIpLongitude
+  - :ixiaDstLongitude
   160:
   - :uint8
-  - :ixiaOsDeviceId
+  - :ixiaDeviceId
   161:
   - :string
-  - :ixiaOsDeviceName
+  - :ixiaDeviceName
   162:
   - :uint8
   - :ixiaBrowserId
@@ -3910,28 +3910,28 @@
   - :ixiaBrowserName
   176:
   - :uint64
-  - :ixiaReverseOctetDeltaCount
+  - :ixiaRevOctetDeltaCount
   177:
   - :uint64
-  - :ixiaReversePacketDeltaCount
+  - :ixiaRevPacketDeltaCount
   178:
   - :string
-  - :ixiaConnectionEncryptionType
+  - :ixiaEncryptType
   179:
   - :string
-  - :ixiaEncryptionCipherSuite
+  - :ixiaEncryptCipherSuite
   180:
   - :uint16
-  - :ixiaEncryptionKeyLength
+  - :ixiaEncryptKeyLength
   181:
   - :string
-  - :ixiaImsi3g4gSubscriber
+  - :ixiaImsiSubscriber
   182:
   - :string
-  - :ixiaHttpRequestUserAgent
+  - :ixiaHttpUserAgent
   183:
   - :string
-  - :ixiaHostName
+  - :ixiaHttpHostName
   184:
   - :string
   - :ixiaHttpUri
@@ -3940,19 +3940,25 @@
   - :ixiaDnsRecordTxt
   186:
   - :string
-  - :ixiaSourceAsName
+  - :ixiaSrcAsName
   187:
   - :string
-  - :ixiaDestinationAsName
+  - :ixiaDstAsName
   188:
   - :uint32
-  - :ixiaTransactionLatency
+  - :ixiaLatency
   189:
   - :string
-  - :ixiaDnsQueryNames
+  - :ixiaDnsQuery
   190:
   - :string
-  - :ixiaDnsAnswerNames
+  - :ixiaDnsAnswer
   191:
   - :string
   - :ixiaDnsClasses
+  192:
+  - :string
+  - :ixiaThreatType
+  193:
+  - :ip4_addr
+  - :ixiaThreatIPv4
