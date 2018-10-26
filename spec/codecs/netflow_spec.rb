@@ -98,7 +98,6 @@ describe LogStash::Codecs::Netflow do
         }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -187,7 +186,6 @@ describe LogStash::Codecs::Netflow do
         }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
 
     end
 
@@ -231,7 +229,6 @@ describe LogStash::Codecs::Netflow do
         }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode the mac address" do
@@ -287,7 +284,6 @@ describe LogStash::Codecs::Netflow do
         }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -369,7 +365,6 @@ describe LogStash::Codecs::Netflow do
         }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     # These tests will start to fail whenever options template decoding is added.
@@ -423,7 +418,6 @@ describe LogStash::Codecs::Netflow do
          }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should serialize to json" do
@@ -618,7 +612,6 @@ describe LogStash::Codecs::Netflow do
         }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -724,7 +717,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -771,7 +763,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -829,7 +820,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -887,7 +877,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -945,7 +934,6 @@ describe LogStash::Codecs::Netflow do
       }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1009,7 +997,6 @@ describe LogStash::Codecs::Netflow do
       }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1085,7 +1072,6 @@ describe LogStash::Codecs::Netflow do
         "@timestamp": "2017-12-01T17:04:39.000Z"
       }
       END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1141,7 +1127,6 @@ describe LogStash::Codecs::Netflow do
         "@version":"1"
       }
       END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1205,7 +1190,6 @@ describe LogStash::Codecs::Netflow do
         }
       }
       END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1264,7 +1248,6 @@ describe LogStash::Codecs::Netflow do
         "@version": "1"
       }
       END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1336,7 +1319,6 @@ describe LogStash::Codecs::Netflow do
       }
       END
 
-      #events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1380,7 +1362,6 @@ describe LogStash::Codecs::Netflow do
       }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1424,7 +1405,6 @@ describe LogStash::Codecs::Netflow do
         }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1482,7 +1462,6 @@ describe LogStash::Codecs::Netflow do
         }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1545,8 +1524,6 @@ describe LogStash::Codecs::Netflow do
       } 
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
-      events.map{|event| event.gsub(/NormalOperation/, "Normal Operation")}
     end
 
     it "should decode raw data" do
@@ -1610,7 +1587,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1658,7 +1634,6 @@ describe LogStash::Codecs::Netflow do
           "host": "172.16.32.201"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1728,7 +1703,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1907,7 +1881,6 @@ describe LogStash::Codecs::Netflow do
         }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1982,7 +1955,6 @@ describe LogStash::Codecs::Netflow do
         "@version": "1"
       }
       END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2255,7 +2227,6 @@ describe LogStash::Codecs::Netflow do
         "@version": "1"
       }
       END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2293,7 +2264,6 @@ describe LogStash::Codecs::Netflow do
           "@version":"1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2344,7 +2314,6 @@ describe LogStash::Codecs::Netflow do
           "@version":"1"
         }
       END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2381,7 +2350,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2443,7 +2411,6 @@ describe LogStash::Codecs::Netflow do
           "@timestamp": "2018-01-29T03:02:20.000Z"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2493,7 +2460,6 @@ describe LogStash::Codecs::Netflow do
           "@timestamp": "2018-01-16T09:45:02.000Z"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2553,7 +2519,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2589,7 +2554,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2649,7 +2613,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2692,7 +2655,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2778,7 +2740,6 @@ describe LogStash::Codecs::Netflow do
           "@timestamp": "2017-11-13T14:39:31.000Z"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2832,7 +2793,6 @@ describe LogStash::Codecs::Netflow do
           "@timestamp": "2017-11-21T14:32:15.000Z"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2881,7 +2841,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2997,7 +2956,6 @@ describe LogStash::Codecs::Netflow do
         "@version": "1"
       }
       END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
