@@ -3919,7 +3919,7 @@
   - :ixiaEncryptType
   179:
   - :string
-  - :ixiaEncryptCipherSuite
+  - :ixiaEncryptCipher
   180:
   - :uint16
   - :ixiaEncryptKeyLength
@@ -3962,3 +3962,6 @@
   193:
   - :ip4_addr
   - :ixiaThreatIPv4
+  194:
+  - :ip4_addr
+  - :ixiaThreatIPv6
