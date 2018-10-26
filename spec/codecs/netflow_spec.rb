@@ -201,6 +201,8 @@ describe LogStash::Codecs::Netflow do
 
   end
 
+
+
   context "Netflow 9 macaddress" do
     let(:data) do
       data = []
@@ -240,6 +242,54 @@ describe LogStash::Codecs::Netflow do
       expect(JSON.parse(decode[1].to_json)).to eq(JSON.parse(json_events[0]))
     end
   end
+
+  context "Netflow 9 Cisco ACI" do
+    let(:data) do
+      data = []
+      data << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_cisco_aci_tpl256-258.dat"), :mode => "rb")
+      data << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_cisco_aci_data256.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+      {
+        "@timestamp": "2018-10-15T11:29:00.000Z",
+        "netflow": {
+          "version": 9,
+          "l4_dst_port": 49411,
+          "flowset_id": 256,
+          "l4_src_port": 179,
+          "ipv4_dst_addr": "10.154.231.146",
+          "in_pkts": 2,
+          "first_switched": "2018-10-15T11:28:05.999Z",
+          "protocol": 6,
+          "last_switched": "2018-10-15T11:28:24.999Z",
+          "ip_protocol_version": 4,
+          "in_bytes": 99,
+          "flow_seq_num": 36,
+          "tcp_flags": 24,
+          "input_snmp": 369139712,
+          "ipv4_src_addr": "10.154.231.145",
+          "src_vlan": 0,
+          "direction": 0
+        },
+        "@version": "1"
+      }
+      END
+
+    end
+
+    it "should decode the mac address" do
+      expect(decode.size).to eq(3)
+      expect(decode[0].get("[netflow][ipv4_src_addr]")).to eq("10.154.231.145")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+  end
+
 
   context "Netflow 9 Cisco ASA" do
     let(:data) do
