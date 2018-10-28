@@ -1,3 +1,9 @@
+## 4.2.0
+
+  - Added Cisco ACI to list of known working Netflow v9 exporters
+  - Added support for IXIA Packet Broker IPFIX
+  - Fixed issue with Procera float fields
+
 ## 4.1.2
 
   - Fixed issue where TTL in template registry was not being respected.
