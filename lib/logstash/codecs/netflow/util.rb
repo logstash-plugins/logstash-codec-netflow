@@ -36,13 +36,13 @@ class IP6Addr < BinData::Primitive
   end
 
   def get
-    # There faster implementations, however they come with the 
+    # There are faster implementations, however they come with the 
     # loss of compressed IPv6 notation.
     # For benchmarks see spec/codecs/benchmarks/IP6Addr.rb
     unless self.storage.nil?
-      IPAddr.new_ntoh((0..7).map { |i|
-        (self.storage >> (112 - 16 * i)) & 0xffff
-      }.pack('n8')).to_s
+      b = "%032x" % self.storage
+      c = b[0..3] + ":" + b[4..7] + ":" + b[8..11] + ":" + b[12..15] + ":" + b[16..19] + ":" + b[20..23] + ":" + b[24..27] + ":" + b[28..31]
+      IPAddr.new(c).to_s
     end
   end
 end
