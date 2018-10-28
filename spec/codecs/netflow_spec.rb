@@ -98,7 +98,6 @@ describe LogStash::Codecs::Netflow do
         }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -187,7 +186,6 @@ describe LogStash::Codecs::Netflow do
         }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
 
     end
 
@@ -202,6 +200,8 @@ describe LogStash::Codecs::Netflow do
     end
 
   end
+
+
 
   context "Netflow 9 macaddress" do
     let(:data) do
@@ -231,7 +231,6 @@ describe LogStash::Codecs::Netflow do
         }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode the mac address" do
@@ -243,6 +242,54 @@ describe LogStash::Codecs::Netflow do
       expect(JSON.parse(decode[1].to_json)).to eq(JSON.parse(json_events[0]))
     end
   end
+
+  context "Netflow 9 Cisco ACI" do
+    let(:data) do
+      data = []
+      data << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_cisco_aci_tpl256-258.dat"), :mode => "rb")
+      data << IO.read(File.join(File.dirname(__FILE__), "netflow9_test_cisco_aci_data256.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+      {
+        "@timestamp": "2018-10-15T11:29:00.000Z",
+        "netflow": {
+          "version": 9,
+          "l4_dst_port": 49411,
+          "flowset_id": 256,
+          "l4_src_port": 179,
+          "ipv4_dst_addr": "10.154.231.146",
+          "in_pkts": 2,
+          "first_switched": "2018-10-15T11:28:05.999Z",
+          "protocol": 6,
+          "last_switched": "2018-10-15T11:28:24.999Z",
+          "ip_protocol_version": 4,
+          "in_bytes": 99,
+          "flow_seq_num": 36,
+          "tcp_flags": 24,
+          "input_snmp": 369139712,
+          "ipv4_src_addr": "10.154.231.145",
+          "src_vlan": 0,
+          "direction": 0
+        },
+        "@version": "1"
+      }
+      END
+
+    end
+
+    it "should decode the mac address" do
+      expect(decode.size).to eq(3)
+      expect(decode[0].get("[netflow][ipv4_src_addr]")).to eq("10.154.231.145")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+  end
+
 
   context "Netflow 9 Cisco ASA" do
     let(:data) do
@@ -287,7 +334,6 @@ describe LogStash::Codecs::Netflow do
         }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -369,7 +415,6 @@ describe LogStash::Codecs::Netflow do
         }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     # These tests will start to fail whenever options template decoding is added.
@@ -423,7 +468,6 @@ describe LogStash::Codecs::Netflow do
          }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should serialize to json" do
@@ -618,7 +662,6 @@ describe LogStash::Codecs::Netflow do
         }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -724,7 +767,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -771,7 +813,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -829,7 +870,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -887,7 +927,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -945,7 +984,6 @@ describe LogStash::Codecs::Netflow do
       }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1009,7 +1047,6 @@ describe LogStash::Codecs::Netflow do
       }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1085,7 +1122,6 @@ describe LogStash::Codecs::Netflow do
         "@timestamp": "2017-12-01T17:04:39.000Z"
       }
       END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1141,7 +1177,6 @@ describe LogStash::Codecs::Netflow do
         "@version":"1"
       }
       END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1205,7 +1240,6 @@ describe LogStash::Codecs::Netflow do
         }
       }
       END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1264,7 +1298,6 @@ describe LogStash::Codecs::Netflow do
         "@version": "1"
       }
       END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1272,6 +1305,75 @@ describe LogStash::Codecs::Netflow do
       expect(decode[1].get("[netflow][application_id]")).to eq("20..12356..40568")
       expect(decode[2].get("[netflow][application_id]")).to eq("20..12356..40568")
       expect(decode[16].get("[netflow][application_id]")).to eq("20..12356..0")
+    end
+
+    it "should serialize to json" do
+      expect(JSON.parse(decode[0].to_json)).to eq(JSON.parse(json_events[0]))
+    end
+
+  end
+
+
+  context "IPFIX from IXIA something something" do
+    let(:data) do
+      packets = []
+      packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_ixia_tpldata256.dat"), :mode => "rb")
+    end
+
+    let(:json_events) do
+      events = []
+      events << <<-END
+      {
+        "@timestamp": "2018-10-25T12:24:43.000Z",
+        "netflow": {
+          "icmpTypeCodeIPv4": 0,
+          "ixiaDstLongitude": 100.33540344238281,
+          "ixiaHttpUserAgent": "",
+          "ixiaDeviceName": "unknown",
+          "flowStartMilliseconds": "2018-10-25T12:24:19.881Z",
+          "destinationIPv4Address": "202.170.60.247",
+          "ixiaDeviceId": 0,
+          "ixiaL7AppName": "unknown",
+          "ixiaBrowserId": 0,
+          "ixiaDstLatitude": 5.411200046539307,
+          "sourceIPv4Address": "119.103.128.175",
+          "ixiaSrcAsName": "CHINANET-BACKBONE No.31,Jin-rong Street, CN",
+          "ixiaThreatIPv4": "0.0.0.0",
+          "ixiaHttpHostName": "",
+          "sourceTransportPort": 51695,
+          "tcpControlBits": 0,
+          "egressInterface": 1,
+          "flowEndReason": 1,
+          "ixiaSrcLongitude": 114.27339935302734,
+          "version": 10,
+          "packetDeltaCount": 4,
+          "destinationTransportPort": 36197,
+          "ixiaRevPacketDeltaCount": 0,
+          "reverseIcmpTypeCodeIPv4": 0,
+          "ixiaRevOctetDeltaCount": 0,
+          "ixiaThreatType": "",
+          "ixiaHttpUri": "",
+          "octetDeltaCount": 360,
+          "ixiaBrowserName": "-",
+          "protocolIdentifier": 17,
+          "bgpSourceAsNumber": 4134,
+          "bgpDestinationAsNumber": 24090,
+          "ixiaDstAsName": "UNISAINS-AS-AP Universiti Sains Malaysia (USM), MY",
+          "ixiaLatency": 0,
+          "ixiaSrcLatitude": 30.58009910583496,
+          "ixiaL7AppId": 0,
+          "ingressInterface": 1,
+          "flowEndMilliseconds": "2018-10-25T12:24:32.022Z"
+        },
+        "@version": "1"
+      }
+      END
+
+    end
+
+    it "should decode raw data" do
+      expect(decode.size).to eq(1)
+      expect(decode[0].get("[netflow][ixiaDstAsName]")).to eq("UNISAINS-AS-AP Universiti Sains Malaysia (USM), MY")
     end
 
     it "should serialize to json" do
@@ -1310,7 +1412,6 @@ describe LogStash::Codecs::Netflow do
       }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1354,7 +1455,6 @@ describe LogStash::Codecs::Netflow do
         }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1412,7 +1512,6 @@ describe LogStash::Codecs::Netflow do
         }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1475,8 +1574,6 @@ describe LogStash::Codecs::Netflow do
       } 
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
-      events.map{|event| event.gsub(/NormalOperation/, "Normal Operation")}
     end
 
     it "should decode raw data" do
@@ -1540,7 +1637,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1588,7 +1684,6 @@ describe LogStash::Codecs::Netflow do
           "host": "172.16.32.201"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1658,7 +1753,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1837,7 +1931,6 @@ describe LogStash::Codecs::Netflow do
         }
       END
 
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -1912,7 +2005,6 @@ describe LogStash::Codecs::Netflow do
         "@version": "1"
       }
       END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2185,7 +2277,6 @@ describe LogStash::Codecs::Netflow do
         "@version": "1"
       }
       END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2223,7 +2314,6 @@ describe LogStash::Codecs::Netflow do
           "@version":"1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2274,7 +2364,6 @@ describe LogStash::Codecs::Netflow do
           "@version":"1"
         }
       END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2311,7 +2400,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2373,7 +2461,6 @@ describe LogStash::Codecs::Netflow do
           "@timestamp": "2018-01-29T03:02:20.000Z"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2423,7 +2510,6 @@ describe LogStash::Codecs::Netflow do
           "@timestamp": "2018-01-16T09:45:02.000Z"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2483,7 +2569,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2519,7 +2604,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2579,7 +2663,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2622,7 +2705,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2708,7 +2790,6 @@ describe LogStash::Codecs::Netflow do
           "@timestamp": "2017-11-13T14:39:31.000Z"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2762,7 +2843,6 @@ describe LogStash::Codecs::Netflow do
           "@timestamp": "2017-11-21T14:32:15.000Z"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2811,7 +2891,6 @@ describe LogStash::Codecs::Netflow do
           "@version": "1"
         }
         END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do
@@ -2927,7 +3006,6 @@ describe LogStash::Codecs::Netflow do
         "@version": "1"
       }
       END
-      events.map{|event| event.gsub(/\s+/, "")}
     end
 
     it "should decode raw data" do

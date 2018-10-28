@@ -36,6 +36,7 @@ The following Netflow/IPFIX exporters have been seen and tested with the most re
 |===========================================================================================
 |Netflow exporter         | v5 | v9 | IPFIX | Remarks
 |Barracuda Firewall       |    |    |   y   | With support for Extended Uniflow
+|Cisco ACI                |    | y  |       |
 |Cisco ASA                |    | y  |       |  
 |Cisco ASR 1k             |    |    |   N   | Fails because of duplicate fields
 |Cisco ASR 9k             |    | y  |       |  
@@ -47,6 +48,7 @@ The following Netflow/IPFIX exporters have been seen and tested with the most re
 |Fortigate FortiOS        |    | y  |       |
 |Huawei Netstream         |    | y  |       |
 |ipt_NETFLOW              |  y | y  |   y   |
+|IXIA packet broker       |    |    |   y   |
 |Juniper MX               |  y |    |   y   | SW > 12.3R8. Fails to decode IPFIX from Junos 16.1 due to duplicate field names which we currently don't support.
 |Mikrotik                 |  y |    |   y   | http://wiki.mikrotik.com/wiki/Manual:IP/Traffic_Flow
 |nProbe                   |  y | y  |   y   | L7 DPI fields now also supported
