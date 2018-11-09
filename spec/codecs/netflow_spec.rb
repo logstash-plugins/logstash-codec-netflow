@@ -2134,7 +2134,7 @@ describe LogStash::Codecs::Netflow do
           "destinationIPv4Address": "172.18.65.211",
           "destinationTransportPort": 5985,
           "tcpControlBits": 2,
-          "vmwareIngressInterfaceTypeID": 1,
+          "vmwareIngressInterfaceAttr": 1,
           "sourceIPv4Address": "172.18.65.21",
           "ingressInterface": 3,
           "ipClassOfService": 0,
@@ -2149,9 +2149,9 @@ describe LogStash::Codecs::Netflow do
           "sourceTransportPort": 61209,
           "flowEndMilliseconds": "2016-12-22T12:17:37.000Z",
           "maximumTTL": 128,
-          "vmwareEgressInterfaceTypeID": 2,
+          "vmwareEgressInterfaceAttr": 2,
           "flowStartMilliseconds": "2016-12-22T12:17:37.000Z",
-          "vmwareObservationDomainID": 0
+          "vmwareVxlanExportRole": 0
         },
         "@timestamp": "2016-12-22T12:17:52.000Z",
         "@version": "1"
