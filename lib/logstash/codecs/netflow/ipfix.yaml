@@ -2453,37 +2453,34 @@
 6876:
   880:
   - :uint8
-  - :vmwareUnknown880
+  - :vmwareTenantProtocol
   881:
-  - :uint32
-  - :vmwareUnknown881
+  - :ip4_addr
+  - :vmwareTenantSourceIPv4
   882:
-  - :uint32
-  - :vmwareUnknown882
+  - :ip4_addr
+  - :vmwareTenantDestIPv4
   883:
-  - :string
-  - :vmwareUnknown883
+  - :ip6_addr
+  - :vmwareTenantSourceIPv6
   884:
-  - :string
-  - :vmwareUnknown884
+  - :ip6_addr
+  - :vmwareTenantDestIPv6
   886:
   - :uint16
-  - :vmwareUnknown886
+  - :vmwareTenantSourcePort
   887:
   - :uint16
-  - :vmwareUnknown887
+  - :vmwareTenantDestPort
   888:
   - :uint16
-  # source: https://github.com/logstash-plugins/logstash-codec-netflow/issues/28#issuecomment-371811848
-  - :vmwareEgressInterfaceTypeID
+  - :vmwareEgressInterfaceAttr
   889:
   - :uint8
-  # source: https://github.com/logstash-plugins/logstash-codec-netflow/issues/28#issuecomment-371811848
-  - :vmwareObservationDomainID
+  - :vmwareVxlanExportRole
   890:
   - :uint16
-  # source: https://github.com/logstash-plugins/logstash-codec-netflow/issues/28#issuecomment-371811848
-  - :vmwareIngressInterfaceTypeID
+  - :vmwareIngressInterfaceAttr
 29305:
   1:
   - :uint64
