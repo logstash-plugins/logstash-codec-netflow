@@ -136,7 +136,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
         # convert these into absolute times
         millis = flowset.uptime - v
         seconds = flowset.unix_sec - (millis / 1000)
-        micros = (flowset.unix_nsec / 1000) - (millis % 1000)
+        micros = (flowset.unix_nsec / 1000) - ((millis % 1000) * 1000)
         if micros < 0
           seconds--
           micros += 1000000
@@ -262,7 +262,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
             millis = flowset.uptime - v
             seconds = flowset.unix_sec - (millis / 1000)
             # v9 did away with the nanosecs field
-            micros = 1000000 - (millis % 1000)
+            micros = 1000000 - ((millis % 1000) * 1000)
             event[@target][k.to_s] = LogStash::Timestamp.at(seconds, micros).to_iso8601
           else
             event[@target][k.to_s] = v.snapshot
