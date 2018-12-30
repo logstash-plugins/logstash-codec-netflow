@@ -82,8 +82,8 @@ describe LogStash::Codecs::Netflow do
             "output_snmp": 0,
             "in_pkts": 4,
             "in_bytes": 304,
-            "first_switched": "2015-06-21T11:40:52.280Z",
-            "last_switched": "2015-05-02T18:38:08.279Z",
+            "first_switched": "2015-06-21T11:40:52.194Z",
+            "last_switched": "2015-05-02T18:38:08.476Z",
             "l4_src_port": 22,
             "l4_dst_port": 54435,
             "tcp_flags": 24,
@@ -408,8 +408,8 @@ describe LogStash::Codecs::Netflow do
             "ipv4_next_hop":"0.0.0.0",
             "src_as":0,
             "dst_as":0,
-            "last_switched":"2015-10-08T19:05:56.999Z",
-            "first_switched":"2015-10-08T19:05:56.999Z"
+            "last_switched":"2015-10-08T19:05:56.015Z",
+            "first_switched":"2015-10-08T19:05:56.010Z"
           },
           "@version":"1"
         }
@@ -1894,7 +1894,7 @@ describe LogStash::Codecs::Netflow do
           "netflow": {
             "streamcore_id_rule_10": 0,
             "in_pkts": 11,
-            "first_switched": "2017-01-11T11:22:44.999Z",
+            "first_switched": "2017-01-11T11:22:44.939Z",
             "flowset_id": 260,
             "l4_src_port": 53483,
             "streamcore_id_rule_1": 1171,
@@ -1921,7 +1921,7 @@ describe LogStash::Codecs::Netflow do
             "flow_seq_num": 2142545188,
             "ipv4_src_addr": "10.27.8.20",
             "input_snmp": 1148,
-            "last_switched": "2017-01-11T11:23:35.999Z",
+            "last_switched": "2017-01-11T11:23:35.954Z",
             "streamcore_url": "\/mux.json",
             "streamcore_wan_rtt": 0,
             "streamcore_total_app_resp_time": 19
