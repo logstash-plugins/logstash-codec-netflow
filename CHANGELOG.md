@@ -1,3 +1,7 @@
+## 4.2.1
+
+  - Fix sub-second timestamp math
+
 ## 4.2.0
 
   - Added Cisco ACI to list of known working Netflow v9 exporters
