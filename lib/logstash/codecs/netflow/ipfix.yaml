@@ -3631,8 +3631,7 @@
   4321:
   - :uint64
   - :viptelaVPNId
-# List below taken from Procera PacketLogic product guide 15.1 - Not publicly available AFAIK
-# Further updates / additional fields may be present with versions 16/17+
+# List below taken from Procera PacketLogic product guide 15.1 and 20.30 - Not publicly available
 15397:
   1:
   - :string
@@ -3769,6 +3768,69 @@
   47:
   - :string
   - :proceraTemplateName
+  49:
+  - :uint8
+  - :proceraIncomingDscp
+  50:
+  - :uint8
+  - :proceraOutgoingDscp
+  51:
+  - :uint16
+  - :proceraIncomingDot1qVlanIdLevel1
+  52:
+  - :uint16
+  - :proceraIncomingDot1qVlanIdLevel2
+  53:
+  - :uint16
+  - :proceraIncomingDot1qVlanIdLevel3
+  54:
+  - :uint16
+  - :proceraIncomingDot1qVlanIdLevel4
+  55:
+  - :uint16
+  - :proceraOutgoingDot1qVlanIdLevel1
+  56:
+  - :uint16
+  - :proceraOutgoingDot1qVlanIdLevel2
+  57:
+  - :uint16
+  - :proceraOutgoingDot1qVlanIdLevel3
+  58:
+  - :uint16
+  - :proceraOutgoingDot1qVlanIdLevel4
+  59:
+  - :int8
+  - :proceraIncomingDot1qPriorityLevel1
+  60:
+  - :int8
+  - :proceraIncomingDot1qPriorityLevel2
+  61:
+  - :int8
+  - :proceraIncomingDot1qPriorityLevel3
+  62:
+  - :int8
+  - :proceraIncomingDot1qPriorityLevel4
+  63:
+  - :int8
+  - :proceraOutgoingDot1qPriorityLevel1
+  64:
+  - :int8
+  - :proceraOutgoingDot1qPriorityLevel2
+  65:
+  - :int8
+  - :proceraOutgoingDot1qPriorityLevel3
+  66:
+  - :int8
+  - :proceraOutgoingDot1qPriorityLevel4
+  67:
+  - :int32
+  - :proceraInternalJitter
+  69:
+  - :string
+  - :proceraServiceObject
+  70:
+  - :string
+  - :proceraRemoteGeoIP
 10704:
   1:
   - :uint32
