@@ -96,13 +96,17 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
         else
           decode_netflow9(flowset, record).each{|event| yield(event)}
         end
-#      end
-     end
+      end
+#     end
     elsif header.version == 10
 #     BinData::trace_reading do
       flowset = IpfixPDU.read(payload)
       flowset.records.each do |record|
-        decode_ipfix(flowset, record).each { |event| yield(event) }
+        if metadata != nil
+          decode_ipfix(flowset, record, metadata).each { |event| yield(event) }
+        else
+          decode_ipfix(flowset, record).each { |event| yield(event) }
+        end
       end
 #     end
     else
@@ -193,13 +197,13 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
               template_length += field.field_length
             end
           end
-          # We get this far, we have a list of fields
-          #key = "#{flowset.source_id}|#{event["source"]}|#{template.template_id}"
+          
           if metadata != nil
-            key = "#{flowset.source_id}|#{template.template_id}|#{metadata["host"]}|#{metadata["port"]}"
+            key = "#{flowset.source_id}|#{template.template_id}|#{metadata["host"]}"
           else
             key = "#{flowset.source_id}|#{template.template_id}"
           end
+
           @netflow_templates.register(key, fields) do |bindata|
             @logger.debug("Received template #{template.template_id} with fields #{fields.inspect}")
             @logger.debug("Received template #{template.template_id} of size #{template_length} bytes. Representing in #{bindata.num_bytes} BinData bytes")
@@ -214,7 +218,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       #key = "#{flowset.source_id}|#{event["source"]}|#{record.flowset_id}"
       @logger.debug? and @logger.debug("Start processing data flowset #{record.flowset_id}")
       if metadata != nil
-        key = "#{flowset.source_id}|#{record.flowset_id}|#{metadata["host"]}|#{metadata["port"]}"
+        key = "#{flowset.source_id}|#{record.flowset_id}|#{metadata["host"]}"
       else
         key = "#{flowset.source_id}|#{record.flowset_id}"
       end
@@ -222,7 +226,11 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       template = @netflow_templates.fetch(key)
 
       if !template
-        @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from source id #{flowset.source_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
+        if metadata != nil
+          @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from host #{metadata["host"]}, source id #{flowset.source_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
+        else
+          @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from source id #{flowset.source_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
+        end
         return events
       end
 
@@ -281,7 +289,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     @logger.warn("Invalid netflow packet received (#{e})")
   end
 
-  def decode_ipfix(flowset, record)
+  def decode_ipfix(flowset, record, metadata = nil)
     events = []
 
     case record.flowset_id
@@ -300,19 +308,31 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
             throw :field unless entry
             fields += entry
           end
-          # FIXME Source IP address required in key
-          key = "#{flowset.observation_domain_id}|#{template.template_id}"
+          
+          if metadata != nil
+            key = "#{flowset.observation_domain_id}|#{template.template_id}|#{metadata["host"]}"
+          else
+            key = "#{flowset.observation_domain_id}|#{template.template_id}"
+          end
 
           @ipfix_templates.register(key, fields)
         end
       end
     when 256..65535
       # Data flowset
-      key = "#{flowset.observation_domain_id}|#{record.flowset_id}"
+      if metadata != nil
+        key = "#{flowset.observation_domain_id}|#{record.flowset_id}|#{metadata["host"]}"
+      else
+        key = "#{flowset.observation_domain_id}|#{record.flowset_id}"
+      end
       template = @ipfix_templates.fetch(key)
 
       if !template
-        @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from observation domain id #{flowset.observation_domain_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
+        if metadata != nil
+          @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from host #{metadata["host"]}, observation domain id #{flowset.observation_domain_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
+        else
+          @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from observation domain id #{flowset.observation_domain_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
+        end
         return events
       end
 
