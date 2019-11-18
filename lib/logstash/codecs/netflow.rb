@@ -199,7 +199,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           end
           
           if metadata != nil
-            key = "#{flowset.source_id}|#{template.template_id}|#{metadata["host"]}"
+            key = "#{flowset.source_id}|#{template.template_id}|#{metadata["host"]}|#{metadata["port"]}"
           else
             key = "#{flowset.source_id}|#{template.template_id}"
           end
@@ -218,7 +218,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       #key = "#{flowset.source_id}|#{event["source"]}|#{record.flowset_id}"
       @logger.debug? and @logger.debug("Start processing data flowset #{record.flowset_id}")
       if metadata != nil
-        key = "#{flowset.source_id}|#{record.flowset_id}|#{metadata["host"]}"
+        key = "#{flowset.source_id}|#{record.flowset_id}|#{metadata["host"]}|#{metadata["port"]}"
       else
         key = "#{flowset.source_id}|#{record.flowset_id}"
       end
@@ -227,7 +227,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
       if !template
         if metadata != nil
-          @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from host #{metadata["host"]}, source id #{flowset.source_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
+          @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from host #{metadata["host"]}, port #{metadata["port"]}, source id #{flowset.source_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
         else
           @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from source id #{flowset.source_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
         end
@@ -310,7 +310,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           end
           
           if metadata != nil
-            key = "#{flowset.observation_domain_id}|#{template.template_id}|#{metadata["host"]}"
+            key = "#{flowset.observation_domain_id}|#{template.template_id}|#{metadata["host"]}|#{metadata["port"]}"
           else
             key = "#{flowset.observation_domain_id}|#{template.template_id}"
           end
@@ -321,7 +321,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     when 256..65535
       # Data flowset
       if metadata != nil
-        key = "#{flowset.observation_domain_id}|#{record.flowset_id}|#{metadata["host"]}"
+        key = "#{flowset.observation_domain_id}|#{record.flowset_id}|#{metadata["host"]}|#{metadata["port"]}"
       else
         key = "#{flowset.observation_domain_id}|#{record.flowset_id}"
       end
@@ -329,7 +329,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
       if !template
         if metadata != nil
-          @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from host #{metadata["host"]}, observation domain id #{flowset.observation_domain_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
+          @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from host #{metadata["host"]}, port #{metadata["port"]} observation domain id #{flowset.observation_domain_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
         else
           @logger.warn("Can't (yet) decode flowset id #{record.flowset_id} from observation domain id #{flowset.observation_domain_id}, because no template to decode it with has been received. This message will usually go away after 1 minute.")
         end
