@@ -310,8 +310,8 @@
 - :string
 - :wlanSSID
 148:
-- :uint32
-- :conn_id
+- :uint64
+- :flowId
 149:
 - :uint32
 - :observationDomainId

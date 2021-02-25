@@ -1,3 +1,7 @@
+## 4.2.2
+
+  - Fix incorrect definition for EID 148
+
 ## 4.2.1
 
   - Fix sub-second timestamp math
