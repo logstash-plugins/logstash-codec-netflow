@@ -464,6 +464,12 @@ class IpfixOptionFlowset < BinData::Record
   end
 end
 
+class IpfixShortPDU < BinData::Record
+  endian :big
+  uint16 :version
+  uint16 :pdu_length
+end
+
 class IpfixPDU < BinData::Record
   endian :big
   uint16 :version
