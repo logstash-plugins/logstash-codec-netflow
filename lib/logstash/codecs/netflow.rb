@@ -52,6 +52,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   def initialize(params = {})
     super(params)
     @threadsafe = true
+    @payload_buffer = ""
   end
 
   def clone
@@ -75,6 +76,12 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
   def decode(payload, metadata = nil, &block)
 #   BinData::trace_reading do
+    unless @payload_buffer.empty?
+      # Reuse previously bufferized payload
+      payload = @payload_buffer + payload
+      @payload_buffer = ""
+    end
+
     header = Header.read(payload)
 
     unless @versions.include?(header.version)
@@ -100,9 +107,24 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
      end
     elsif header.version == 10
 #     BinData::trace_reading do
-      flowset = IpfixPDU.read(payload)
-      flowset.records.each do |record|
-        decode_ipfix(flowset, record).each { |event| yield(event) }
+      while payload.bytesize > 4
+        flowset = IpfixShortPDU.read(payload)
+        if flowset.pdu_length > payload.bytesize
+          # Incomplete PDU => bufferize & wait for next call
+          @payload_buffer = payload
+          payload = ""
+        else
+          flowset = IpfixPDU.read(payload)
+          flowset.records.each do |record|
+            decode_ipfix(flowset, record).each { |event| yield(event) }
+          end
+          # Remove processed PDU from payload
+          payload = payload.byteslice(flowset.pdu_length..-1)
+        end
+      end
+      unless payload.empty?
+        # Not enough bytes to read PDU length => bufferize & wait for next call
+        @payload_buffer = payload
       end
 #     end
     else
