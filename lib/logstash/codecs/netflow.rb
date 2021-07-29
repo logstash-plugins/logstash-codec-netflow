@@ -5,9 +5,12 @@ require "logstash/timestamp"
 #require "logstash/json"
 require "json"
 
-# Documentation moved to docs/
+require 'logstash/plugin_mixins/event_support/event_factory_adapter'
 
 class LogStash::Codecs::Netflow < LogStash::Codecs::Base
+
+  include LogStash::PluginMixins::EventSupport::EventFactoryAdapter
+
   config_name "netflow"
 
   # Netflow v9/v10 template cache TTL (minutes)
@@ -147,7 +150,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       end
     end
 
-    LogStash::Event.new(event)
+    event_factory.new_event(event)
   rescue BinData::ValidityError, IOError => e
     @logger.warn("Invalid netflow packet received (#{e})")
   end
@@ -269,7 +272,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           end
         end
 
-        events << LogStash::Event.new(event)
+        events << event_factory.new_event(event)
         flowcounter += 1
       end
     else
@@ -355,7 +358,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           end
         end
 
-        events << LogStash::Event.new(event)
+        events << event_factory.new_event(event)
       end
     else
       @logger.warn("Unsupported flowset id #{record.flowset_id}")
