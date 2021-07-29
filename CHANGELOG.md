@@ -1,3 +1,6 @@
+## 4.2.2
+  - Feat: leverage event_factory support [#195](https://github.com/logstash-plugins/logstash-codec-netflow/pull/195)
+
 ## 4.2.1
 
   - Fix sub-second timestamp math
