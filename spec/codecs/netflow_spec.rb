@@ -3054,8 +3054,6 @@ describe LogStash::Codecs::Netflow, 'missing templates, no template caching conf
 
     it "can not / should not decode any data" do
       expect(decode.size).to eq(0)
-      expect{decode[0].get("[netflow][version]")}.to raise_error(NoMethodError, /undefined method .get. for nil:NilClass/)
-      expect{JSON.parse(decode[0].to_json)}.to raise_error(JSON::ParserError)
     end
 
     it "should report missing templates" do

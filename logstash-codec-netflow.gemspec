@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
 
   s.name            = 'logstash-codec-netflow'
-  s.version         = '4.2.1'
+  s.version         = '4.2.2'
   s.licenses        = ['Apache License (2.0)']
   s.summary         = "Reads Netflow v5, Netflow v9 and IPFIX data"
   s.description     = "This gem is a Logstash plugin required to be installed on top of the Logstash core pipeline using $LS_HOME/bin/logstash-plugin install gemname. This gem is not a stand-alone program"
@@ -21,6 +21,8 @@ Gem::Specification.new do |s|
 
   # Gem dependencies
   s.add_runtime_dependency "logstash-core-plugin-api", "~> 2.0"
+  s.add_runtime_dependency 'logstash-mixin-event_support', '~> 1.0'
+
   s.add_runtime_dependency 'bindata', ['>= 1.5.0']
   s.add_development_dependency 'logstash-devutils', ['>= 1.0.0']
 end
