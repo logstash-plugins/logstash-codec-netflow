@@ -33,6 +33,9 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
   # Specify which Netflow versions you will accept.
   config :versions, :validate => :array, :default => [5, 9, 10]
 
+  # Specify to skip undefined field automatically
+  config :auto_skip, :validate => :boolean, :default => false
+
   # Override YAML file containing Netflow field definitions
   config :netflow_definitions, :validate => :path
 
@@ -491,6 +494,14 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
       end
     else
       @logger.warn("Unsupported field in template #{template_id}", :type => type, :length => length)
+      if @auto_skip
+        field = [:skip]
+        field += [nil, {:length => length}]
+        @logger.warn("Automatically Skipped", :type => type, :length => length)
+        [field]
+      else
+        nil
+      end
       nil
     end
   end # def netflow_field_for

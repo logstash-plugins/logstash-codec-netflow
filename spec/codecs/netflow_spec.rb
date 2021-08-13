@@ -3229,6 +3229,4 @@ describe LogStash::Codecs::Netflow, 'configured with include_flowset_id for ipfi
     expect(decode[1].get("[netflow][flowset_id]")).to eq(257)
     expect(decode[2].get("[netflow][flowset_id]")).to eq(258)
   end
-
-
 end
