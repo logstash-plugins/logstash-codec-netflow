@@ -1,3 +1,6 @@
+## 4.3.0
+  - add Gigamon ipfix [#199](https://api.github.com/repos/logstash-plugins/logstash-codec-netflow/pulls/199)
+
 ## 4.2.2
   - Feat: leverage event_factory support [#195](https://github.com/logstash-plugins/logstash-codec-netflow/pull/195)
   - Test: remove redundant asserts (to get the CI green)
