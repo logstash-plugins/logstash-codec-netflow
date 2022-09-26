@@ -4024,3 +4024,77 @@
   194:
   - :ip4_addr
   - :ixiaThreatIPv6
+# Gigamon (26866)
+26866:
+  106:
+  - :string
+  - :ssl_validity_not_after
+  2531:
+  - :uint32
+  - :ssl_server_hello_extension_type
+  2532:
+  - :uint32
+  - :ssl_request_size
+  2533:
+  - :uint32
+  - :ssl_handshake_type
+  2535:
+  - :uint32
+  - :ssl_client_hello_extension_type
+  101:
+  - :string
+  - :ssl_common_name
+  112:
+  - :string
+  - :ssl_server_name
+  107:
+  - :string
+  - :ssl_serial_number
+  105:
+  - :string
+  - :ssl_validity_not_before
+  2548:
+  - :string
+  - :ssl_server_name_raw
+  2539:
+  - :string
+  - :ssl_server_name_raw
+  2545:
+  - :string
+  - :ssl_issuer
+  2228:
+  - :string
+  - :http2_header_raw
+  2238:
+  - :string
+  - :http2_mime_type
+  2237:
+  - :string
+  - :http2_method
+  2250:
+  - :string
+  - :http2_user_agent
+  2250:
+  - :string
+  - :http2_user_agent
+  4676:
+  - :string
+  - :http_host
+  1958:
+  - :string
+  - :dns_query
+  4681:
+  - :string
+  - :http_uri_raw
+  4745:
+  - :string
+  - :http_uri
+  4721:
+  - :string
+  - :http_uri_full
+  3:
+  - :string
+  - :http_user_agent
+  4702:
+  - :string
+  - :http_server_agent
