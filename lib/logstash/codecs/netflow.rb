@@ -57,6 +57,10 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     @threadsafe = true
   end
 
+  def clone(*args)
+    self
+  end
+
   def register
     require "logstash/codecs/netflow/util"
 
