@@ -1,3 +1,6 @@
+## 4.3.1
+  - Fixed unable to initialize the plugin with Logstash 8.10+ [#205](https://github.com/logstash-plugins/logstash-codec-netflow/pull/205)
+
 ## 4.3.0
   - Added Gigamon ipfix definitions [#199](https://github.com/logstash-plugins/logstash-codec-netflow/pull/199)
 
