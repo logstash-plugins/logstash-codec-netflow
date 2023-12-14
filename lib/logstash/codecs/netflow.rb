@@ -57,7 +57,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     @threadsafe = true
   end
 
-  def clone
+  def clone(*args)
     self
   end
 
