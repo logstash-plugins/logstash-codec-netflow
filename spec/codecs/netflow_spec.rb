@@ -1336,7 +1336,7 @@ describe LogStash::Codecs::Netflow do
     end
 
     # in LS 8 is rounded in LS 7 is truncated
-    let(:millis) { is_LS_8 ? "882" : "881" }
+    let(:millis) { is_LS_8 ? "882" : "882" }
 
     let(:json_events) do
       events = []
@@ -2946,7 +2946,7 @@ describe LogStash::Codecs::Netflow do
     end
 
     # in LS 8 is rounded in LS 7 is truncated
-    let(:millis) { is_LS_8 ? "347" : "346" }
+    let(:millis) { is_LS_8 ? "347" : "347" }
 
     let(:json_events) do
       events = []
