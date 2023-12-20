@@ -33,13 +33,7 @@ describe LogStash::Codecs::Netflow do
       data << IO.read(File.join(File.dirname(__FILE__), "netflow5.dat"), :mode => "rb")
     end
 
-    let(:micros) do
-      if is_LS_8
-        "328"
-      else
-        ""
-      end
-    end
+    let(:micros) { is_LS_8 ? "328" : "" }
 
     let(:json_events) do
       events = []
@@ -1335,9 +1329,6 @@ describe LogStash::Codecs::Netflow do
       packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_ixia_tpldata256.dat"), :mode => "rb")
     end
 
-    # in LS 8 is rounded in LS 7 is truncated
-    let(:millis) { is_LS_8 ? "882" : "882" }
-
     let(:json_events) do
       events = []
       events << <<-END
@@ -1348,7 +1339,7 @@ describe LogStash::Codecs::Netflow do
           "ixiaDstLongitude": 100.33540344238281,
           "ixiaHttpUserAgent": "",
           "ixiaDeviceName": "unknown",
-          "flowStartMilliseconds": "2018-10-25T12:24:19.#{millis}Z",
+          "flowStartMilliseconds": "2018-10-25T12:24:19.882Z",
           "destinationIPv4Address": "202.170.60.247",
           "ixiaDeviceId": 0,
           "ixiaL7AppName": "unknown",
@@ -2945,9 +2936,6 @@ describe LogStash::Codecs::Netflow do
       packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_yaf_data53248.dat"), :mode => "rb")
     end
 
-    # in LS 8 is rounded in LS 7 is truncated
-    let(:millis) { is_LS_8 ? "347" : "347" }
-
     let(:json_events) do
       events = []
       events << <<-END
@@ -2995,7 +2983,7 @@ describe LogStash::Codecs::Netflow do
           "tcpSequenceNumber": 340533701,
           "silkAppLabel": 0,
           "sourceTransportPort": 63499,
-          "flowEndMilliseconds": "2016-12-25T12:58:34.#{millis}Z",
+          "flowEndMilliseconds": "2016-12-25T12:58:34.347Z",
           "flowAttributes": 0,
           "destinationIPv4Address": "172.16.32.215",
           "octetTotalCount": 172,
