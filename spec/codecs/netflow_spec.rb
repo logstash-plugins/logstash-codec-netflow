@@ -17,6 +17,11 @@ describe LogStash::Codecs::Netflow do
     end
   end
 
+  let(:is_LS_8) do
+    logstash_version = Gem::Version.create(LOGSTASH_CORE_VERSION)
+    Gem::Requirement.create('>= 8.0').satisfied_by?(logstash_version)
+  end
+
   ### NETFLOW v5
  
   context "Netflow 5 valid 01" do
@@ -28,11 +33,19 @@ describe LogStash::Codecs::Netflow do
       data << IO.read(File.join(File.dirname(__FILE__), "netflow5.dat"), :mode => "rb")
     end
 
+    let(:micros) do
+      if is_LS_8
+        "328"
+      else
+        ""
+      end
+    end
+
     let(:json_events) do
       events = []
       events << <<-END
         {
-          "@timestamp": "2015-05-02T18:38:08.280Z",
+          "@timestamp": "2015-05-02T18:38:08.280#{micros}Z",
           "netflow": {
             "version": 5,
             "flow_seq_num": 0,
@@ -48,8 +61,8 @@ describe LogStash::Codecs::Netflow do
             "output_snmp": 0,
             "in_pkts": 5,
             "in_bytes": 230,
-            "first_switched": "2015-06-21T11:40:52.194Z",
-            "last_switched": "2015-05-02T18:38:08.476Z",
+            "first_switched": "2015-06-21T11:40:52.194#{micros}Z",
+            "last_switched": "2015-05-02T18:38:08.476#{micros}Z",
             "l4_src_port": 54435,
             "l4_dst_port": 22,
             "tcp_flags": 16,
@@ -66,7 +79,7 @@ describe LogStash::Codecs::Netflow do
 
       events << <<-END
         {
-          "@timestamp": "2015-05-02T18:38:08.280Z",
+          "@timestamp": "2015-05-02T18:38:08.280#{micros}Z",
           "netflow": {
             "version": 5,
             "flow_seq_num": 0,
@@ -82,8 +95,8 @@ describe LogStash::Codecs::Netflow do
             "output_snmp": 0,
             "in_pkts": 4,
             "in_bytes": 304,
-            "first_switched": "2015-06-21T11:40:52.194Z",
-            "last_switched": "2015-05-02T18:38:08.476Z",
+            "first_switched": "2015-06-21T11:40:52.194#{micros}Z",
+            "last_switched": "2015-05-02T18:38:08.476#{micros}Z",
             "l4_src_port": 22,
             "l4_dst_port": 54435,
             "tcp_flags": 24,
@@ -835,11 +848,13 @@ describe LogStash::Codecs::Netflow do
       packets << IO.read(File.join(File.dirname(__FILE__), "netflow5_test_microtik.dat"), :mode => "rb")
     end
 
+    let(:micros) { is_LS_8 ? "932" : "" }
+
     let(:json_events) do
       events = []
       events << <<-END
         {
-          "@timestamp": "2016-07-21T13:51:57.514Z",
+          "@timestamp": "2016-07-21T13:51:57.514#{micros}Z",
           "netflow": {
             "version": 5,
             "flow_seq_num": 8140050,
@@ -855,8 +870,8 @@ describe LogStash::Codecs::Netflow do
             "output_snmp": 46,
             "in_pkts": 13,
             "in_bytes": 11442,
-            "first_switched": "2016-07-21T13:51:42.254Z",
-            "last_switched": "2016-07-21T13:51:42.254Z",
+            "first_switched": "2016-07-21T13:51:42.254#{micros}Z",
+            "last_switched": "2016-07-21T13:51:42.254#{micros}Z",
             "l4_src_port": 80,
             "l4_dst_port": 51826,
             "tcp_flags": 82,
@@ -1320,6 +1335,9 @@ describe LogStash::Codecs::Netflow do
       packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_ixia_tpldata256.dat"), :mode => "rb")
     end
 
+    # in LS 8 is rounded in LS 7 is truncated
+    let(:millis) { is_LS_8 ? "882" : "881" }
+
     let(:json_events) do
       events = []
       events << <<-END
@@ -1330,7 +1348,7 @@ describe LogStash::Codecs::Netflow do
           "ixiaDstLongitude": 100.33540344238281,
           "ixiaHttpUserAgent": "",
           "ixiaDeviceName": "unknown",
-          "flowStartMilliseconds": "2018-10-25T12:24:19.881Z",
+          "flowStartMilliseconds": "2018-10-25T12:24:19.#{millis}Z",
           "destinationIPv4Address": "202.170.60.247",
           "ixiaDeviceId": 0,
           "ixiaL7AppName": "unknown",
@@ -2029,6 +2047,9 @@ describe LogStash::Codecs::Netflow do
       data << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_netscaler_data.dat"), :mode => "rb")
     end
 
+    # in LS 8 the precision is up to nanos in LS 7 is up to millis
+    let(:nanos) { is_LS_8 ? "128468" : "" }
+
     let(:json_events) do
       events = []
       events << <<-END
@@ -2038,7 +2059,7 @@ describe LogStash::Codecs::Netflow do
             "netscalerHttpReqUserAgent": "Mozilla/5.0 (Commodore 64;  kobo.com) Gecko/20100101 Firefox/75.0",
             "destinationTransportPort": 443,
             "netscalerHttpReqCookie": "beer=123456789abcdefghijklmnopqrstuvw; AnotherCookie=1234567890abcdefghijklmnopqr; Shameless.Plug=Thankyou.Rakuten.Kobo.Inc.For.Allowing.me.time.to.work.on.this.and.contribute.back.to.the.community; Padding=aaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbccccccccccccccddddddddddddddddddddddeeeeeeeeeeeeeeeeeeeeeffffffffffffffffffffffgggggggggggggggggggggggghhhhhhhhhhhhhhhhhiiiiiiiiiiiiiiiiiiiiiijjjjjjjjjjjjjjjjjjjjjjjjkkkkkkkkkkkkkkkkkklllllllllllllllmmmmmmmmmm; more=less; GJquote=There.is.no.spoon; GarrySays=Nice!!; LastPadding=aaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbbcccccccccccccccccccdddddddddddeeeeeeee",
-            "flowEndMicroseconds": "2016-11-11T12:09:19.000Z",
+            "flowEndMicroseconds": "2016-11-11T12:09:19.000#{nanos}Z",
             "netscalerHttpReqUrl": "/aa/bb/ccccc/ddddddddddddddddddddddddd",
             "sourceIPv4Address": "192.168.0.1",
             "netscalerHttpReqMethod": "GET",
@@ -2057,7 +2078,7 @@ describe LogStash::Codecs::Netflow do
             "netscalerHttpReqVia": "1.1 akamai.net(ghost) (AkamaiGHost)",
             "netscalerConnectionId": 14460661,
             "tcpControlBits": 24,
-            "flowStartMicroseconds": "2016-11-11T12:09:19.000Z",
+            "flowStartMicroseconds": "2016-11-11T12:09:19.000#{nanos}Z",
             "ingressInterface": 8,
             "version": 10,
             "packetDeltaCount": 2,
@@ -2085,7 +2106,6 @@ describe LogStash::Codecs::Netflow do
       expect(decode[0].get("[netflow][version]")).to eq(10)
       expect(decode[0].get("[netflow][sourceIPv4Address]")).to eq('192.168.0.1')
       expect(decode[0].get("[netflow][destinationIPv4Address]")).to eq('10.0.0.1')
-      expect(decode[0].get("[netflow][flowEndMicroseconds]")).to eq('2016-11-11T12:09:19.000Z')
       expect(decode[0].get("[netflow][netscalerConnectionId]")).to eq(14460661)
       expect(decode[1].get("[netflow][version]")).to eq(10)
       expect(decode[1].get("[netflow][flowId]")).to eq(14460662)
@@ -2095,6 +2115,16 @@ describe LogStash::Codecs::Netflow do
       expect(decode[2].get("[netflow][version]")).to eq(10)
       expect(decode[2].get("[netflow][netscalerAppUnitNameAppId]")).to eq(239927296)
       expect(decode[2].get("[netflow][netscalerHttpReqXForwardedFor]")).to eq('11.222.33.255')
+    end
+
+    if Gem::Requirement.create('>= 8.0').satisfied_by?(Gem::Version.create(LOGSTASH_CORE_VERSION))
+      it "should decode raw data decoding flowEndMicroseconds with nano precision" do
+        expect(decode[0].get("[netflow][flowEndMicroseconds]")).to eq('2016-11-11T12:09:19.000127768Z')
+      end
+    else
+      it "should decode raw data decoding flowEndMicroseconds with millis precision" do
+        expect(decode[0].get("[netflow][flowEndMicroseconds]")).to eq('2016-11-11T12:09:19.000Z')
+      end
     end
 
     it "should decode variable length fields" do
@@ -2915,6 +2945,9 @@ describe LogStash::Codecs::Netflow do
       packets << IO.read(File.join(File.dirname(__FILE__), "ipfix_test_yaf_data53248.dat"), :mode => "rb")
     end
 
+    # in LS 8 is rounded in LS 7 is truncated
+    let(:millis) { is_LS_8 ? "347" : "346" }
+
     let(:json_events) do
       events = []
       events << <<-END
@@ -2962,7 +2995,7 @@ describe LogStash::Codecs::Netflow do
           "tcpSequenceNumber": 340533701,
           "silkAppLabel": 0,
           "sourceTransportPort": 63499,
-          "flowEndMilliseconds": "2016-12-25T12:58:34.346Z",
+          "flowEndMilliseconds": "2016-12-25T12:58:34.#{millis}Z",
           "flowAttributes": 0,
           "destinationIPv4Address": "172.16.32.215",
           "octetTotalCount": 172,
@@ -3065,6 +3098,11 @@ end
 
 # New subject with config, ordered testing since we need caching before data processing
 describe LogStash::Codecs::Netflow, 'configured with template caching', :order => :defined do
+  let(:is_LS_8) do
+    logstash_version = Gem::Version.create(LOGSTASH_CORE_VERSION)
+    Gem::Requirement.create('>= 8.0').satisfied_by?(logstash_version)
+  end
+
   context "IPFIX Netscaler with variable length fields" do
     subject do
       LogStash::Codecs::Netflow.new(cache_config).tap do |codec|
@@ -3171,10 +3209,13 @@ describe LogStash::Codecs::Netflow, 'configured with template caching', :order =
       expect(JSON.parse(File.read("#{tmp_dir}/ipfix_templates.cache"))).to eq(JSON.parse(cached_templates))
     end
 
+    # in LS 8 the precision is up to nanos in LS 7 is up to millis
+    let(:nanos) { is_LS_8 ? "127768" : "" }
+
     it "should decode raw data based on cached templates" do
       expect(decode.size).to eq(3)
       expect(decode[0].get("[netflow][version]")).to eq(10)
-      expect(decode[0].get("[netflow][flowEndMicroseconds]")).to eq('2016-11-11T12:09:19.000Z')
+      expect(decode[0].get("[netflow][flowEndMicroseconds]")).to eq("2016-11-11T12:09:19.000#{nanos}Z")
       expect(decode[0].get("[netflow][netscalerConnectionId]")).to eq(14460661)
       expect(decode[1].get("[netflow][version]")).to eq(10)
       expect(decode[1].get("[netflow][observationPointId]")).to eq(167954698)
@@ -3215,13 +3256,22 @@ describe LogStash::Codecs::Netflow, 'configured with include_flowset_id for ipfi
   it "should decode raw data" do
     expect(decode.size).to eq(3)
     expect(decode[0].get("[netflow][version]")).to eq(10)
-    expect(decode[0].get("[netflow][flowEndMicroseconds]")).to eq('2016-11-11T12:09:19.000Z')
     expect(decode[0].get("[netflow][netscalerConnectionId]")).to eq(14460661)
     expect(decode[1].get("[netflow][version]")).to eq(10)
     expect(decode[1].get("[netflow][observationPointId]")).to eq(167954698)
     expect(decode[1].get("[netflow][netscalerFlowFlags]")).to eq(1157636096)
     expect(decode[2].get("[netflow][version]")).to eq(10)
     expect(decode[2].get("[netflow][netscalerAppUnitNameAppId]")).to eq(239927296)
+  end
+
+  if Gem::Requirement.create('>= 8.0').satisfied_by?(Gem::Version.create(LOGSTASH_CORE_VERSION))
+    it "should decode raw data decoding flowEndMicroseconds with nano precision" do
+      expect(decode[0].get("[netflow][flowEndMicroseconds]")).to eq('2016-11-11T12:09:19.000127768Z')
+    end
+  else
+    it "should decode raw data decoding flowEndMicroseconds with millis precision" do
+      expect(decode[0].get("[netflow][flowEndMicroseconds]")).to eq('2016-11-11T12:09:19.000Z')
+    end
   end
 
   it "should include flowset_id" do
