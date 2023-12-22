@@ -343,7 +343,13 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           when /^flow(?:Start|End)(Milli|Micro|Nano)seconds$/
             case $1
             when 'Milli'
-              event[@target][k.to_s] = LogStash::Timestamp.at(v.snapshot.to_f / 1_000).to_iso8601
+              secs = v.snapshot.to_i / 1000
+              micros = (v.snapshot.to_i % 1000) * 1000
+              # Use the 2 args Timestamp.at to avoid the precision under milliseconds. Doing math division (like /1000 on a float)
+              # could introduce error in representation that makes 0.192 millis to be expressed like 0.192000001 nanoseconds,
+              # so here we cut to millis, but there is a rounding when representing to to_iso8601, so 191998 micros becomes
+              # 192 millis in LogStash 8 while in previous versions it appears truncated like 191.
+              event[@target][k.to_s] = LogStash::Timestamp.at(secs, micros).to_iso8601
             when 'Micro', 'Nano'
               # For now we'll stick to assuming ntp timestamps,
               # Netscaler implementation may be buggy though:

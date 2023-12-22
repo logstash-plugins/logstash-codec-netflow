@@ -1,3 +1,7 @@
+## 4.3.2
+  - Updates the milliseconds rounding for IPFIX start/end milliseconds fields. 
+  - Fix the test to run on Logstash 8 with microseconds precision. [#206](https://github.com/logstash-plugins/logstash-codec-netflow/pull/206)
+
 ## 4.3.1
   - Fixed unable to initialize the plugin with Logstash 8.10+ [#205](https://github.com/logstash-plugins/logstash-codec-netflow/pull/205)
 
