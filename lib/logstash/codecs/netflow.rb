@@ -48,7 +48,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     4 => :scope_netflow_cache,
     5 => :scope_template,
   }
-  IPFIX_FIELDS = ['version']
+  IPFIX_FIELDS = ['version', 'flow_seq_num']
   SWITCHED = /_switched$/
   FLOWSET_ID = "flowset_id"
 
