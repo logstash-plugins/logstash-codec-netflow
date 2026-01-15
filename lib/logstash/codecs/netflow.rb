@@ -88,16 +88,24 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     if header.version == 5
       flowset = Netflow5PDU.read(payload)
       flowset.records.each do |record|
-        yield(decode_netflow5(flowset, record))
+        begin
+          yield(decode_netflow5(flowset, record))
+        rescue BinData::ValidityError, IOError => e
+          @logger.warn("Invalid Netflow v5 record (#{e})")
+        end
       end
     elsif header.version == 9
 #     BinData::trace_reading do
       flowset = Netflow9PDU.read(payload)
       flowset.records.each do |record|
-        if metadata != nil
-          decode_netflow9(flowset, record, metadata).each{|event| yield(event)}
-        else
-          decode_netflow9(flowset, record).each{|event| yield(event)}
+        begin
+          if metadata != nil
+            decode_netflow9(flowset, record, metadata).each{|event| yield(event)}
+          else
+            decode_netflow9(flowset, record).each{|event| yield(event)}
+          end
+        rescue BinData::ValidityError, IOError => e
+          @logger.warn("Invalid Netflow v9 record (#{e})")
         end
 #      end
      end
@@ -105,7 +113,11 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 #     BinData::trace_reading do
       flowset = IpfixPDU.read(payload)
       flowset.records.each do |record|
-        decode_ipfix(flowset, record).each { |event| yield(event) }
+        begin
+          decode_ipfix(flowset, record).each { |event| yield(event) }
+        rescue BinData::ValidityError, IOError => e
+          @logger.warn("Invalid IPFIX record (#{e})")
+        end
       end
 #     end
     else
@@ -151,8 +163,6 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     end
 
     event_factory.new_event(event)
-  rescue BinData::ValidityError, IOError => e
-    @logger.warn("Invalid netflow packet received (#{e})")
   end
 
   def decode_netflow9(flowset, record, metadata = nil)
@@ -280,8 +290,6 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     end
 
     events
-  rescue BinData::ValidityError, IOError => e
-    @logger.warn("Invalid netflow packet received (#{e})")
   end
 
   def decode_ipfix(flowset, record)
@@ -371,8 +379,6 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     end
 
     events
-  rescue BinData::ValidityError => e
-    @logger.warn("Invalid IPFIX packet received (#{e})")
   end
 
   def load_definitions(defaults, extra)
