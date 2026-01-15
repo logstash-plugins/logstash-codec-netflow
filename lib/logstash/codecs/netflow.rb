@@ -92,6 +92,9 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           yield(decode_netflow5(flowset, record))
         rescue BinData::ValidityError, IOError => e
           @logger.warn("Invalid Netflow v5 record (#{e})")
+          if @logger.debug?
+            @logger.debug("Netflow v5 decode error", :flow_seq_num => flowset.flow_seq_num)
+          end
         end
       end
     elsif header.version == 9
@@ -106,6 +109,11 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           end
         rescue BinData::ValidityError, IOError => e
           @logger.warn("Invalid Netflow v9 record (#{e})")
+          if @logger.debug?
+            host = metadata ? metadata["host"] : nil
+            port = metadata ? metadata["port"] : nil
+            @logger.debug("Netflow v9 decode error", :source_id => flowset.source_id, :flowset_id => record.flowset_id, :host => host, :port => port)
+          end
         end
 #      end
      end
@@ -117,6 +125,9 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
           decode_ipfix(flowset, record).each { |event| yield(event) }
         rescue BinData::ValidityError, IOError => e
           @logger.warn("Invalid IPFIX record (#{e})")
+          if @logger.debug?
+            @logger.debug("IPFIX decode error", :observation_domain_id => flowset.observation_domain_id, :flowset_id => record.flowset_id)
+          end
         end
       end
 #     end
