@@ -1,3 +1,6 @@
+## 4.3.3
+  - Fix NoMethodError when decode fails. [214](https://github.com/logstash-plugins/logstash-codec-netflow/pull/214)
+
 ## 4.3.2
   - Updates the milliseconds rounding for IPFIX start/end milliseconds fields. 
   - Fix the test to run on Logstash 8 with microseconds precision. [#206](https://github.com/logstash-plugins/logstash-codec-netflow/pull/206)
