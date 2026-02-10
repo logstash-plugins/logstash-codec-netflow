@@ -1,3 +1,6 @@
+## 4.3.4
+  - Fix: replace deprecated `File.exists?` with `File.exist?` for Ruby 3.4 (JRuby 10) compatibility [#215](https://github.com/logstash-plugins/logstash-codec-netflow/pull/215)
+
 ## 4.3.3
   - Fix NoMethodError when decode fails. [214](https://github.com/logstash-plugins/logstash-codec-netflow/pull/214)
 
