@@ -401,7 +401,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
     # Allow the user to augment/override/rename the default fields
     if extra
-      raise "#{self.class.name}: definitions file #{extra} does not exist" unless File.exists?(extra)
+      raise "#{self.class.name}: definitions file #{extra} does not exist" unless File.exist?(extra)
       begin
         fields.merge!(YAML.load_file(extra))
       rescue Exception => e
@@ -643,7 +643,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     ##
     # @api private
     def do_load
-      unless File.exists?(file_path)
+      unless File.exist?(file_path)
         logger.warn('Template Cache does not exist', :file_path => file_path)
         return
       end
@@ -668,7 +668,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
 
       logger.debug? and logger.debug('Writing templates to template cache', :file_path => file_path)
 
-      fail('Template Cache not writable') if File.exists?(file_path) && !File.writable?(file_path)
+      fail('Template Cache not writable') if File.exist?(file_path) && !File.writable?(file_path)
 
       do_cleanup!
 
