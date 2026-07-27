@@ -664,7 +664,7 @@ class LogStash::Codecs::Netflow < LogStash::Codecs::Base
     # @see `TemplateRegistry#persist`
     # @api private
     def do_persist
-      return if file_path.nil?
+      (do_cleanup!; return) if file_path.nil?
 
       logger.debug? and logger.debug('Writing templates to template cache', :file_path => file_path)
 
