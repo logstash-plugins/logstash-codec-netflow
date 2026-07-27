@@ -4098,3 +4098,155 @@
   4702:
   - :string
   - :http_server_agent
+# Arista (https://www.arista.com/en/um-eos/eos-sampled-flow-tracking)
+# List built using following commands output
+# - show flow tracking sampled ipfix template
+# - show flow tracking hardware ipfix template 
+30065:
+  1:
+  - :uint32
+  - :octetDeltaCount
+  2:
+  - :uint32
+  - :packetDeltaCount
+  4:
+  - :uint8
+  - :protocolIdentifier
+  5:
+  - :uint8
+  - :ipClassOfService
+  6:
+  - :uint16
+  - :tcpControlBits
+  7:
+  - :uint16
+  - :sourceTransportPort
+  8:
+  - :ip4_addr
+  - :sourceIPv4Address
+  9:
+  - :uint8
+  - :sourceIPv4PrefixLength
+  10:
+  - :uint32
+  - :ingressInterface
+  11:
+  - :uint16
+  - :destinationTransportPort 
+  12:
+  - :ip4_addr
+  - :destinationIPv4Address
+  13:
+  - :uint8
+  - :destinationIPv4PrefixLength
+  14:
+  - :uint32
+  - :egressInterface
+  15:
+  - :ip4_addr
+  - :ipNextHopIPv4Address
+  16:
+  - :uint32
+  - :bgpSourceAsNumber
+  17:
+  - :uint32
+  - :bgpDestinationAsNumber
+  18:
+  - :ip4_addr
+  - :bgpNextHopIPv4Address
+  27:
+  - :ip6_addr
+  - :sourceIPv6Address
+  28:
+  - :ip6_addr
+  - :destinationIPv6Address
+  29:
+  - :uint8
+  - :sourceIPv6PrefixLength
+  30:
+  - :uint8
+  - :destinationIPv6PrefixLength
+  31:
+  - :uint32
+  - :flowLabelIPv6
+  36:
+  - :uint16
+  - :flowActiveTimeout
+  37:
+  - :uint16
+  - :flowIdleTimeout
+  56:
+  - :mac_addr
+  - :sourceMacAddress
+  57:
+  - :mac_addr
+  - :postDestinationMacAddress
+  58:
+  - :uint16
+  - :vlanId
+  59:
+  - :uint16
+  - :postVlanId
+  61:
+  - :uint8
+  - :flowDirection
+  62:
+  - :ip6_addr
+  - :ipNextHopIPv6Address
+  63:
+  - :ip6_addr
+  - :bgpNextHopIPv6Address
+  82:
+  - :string
+  - :interfaceName
+  136:
+  - :uint8
+  - :flowEndReason
+  145:
+  - :uint16
+  - :templateId
+  149:
+  - :uint32
+  - :observationDomainId
+  152:
+  - :uint64
+  - :flowStartMilliseconds
+  153:
+  - :uint64
+  - :flowEndMilliseconds
+  173:
+  - :uint64
+  - :flowKeyIndicator
+  234:
+  - :uint32
+  - :ingressVRFID
+  235:
+  - :uint32
+  - :egressVRFID
+  236:
+  - :string
+  - :VRFname
+  243:
+  - :uint16
+  - :dot1qVlanId
+  245:
+  - :uint16
+  - :dot1qCustomerVlanId
+  300:
+  - :string
+  - :observationDomainName
+  304:
+  - :uint16
+  - :selectorAlgorithm
+  309:
+  - :uint32
+  - :samplingSize
+  310:
+  - :uint32
+  - :samplingPopulation
+  368:
+  - :uint32
+  - :ingressInterfaceType
+  1001:
+  - :uint16
+  - :flowTrackingType
